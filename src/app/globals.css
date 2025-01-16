@@ -2,20 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: 'CustomFontName';
+  src: url('/fonts/AvenirArabic-Medium.otf') format('woff2');
+  font-weight: bold;
+  font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+main{
+  min-height: calc(100vh - 142px);
+  direction: rtl;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: MyCustomFont sans-serif;
 }

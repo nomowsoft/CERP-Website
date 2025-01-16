@@ -1,3 +1,11 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/Home/hero/page": "app/Home/hero/page.js",
+  "/Home/features/page": "app/Home/features/page.js",
+  "/Home/product/page": "app/Home/product/page.js",
+  "/Home/slider/page": "app/Home/slider/page.js",
+  "/Home/system_health/page": "app/Home/system_health/page.js",
+  "/Home/system_hifz/page": "app/Home/system_hifz/page.js",
+  "/contact_us/page": "app/contact_us/page.js",
   "/page": "app/page.js"
 }
