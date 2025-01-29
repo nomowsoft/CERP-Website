@@ -9,16 +9,16 @@ const SystemHifz = () => {
       <div className="gap-8 items-center py-8 px-4 mx-32 xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
         <div className="block md:hidden" data-aos="zoom-in">
           <div className="flex justify-center">
-            <Image className="w-full" width={250} height={20} src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/cta/cta-dashboard-mockup-dark.svg" alt="dashboard image" />
+            <Image className="w-full" width={250} height={20} src="/system_hifz/haile.png" alt="dashboard image" />
           </div>
         </div>
         <div className="hidden md:block" data-aos="fade-left">
           <div className="flex justify-center">
-            <Image width={700} height={20} src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/cta/cta-dashboard-mockup-dark.svg" alt="dashboard image" />
+            <Image width={700} height={20} src="/system_hifz/haile.png" alt="dashboard image" className="rounded-xl shadow-xl"/>
           </div>
         </div>
         <div className="mt-4 md:mt-0" data-aos="fade-right">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-success">نظام سرب لجمعيات نحفيظ القران الكريم</h2>
+            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-success">نظام سرب لجمعيات تحفيظ القرآن الكريم</h2>
             <ul className="text-2xl text-success mb-8">
               <li className="flex">
                 <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
