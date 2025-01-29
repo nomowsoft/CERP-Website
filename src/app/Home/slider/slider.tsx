@@ -37,17 +37,17 @@ const Slider = () => {
       >
           <SwiperSlide>
             <div className="flex justify-center">
-              <Image src="/slider/Group.png" alt="..." height={20} width={5000} />
+              <Image src="/slider/slider1.jpg" alt="..." height={20} width={5000} />
             </div>
           </SwiperSlide>
           <SwiperSlide>
               <div className="flex justify-center">
-                <Image src="/slider/Group.png" alt="..." height={20} width={5000} />
+                <Image src="/slider/slider2.jpg" alt="..." height={20} width={5000} />
               </div>
           </SwiperSlide>
           <SwiperSlide className="flex justify-center items-center">
             <div className="flex justify-center">
-              <Image src="/slider/Group.png" alt="..." height={20} width={5000} />
+              <Image src="/slider/slider3.jpg" alt="..." height={20} width={5000} />
             </div>
           </SwiperSlide>
       </Swiper>

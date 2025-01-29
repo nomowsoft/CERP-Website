@@ -9,7 +9,7 @@ const SystemHealth = () => {
       <div className="gap-8 items-center py-8 px-4 mx-32 xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
           <div className="block md:hidden" data-aos="zoom-in">
             <div className="flex justify-center">
-              <Image className="w-full" width={250} height={20} src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/cta/cta-dashboard-mockup-dark.svg" alt="dashboard image" />
+              <Image className="w-full rounded-2xl" width={250} height={20} src="/system_health/health.jpeg" alt="dashboard image" />
             </div>
           </div>
           <div className="mt-4 md:mt-0" data-aos="fade-left">
@@ -59,7 +59,7 @@ const SystemHealth = () => {
           </div>
           <div className="hidden md:block" data-aos="fade-right">
             <div className="flex justify-center">
-              <Image width={700} height={20} src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/cta/cta-dashboard-mockup-dark.svg" alt="dashboard image" />
+              <Image className="rounded-2xl lg:h-96" width={750} height={20} src="/system_health/health.jpeg" alt="dashboard image" />
             </div>
           </div>
       </div>
