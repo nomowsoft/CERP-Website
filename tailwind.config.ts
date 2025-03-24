@@ -11,19 +11,16 @@ export default {
       colors: {
         primary: "#EEE8F5",
         success: "#100083",
-        info: "#1000831a",
-        secondary: "#17539B",
-        warning: "#25D5FC",
-        // footer: "#A376AF",
-        customBlue: {
-          50: '#7D007E'
-        }
+        info: "#F1F2F4",
       },
       backgroundImage: {
-        hero: "url('/hero/hero.svg')",
+        hero: "url('/hero/Group.svg')",
+        system: "url('/system/system_back.svg')",
         hero1: "url('/hero/hero1.svg')",
         product: "url('/product/product.svg')",
         footer: "url('/footer/footer.svg')",
+        health: "url('/system_health/bg.png')",
+        hifz: "url('/system_hifz/bg.png')",
       },
     },
   },
