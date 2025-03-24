@@ -1,21 +1,23 @@
-"use client"
+"use client";
 import Navitem from "./nav_item";
 
-const menuItems = [
-    { name: "الرئسية", href: "/", isActive: true },
-];
-const Navlink = () => {
-    return (
-        <ul className="flex flex-col mt-4 text-lg lg:flex-row lg:mt-0">
-            {menuItems.map((item) => (
-                <Navitem
-                    name={item.name}
-                    key={item.name}
-                    href={item.href}
-                />
-            ))}
-        </ul>
-    )
-}
+const Navlink = ({ closeMenu }: { closeMenu?: () => void }) => {
+  const links = [
+    { name: "الرئيسية", href: "/" },
+  ];
 
-export default Navlink
+  return (
+    <ul className="flex flex-col lg:flex-row lg:space-x-4">
+      {links.map((link) => (
+        <Navitem
+          key={link.href}
+          name={link.name}
+          href={link.href}
+          closeMenu={closeMenu}
+        />
+      ))}
+    </ul>
+  );
+};
+
+export default Navlink;
