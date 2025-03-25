@@ -27,7 +27,7 @@ export default function Header() {
 
   return (
     <header>
-      <nav className="bg-white border-gray-200 px-4 lg:px-6 fixed w-full z-50">
+      <nav className="bg-white border-gray-200 px-4 lg:px-6 w-full z-50">
         <div className="flex flex-wrap justify-between items-center mx-5 lg:mx-10 xl:mx-20 py-4 relative">
           <div className="flex items-center space-x-6">
             <Link href="/" className="flex items-center">
