@@ -4,11 +4,11 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer>
-        <div className="bg-slate-200 py-14">
+        <div className="bg-gray-100 py-14">
             <div className="xl:max-w-screen-2xl mx-auto relative flex justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 py-10 -mt-36">
                     <div className="flex items-center bg-white p-5 rounded-xl">
-                        <Image src="/footer/Icon (1).png" alt="..." height={20} width={100} />
+                        <Image src="/footer/Icon (1).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
                                 الموقع
@@ -25,7 +25,7 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="flex items-center bg-white p-5 rounded-xl">
-                        <Image src="/footer/Icon (2).png" alt="..." height={20} width={100} />
+                        <Image src="/footer/Icon (2).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
                                 رقم التواصل
@@ -36,7 +36,7 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="flex items-center bg-white p-5 rounded-xl">
-                        <Image src="/footer/Icon (3).png" alt="..." height={20} width={100} />
+                        <Image src="/footer/Icon (3).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
                             الموقع الإلكتروني
@@ -47,7 +47,7 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="flex items-center bg-white p-5 rounded-xl">
-                        <Image src="/footer/Icon (4).png" alt="..." height={20} width={100} />
+                        <Image src="/footer/Icon (4).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
                             البريد الإلكتروني
@@ -61,12 +61,12 @@ export default function Footer() {
             </div>
             <div className="mx-5 md:mx-20 rounded-3xl">
                 <div className="lg:flex items-center justify-center">
-                    <div className="py-10 lg:w-1/2">
+                    <div className="py-10 ">
                         <Link href="/" className="flex justify-center">
                             <Image height={20} width={250} src="/footer/cerp 1.png" alt="Flowbite Logo" />
                         </Link>
                     </div>
-                    <div className="lg:w-1/9 grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-20 lg:mx-10 px-10 text-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-20 lg:mx-10 px-10 text-center">
                         <div className="lg:text-2xl text-success ">
                             <Link href="/">
                                 الرئسية
@@ -91,7 +91,7 @@ export default function Footer() {
                 </div>
             </div>
         </div>
-        <div className="py-8 text-center">
+        <div className="py-8 text-center bg-white">
             <p className="text-xl text-gray-600">
                 2025 © جميع الحقوق محفوظة لشركة ماسا
             </p>

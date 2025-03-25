@@ -9,7 +9,7 @@ import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from "swiper/module
 
 const Slider = () => {
   return (
-    <section className="py-32 bg-hero bg-no-repeat bg-cover w-full bg-white">
+    <section className="py-32 bg-hero bg-no-repeat bg-cover w-full ">
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
         autoplay={{

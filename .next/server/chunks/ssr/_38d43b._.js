@@ -56,7 +56,7 @@ function Footer() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "bg-slate-200 py-14",
+                className: "bg-gray-100 py-14",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "xl:max-w-screen-2xl mx-auto relative flex justify-center",
@@ -70,7 +70,7 @@ function Footer() {
                                             src: "/footer/Icon (1).png",
                                             alt: "...",
                                             height: 20,
-                                            width: 100
+                                            width: 70
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/footer/Footer.tsx",
                                             lineNumber: 11,
@@ -129,7 +129,7 @@ function Footer() {
                                             src: "/footer/Icon (2).png",
                                             alt: "...",
                                             height: 20,
-                                            width: 100
+                                            width: 70
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/footer/Footer.tsx",
                                             lineNumber: 28,
@@ -172,7 +172,7 @@ function Footer() {
                                             src: "/footer/Icon (3).png",
                                             alt: "...",
                                             height: 20,
-                                            width: 100
+                                            width: 70
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/footer/Footer.tsx",
                                             lineNumber: 39,
@@ -215,7 +215,7 @@ function Footer() {
                                             src: "/footer/Icon (4).png",
                                             alt: "...",
                                             height: 20,
-                                            width: 100
+                                            width: 70
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/footer/Footer.tsx",
                                             lineNumber: 50,
@@ -268,7 +268,7 @@ function Footer() {
                             className: "lg:flex items-center justify-center",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "py-10 lg:w-1/2",
+                                    className: "py-10 ",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
                                         href: "/",
                                         className: "flex justify-center",
@@ -293,7 +293,7 @@ function Footer() {
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "lg:w-1/9 grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-20 lg:mx-10 px-10 text-center",
+                                    className: "grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-20 lg:mx-10 px-10 text-center",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "lg:text-2xl text-success ",
@@ -379,7 +379,7 @@ function Footer() {
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "py-8 text-center",
+                className: "py-8 text-center bg-white",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     className: "text-xl text-gray-600",
                     children: "2025 © جميع الحقوق محفوظة لشركة ماسا"
