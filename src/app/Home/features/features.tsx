@@ -4,7 +4,7 @@ import Image from "next/image";
 const l = [
   {
     id: 1,
-    name: 'استضافة الخوادم  داخل المملكة العربية السعودية',
+    name: 'استضافة الخوادم  داخل المملكة العربية السعودية.',
     image: '/hero/data-center1.png'
   },
   {

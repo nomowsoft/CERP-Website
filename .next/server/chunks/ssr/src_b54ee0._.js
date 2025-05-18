@@ -160,7 +160,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$imag
 const l = [
     {
         id: 1,
-        name: 'استضافة الخوادم  داخل المملكة العربية السعودية',
+        name: 'استضافة الخوادم  داخل المملكة العربية السعودية.',
         image: '/hero/data-center1.png'
     },
     {
