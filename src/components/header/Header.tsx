@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import Navlink from "./nav_link";
+// import Navlink from "./nav_link"; TODOO
 import Link from "next/link";
 
 export default function Header() {
@@ -33,13 +33,13 @@ export default function Header() {
             <Link href="/" className="flex items-center">
               <Image
                 height={20}
-                width={100}
+                width={150}
                 src="/header/cerp.svg"
                 alt="Logo"
               />
             </Link>
             <div className="hidden lg:flex px-14">
-              <Navlink />
+              {/* <Navlink /> TODOO */}
             </div>
           </div>
           <div className="hidden lg:flex items-center space-x-6">
@@ -98,7 +98,7 @@ export default function Header() {
             } lg:hidden w-full z-50`}
             id="mobile-menu"
           >
-            <Navlink closeMenu={closeMobileMenu} />
+            {/* <Navlink closeMenu={closeMobileMenu} /> TODOO */}
             <div className="mt-4">
               <Link
                 href="/contact_us"
