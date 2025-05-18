@@ -51,7 +51,7 @@ const SystemHealth = () => {
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
           <div className="md:col-span-5">
-            {health.slice(0, 7).map((item) => (
+            {health.slice(0, 6).map((item) => (
               <div className="flex items-center mt-4" key={item.id}>
                 <div className="flex-shrink-0">
                   <Image
@@ -73,7 +73,7 @@ const SystemHealth = () => {
           </div>
 
           <div className="md:col-span-6">
-            {health.slice(7, 14).map((item) => (
+            {health.slice(6, 12).map((item) => (
               <div className="flex items-center mt-4" key={item.id}>
                 <div className="flex-shrink-0">
                   <Image
