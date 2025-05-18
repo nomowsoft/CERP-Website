@@ -4,7 +4,6 @@ import Navitem from "./nav_item";
 const Navlink = ({ closeMenu }: { closeMenu?: () => void }) => {
   const links = [
     { name: "الرئيسية", href: "/" },
-    { name: "تواصل معنا", href: "/contact_us" },
   ];
 
   return (

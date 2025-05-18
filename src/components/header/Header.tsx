@@ -1,10 +1,13 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-// import Navlink from "./nav_link"; TODOO
+import Navlink from "./nav_link";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
+  const new_path = `${pathname}`
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -38,8 +41,8 @@ export default function Header() {
                 alt="Logo"
               />
             </Link>
-            <div className="hidden lg:flex px-14">
-              {/* <Navlink /> TODOO */}
+            <div className={`${ new_path === `/` ? 'hidden' : 'hidden lg:flex px-14'}`}>
+              <Navlink />
             </div>
           </div>
           <div className="hidden lg:flex items-center space-x-6">
@@ -98,7 +101,10 @@ export default function Header() {
             } lg:hidden w-full z-50`}
             id="mobile-menu"
           >
-            {/* <Navlink closeMenu={closeMobileMenu} /> TODOO */}
+            <div className={`${ new_path === `/` ? 'hidden' : ''}`}>
+              <Navlink closeMenu={closeMobileMenu}  />
+            </div>
+
             <div className="mt-4">
               <Link
                 href="/contact_us"
