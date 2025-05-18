@@ -42,7 +42,7 @@ export default function Footer() {
                             الموقع الإلكتروني
                             </p>
                             <p className="text-gray-500 mx-2">
-                            https://masa.sa
+                            http://Cerp.masa.sa
                             </p>
                         </div>
                     </div>
@@ -53,7 +53,7 @@ export default function Footer() {
                             البريد الإلكتروني
                             </p>
                             <p className="text-gray-500 mx-2">
-                            info@masa.sa
+                            info@cerp.masa.sa
                             </p>
                         </div>
                     </div>
