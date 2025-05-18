@@ -1,5 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
 import Header from '../components/header/Header'
 import Footer from '../components/footer/Footer'
 
@@ -15,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html  lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl">
       <head>
         <link rel="icon" href="/header/cerp.svg" />
       </head>
@@ -25,6 +27,19 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <div style={{
+          position: "fixed",
+          left: "2rem",
+          bottom: "5rem",
+          zIndex: 1000,
+        }}>
+          <Link href="https://wa.me/+9660537802802" target="_blank" className="block lg:hidden">
+            <Image src="/footer/whatsapp.png" alt="..." width={60} height={20} />
+          </Link>
+          <Link href="https://web.whatsapp.com/send?phone=+9660537802802" target="_blank" className="hidden lg:block">
+            <Image src="/footer/whatsapp.png" alt="..." width={60} height={20} />
+          </Link>
+        </div>
       </body>
     </html>
   );

@@ -9,8 +9,8 @@ const System = () => {
                 أنظمة سرب
             </h1>
         </div>
-        <SystemHalaqat />
         <SystemHealth />
+        <SystemHalaqat />
     </section>
   );
 }

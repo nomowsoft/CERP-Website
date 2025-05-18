@@ -1,4 +1,4 @@
-import { Program, System } from "./types"
+import { Program, System, CutomerPartner } from "./types"
 
 export const program: Program[] = [
     {
@@ -132,5 +132,111 @@ export const halaqat: System[] = [
     {
         id: 15,
         title: "لوحة المعلومات العامة وتشمل إحصائيات أعداد الطلاب والمعلمين والمساجد والحلقات",
+    },
+]
+
+export const health: System[] = [
+    {
+        id: 1,
+        title: "إدارة الخدمات الصحية",
+    },
+    {
+        id: 2,
+        title: "إدارة بيانات المرضى",
+    },
+    {
+        id: 3,
+        title: "إدارة المواعيد والخدمات الصحية",
+    },
+    {
+        id: 4,
+        title: "إدارة المستشفيات والمستوصفات ومزودي الخدمة",
+    },
+    {
+        id: 5,
+        title: "تسجيل ومتابعة طلبات المستفيدين الصحية",
+    },
+    {
+        id: 6,
+        title: "السجل الصحي الإلكتروني",
+    },
+    {
+        id: 7,
+        title: "التكامل مع النظام المالي والإداري",
+    },
+    {
+        id: 8,
+        title: "ربط مباشر مع بوابة المستفيدين (المرضى)",
+    },
+    {
+        id: 9,
+        title: "لوحة معلومات للبيانات الصحية والإحصائيات",
+    },
+    {
+        id: 10,
+        title: "مؤشرات أداء لخدمة المستفيدين",
+    },
+    {
+        id: 11,
+        title: "أتمتة سير العمل والإجراءات الصحية",
+    },
+    {
+        id: 12,
+        title: "تخصيص صلاحيات الدخول حسب الدور",
+    },
+    {
+        id: 13,
+        title: "التوافق مع معايير الحوكمة الصحية الوطنية",
+    },
+    {
+        id: 14,
+        title: "دعم الربط مع التطبيقات الخارجية إن لزم",
+    },
+]
+
+export const cutomerpartner: CutomerPartner[] = [
+    {
+        id: 1,
+        image: "/customer_partner/Feature.png",
+    },
+    {
+        id: 2,
+        image: "/customer_partner/Feature (1).png",
+    },
+    {
+        id: 3,
+        image: "/customer_partner/Feature (2).png",
+    },
+    {
+        id: 4,
+        image: "/customer_partner/Feature (3).png",
+    },
+    {
+        id: 5,
+        image: "/customer_partner/Feature (4).png",
+    },
+    {
+        id: 6,
+        image: "/customer_partner/Feature (5).png",
+    },
+    {
+        id: 7,
+        image: "/customer_partner/Feature (6).png",
+    },
+    {
+        id: 8,
+        image: "/customer_partner/Feature (7).png",
+    },
+    {
+        id: 9,
+        image: "/customer_partner/Feature (8).png",
+    },
+    {
+        id: 10,
+        image: "/customer_partner/Feature (9).png",
+    },
+    {
+        id: 11,
+        image: "/customer_partner/Feature (10).png",
     },
 ]

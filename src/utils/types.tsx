@@ -7,3 +7,7 @@ export type System = {
     id:number;
     title:string;
 }
+export type CutomerPartner = {
+    id:number;
+    image:string;
+}

@@ -48,7 +48,7 @@ const SystemHalaqat = () => {
         }`}
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
-          <div className="md:col-span-4">
+          <div className="md:col-span-5">
             {halaqat.slice(0, 8).map((item) => (
               <div className="flex items-center mt-4" key={item.id}>
                 <div className="flex-shrink-0">
@@ -59,7 +59,7 @@ const SystemHalaqat = () => {
                     height={20}
                   />
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 py-4">
                   <h1 className="text-lg md:text-xl text-success">{item.title}</h1>
                 </div>
               </div>
@@ -70,7 +70,7 @@ const SystemHalaqat = () => {
             <Image src="/system/Line 5.png" alt="Divider" width={4} height={200} />
           </div>
 
-          <div className="md:col-span-7">
+          <div className="md:col-span-6">
             {halaqat.slice(8, 15).map((item) => (
               <div className="flex items-center mt-4" key={item.id}>
                 <div className="flex-shrink-0">
@@ -81,7 +81,7 @@ const SystemHalaqat = () => {
                     height={20}
                   />
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 py-4">
                   <h1 className="text-lg md:text-xl text-success">{item.title}</h1>
                 </div>
               </div>
