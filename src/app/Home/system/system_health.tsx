@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { halaqat } from "@/utils/data";
+import { health } from "@/utils/data";
 
 const SystemHealth = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,8 +50,8 @@ const SystemHealth = () => {
         }`}
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
-          <div className="md:col-span-4">
-            {halaqat.slice(0, 8).map((item) => (
+          <div className="md:col-span-5">
+            {health.slice(0, 7).map((item) => (
               <div className="flex items-center mt-4" key={item.id}>
                 <div className="flex-shrink-0">
                   <Image
@@ -61,7 +61,7 @@ const SystemHealth = () => {
                     height={20}
                   />
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 py-4">
                   <h1 className="text-lg md:text-xl text-success">{item.title}</h1>
                 </div>
               </div>
@@ -72,8 +72,8 @@ const SystemHealth = () => {
             <Image src="/system/Line 5.png" alt="Divider" width={4} height={200} />
           </div>
 
-          <div className="md:col-span-7">
-            {halaqat.slice(8, 15).map((item) => (
+          <div className="md:col-span-6">
+            {health.slice(7, 14).map((item) => (
               <div className="flex items-center mt-4" key={item.id}>
                 <div className="flex-shrink-0">
                   <Image
@@ -83,7 +83,7 @@ const SystemHealth = () => {
                     height={20}
                   />
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 py-4">
                   <h1 className="text-lg md:text-xl text-success">{item.title}</h1>
                 </div>
               </div>

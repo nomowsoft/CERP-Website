@@ -59,35 +59,14 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-            <div className="mx-5 md:mx-20 rounded-3xl">
-                <div className="lg:flex items-center justify-center">
+            <div className="rounded-3xl xl:max-w-screen-xl mx-auto">
+                <div className="lg:flex items-center">
                     <div className="py-10 ">
                         <Link href="/" className="flex justify-center">
                             <Image height={20} width={250} src="/footer/cerp 1.png" alt="Flowbite Logo" />
                         </Link>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-20 lg:mx-10 px-10 text-center">
-                        <div className="lg:text-2xl text-success ">
-                            <Link href="/">
-                                الرئسية
-                            </Link>
-                        </div>
-                        <div className="lg:text-2xl text-success">
-                            <Link href="#">
-                            قصص النجاح
-                            </Link>
-                        </div>
-                        <div className="lg:text-2xl text-success">
-                            <Link href="#">
-                            الأسئلة الشائعة
-                            </Link>
-                        </div>
-                        <div className="lg:text-2xl text-success">
-                            <Link href="#">
-                            الدعم الفني والمساعدة
-                            </Link>
-                        </div>
-                    </div>
+              
                 </div>
             </div>
         </div>

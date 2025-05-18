@@ -6,6 +6,7 @@ import Slider from './Home/slider/slider';
 import Features from './Home/features/features';
 import Program from './Home/program_cerp/program_cerp';
 import System from './Home/system/system';
+import CustomerPartner from './Home/customer_partner/customer_partner';
 
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
       <Features />
       <Program />
       <System />
+      <CustomerPartner />
     </div>
   );
 }
