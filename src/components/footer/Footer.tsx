@@ -30,7 +30,7 @@ export default function Footer() {
                             <p className="text-2xl text-success mx-2">
                                 رقم التواصل
                             </p>
-                            <p className="text-gray-500 mx-2">
+                            <p className="text-gray-500 mx-2" dir="ltr">
                             +966 53 780 2802
                             </p>
                         </div>
