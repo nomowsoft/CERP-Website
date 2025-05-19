@@ -38,8 +38,8 @@ export const program: Program[] = [
     },
     {
         id: 8,
-        image: "/program/program8.png",
-        title: "نظام المشتريات",
+        image: "/program/program14.png",
+        title: "نظام إدارة المحافظ الاستثمارية",
     },
     {
         id: 9,
@@ -71,6 +71,17 @@ export const program: Program[] = [
         image: "/program/program14.png",
         title: "نظام إدارة المساعدة وإدارة طلبات الإدارة المختلفة",
     },
+     {
+        id: 15,
+        image: "/program/program8.png",
+        title: "نظام المشتريات",
+    },
+    {
+        id: 16,
+        image: "/program/program15.png",
+        title: "الحوكمة والسلامة المالية",
+    },
+    
 ]
 export const halaqat: System[] = [
     {
@@ -138,58 +149,58 @@ export const halaqat: System[] = [
 export const health: System[] = [
     {
         id: 1,
-        title: "اتمتة رحلة المستفيد - بوابة المستفيد.",
+        title: "اتمتة رحلة المستفيد - بوابة المستفيد",
     },
     {
         id: 2,
-        title: "تطبيق جوال المستفيد.",
+        title: "تطبيق جوال المستفيد",
     },
     {
         id: 3,
-        title: "نظام ادارة الخدمات الصحية.",
+        title: "نظام ادارة الخدمات الصحية",
     },
     {
         id: 4,
-        title: "ادارة الموافقات ومراحل الطلب وتنفيذ الخدمة.",
+        title: "ادارة الموافقات ومراحل الطلب وتنفيذ الخدمة",
     },
     {
         id: 5,
-        title: "طلب عروض اسعار من اكثر من مزود خدمة.",
+        title: "طلب عروض اسعار من اكثر من مزود خدمة",
     },
     {
         id: 6,
-        title: "حوكمة الصرف من خلال الموازنات ومحافظ الداعمين.",
+        title: "حوكمة الصرف من خلال الموازنات ومحافظ الداعمين",
     },
     {
         id: 7,
-        title: "ربط حالة المستفيد بالموارد المالية.",
+        title: "ربط حالة المستفيد بالموارد المالية",
     },
     {
         id: 8,
-        title: "ادارة مزودي الخدمة الطبية.",
+        title: "ادارة مزودي الخدمة الطبية",
     },
     {
         id: 9,
-        title: "ادارة حسابات المرضى.",
+        title: "ادارة حسابات المرضى",
     },
     {
         id: 10,
-        title: "لوحة معلومات تفاعلية.",
+        title: "لوحة معلومات تفاعلية",
     },
     {
         id: 11,
-        title: "اشعارات المستفيد ومزود الخدمة.",
+        title: "اشعارات المستفيد ومزود الخدمة",
     },
     {
         id: 12,
-        title: "تقارير.",
+        title: "تقارير",
     },
 ]
 
 export const cutomerpartner: CutomerPartner[] = [
     {
         id: 1,
-        image: "/customer_partner/Feature.png",
+        image: "/customer_partner/Feature (11).png",
     },
     {
         id: 2,

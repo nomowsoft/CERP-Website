@@ -64,7 +64,7 @@ const Contactus = () => {
                     />
                   </div>
                   <div className="py-2">
-                    <label htmlFor="company" className="text-success text-2xl">اسم الشركة</label>
+                    <label htmlFor="company" className="text-success text-2xl">اسم الجمعية</label>
                     <input
                       id="company"
                       type="text"
