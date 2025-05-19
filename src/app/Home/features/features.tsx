@@ -4,52 +4,52 @@ import Image from "next/image";
 const l = [
   {
     id: 1,
-    name: 'استضافة الخوادم  داخل المملكة العربية السعودية.',
+    name: 'استضافة الخوادم  داخل المملكة العربية السعودية',
     image: '/hero/data-center1.png'
   },
   {
     id: 2,
-    name: 'حوكمة الاجراءت.',
+    name: 'حوكمة الاجراءت',
     image: '/hero/process1.png'
   },
   {
     id: 3,
-    name: 'الحوكمة المالية لتحقيق معيار السلامة المالية.',
+    name: 'الحوكمة المالية لتحقيق معيار السلامة المالية',
     image: '/hero/security-system.png'
   },
   {
     id: 4,
-    name: 'يحقق متطلبات الامن السبراني.',
+    name: 'يحقق متطلبات الامن السبراني',
     image: '/hero/computer.png'
   },
   {
     id: 5,
-    name: 'الدعم الفني والصيانة.',
+    name: 'الدعم الفني والصيانة',
     image: '/hero/computer.png'
   },
   {
     id: 6,
-    name: 'الصيانة الدورية لضمان استمرارية الاعمال.',
+    name: 'الصيانة الدورية لضمان استمرارية الاعمال',
     image: '/hero/optimize.png'
   },
   {
     id: 7,
-    name: 'المحادثة الفورية مع فريق الدعم الفني.',
+    name: 'المحادثة الفورية مع فريق الدعم الفني',
     image: '/hero/continuous.png'
   },
   {
     id: 8,
-    name: 'النسخ الاحتياطي.',
+    name: 'النسخ الاحتياطي',
     image: '/hero/chat-bubble.png'
   },
   {
     id: 9,
-    name: 'التطوير المستمر .',
+    name: 'التطوير المستمر',
     image: '/hero/cloud-upload.png'
   },
   {
     id: 10,
-    name: 'التكامل بين الانظمة مع مركزية قاعدة البيانات.',
+    name: 'التكامل بين الانظمة مع مركزية قاعدة البيانات',
     image: '/hero/continuous-improvement.png'
   }
 ]
