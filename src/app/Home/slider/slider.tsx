@@ -30,17 +30,17 @@ const Slider = () => {
       >
         <SwiperSlide>
           <div className="flex justify-center">
-            <Image src="/slider/slider1.svg" alt="..." height={20} width={5000} />
+            <Image src="/slider/s1.svg" alt="..." height={20} width={5000} />
           </div>
         </SwiperSlide>
         <SwiperSlide>
           <div className="flex justify-center">
-            <Image src="/slider/slider2.svg" alt="..." height={20} width={5000} />
+            <Image src="/slider/s2.svg" alt="..." height={20} width={5000} />
           </div>
         </SwiperSlide>
         <SwiperSlide>
           <div className="flex justify-center">
-            <Image src="/slider/slider3.svg" alt="..." height={20} width={5000} />
+            <Image src="/slider/s3.svg" alt="..." height={20} width={5000} />
           </div>
         </SwiperSlide>
       </Swiper>
