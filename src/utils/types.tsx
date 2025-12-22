@@ -1,11 +1,11 @@
 export type Program = {
     id:number;
     image:string;
-    title:string;
+    titleKey: string;
 }
 export type System = {
     id:number;
-    title:string;
+    titleKey: string;
 }
 export type CutomerPartner = {
     id:number;

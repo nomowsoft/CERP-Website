@@ -1,13 +1,15 @@
 "use client";
 import Navitem from "./nav_item";
+import { useTranslations } from "next-intl";
 
 const Navlink = ({ closeMenu }: { closeMenu?: () => void }) => {
+  const t = useTranslations();
   const links = [
-    { name: "الرئيسية", href: "/" },
+    { name: t('header.home'), href: "/" },
   ];
 
   return (
-    <ul className="flex flex-col lg:flex-row lg:space-x-4">
+    <ul className="flex justify-center items-center lg:flex-row">
       {links.map((link) => (
         <Navitem
           key={link.href}
@@ -20,4 +22,4 @@ const Navlink = ({ closeMenu }: { closeMenu?: () => void }) => {
   );
 };
 
-export default Navlink;
+export default Navlink; 

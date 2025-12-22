@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
+  const t = useTranslations('footer');
   return (
     <footer>
         <div className="bg-gray-100 py-14">
@@ -11,7 +13,7 @@ export default function Footer() {
                         <Image src="/footer/Icon (1).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
-                                الموقع
+                                {t('location')}
                             </p>
                             <p className="text-gray-500 mx-2">
                             P.O.Box 295940 
@@ -20,7 +22,7 @@ export default function Footer() {
                             12612 Riyadh
                             </p>
                             <p className="text-gray-500 mx-2">
-                                المملكة العربية السعودية
+                                {t('country')}
                             </p>
                         </div>
                     </a>
@@ -28,7 +30,7 @@ export default function Footer() {
                         <Image src="/footer/Icon (2).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
-                                رقم التواصل
+                                {t('contactNumber')}
                             </p>
                             <p className="text-gray-500 mx-2" dir="ltr">
                             +966 53 780 2802
@@ -39,7 +41,7 @@ export default function Footer() {
                         <Image src="/footer/Icon (2).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
-                                رقم التواصل
+                                {t('contactNumber')}
                             </p>
                             <p className="text-gray-500 mx-2" dir="ltr">
                             +966 53 780 2802
@@ -50,7 +52,7 @@ export default function Footer() {
                         <Image src="/footer/Icon (3).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
-                            الموقع الإلكتروني
+                            {t('website')}
                             </p>
                             <p className="text-gray-500 mx-2">
                             http://cerp.masa.sa
@@ -61,7 +63,7 @@ export default function Footer() {
                         <Image src="/footer/Icon (4).png" alt="..." height={20} width={70} />
                         <div>
                             <p className="text-2xl text-success mx-2">
-                            البريد الإلكتروني
+                            {t('email')}
                             </p>
                             <p className="text-gray-500 mx-2">
                             info.cerp@masa.sa
@@ -83,7 +85,7 @@ export default function Footer() {
         </div>
         <div className="py-8 text-center bg-white">
             <p className="text-xl text-gray-600">
-                2025 © جميع الحقوق محفوظة لشركة ماسا
+                {t('copyright')}
             </p>
         </div>
     </footer>

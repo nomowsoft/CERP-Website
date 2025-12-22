@@ -4,196 +4,196 @@ export const program: Program[] = [
     {
         id: 1,
         image: "/program/program1.png",
-        title: "النظام المالي والاصول",
+        titleKey: "programs.financialAssets",
     },
     {
         id: 2,
         image: "/program/program2.png",
-        title: "نظام الموارد المالية",
+        titleKey: "programs.financialResources",
     },
     {
         id: 3,
         image: "/program/program3.png",
-        title: "الخطط والموازنات",
+        titleKey: "programs.plansBudgets",
     },
     {
         id: 4,
         image: "/program/program4.png",
-        title: "الخطة الإستراتيجية",
+        titleKey: "programs.strategicPlan",
     },
     {
         id: 5,
         image: "/program/program5.png",
-        title: "الإتصالات الإدارية",
+        titleKey: "programs.administrativeCommunications",
     },
     {
         id: 6,
         image: "/program/program6.png",
-        title: "إدارة التطوع",
+        titleKey: "programs.volunteerManagement",
     },
     {
         id: 7,
         image: "/program/program7.png",
-        title: "إدارة الأملاك",
+        titleKey: "programs.assetsManagement",
     },
     {
         id: 8,
         image: "/program/program14.png",
-        title: "نظام إدارة المحافظ الاستثمارية",
+        titleKey: "programs.investmentPortfolioSystem",
     },
     {
         id: 9,
         image: "/program/program9.png",
-        title: "نظام المخزون",
+        titleKey: "programs.inventorySystem",
     },
     {
         id: 10,
         image: "/program/program10.png",
-        title: "الموارد البشرية المتوافق مع أنظمة العمل السعودي",
+        titleKey: "programs.hrSaudiCompliant",
     },
     {
         id: 11,
         image: "/program/program11.png",
-        title: "تطبيق الخدمة الذاتية",
+        titleKey: "programs.selfServiceApp",
     },
     {
         id: 12,
         image: "/program/program12.png",
-        title: "نظام العضويات",
+        titleKey: "programs.membershipSystem",
     },
     {
         id: 13,
         image: "/program/program13.png",
-        title: "إدارة الأسطول",
+        titleKey: "programs.fleetManagement",
     },
     {
         id: 14,
         image: "/program/program14.png",
-        title: "نظام إدارة المساعدة وإدارة طلبات الإدارة المختلفة",
+        titleKey: "programs.assistanceAndRequestsSystem",
     },
      {
         id: 15,
         image: "/program/program8.png",
-        title: "نظام المشتريات",
+        titleKey: "programs.procurementSystem",
     },
     {
         id: 16,
         image: "/program/program15.png",
-        title: "الحوكمة والسلامة المالية",
+        titleKey: "programs.governanceAndFinancialSafety",
     },
     
 ]
 export const halaqat: System[] = [
     {
         id: 1,
-        title: "إدارة المجمعات / المساجد / الحلقات",
+        titleKey: "manageComplexes",
     },
     {
         id: 2,
-        title: "إدارة المعلمين",
+        titleKey: "manageTeachers",
     },
     {
         id: 3,
-        title: "إدارة الحلقات",
+        titleKey: "manageHalaqat",
     },
     {
         id: 4,
-        title: "الحلقات عن بعد",
+        titleKey: "remoteHalaqat",
     },
     {
         id: 5,
-        title: "إدارة الطلاب",
+        titleKey: "manageStudents",
     },
     {
         id: 6,
-        title: "إدارة الخطط والمناهج",
+        titleKey: "plansAndCurricula",
     },
     {
         id: 7,
-        title: "الإشراف التربوي",
+        titleKey: "educationalSupervision",
     },
     {
         id: 8,
-        title: "إدراة الإختبارات",
+        titleKey: "manageExams",
     },
     {
         id: 9,
-        title: "إدارة التحفيز",
+        titleKey: "incentivesManagement",
     },
     {
         id: 10,
-        title: "تطبيق الطالب",
+        titleKey: "studentApp",
     },
     {
         id: 11,
-        title: "تطبيق المعلم لإدراة الحلقات والتحضير حسب الموقع الجغرافي",
+        titleKey: "teacherApp",
     },
     {
         id: 12,
-        title: "لوحة معلومات الطالب",
+        titleKey: "studentDashboard",
     },
     {
         id: 13,
-        title: "لوحة معلومات الطالب",
+        titleKey: "studentDashboard",
     },
     {
         id: 14,
-        title: "لوحة معلومات لكل إدارة",
+        titleKey: "departmentDashboard",
     },
     {
         id: 15,
-        title: "لوحة المعلومات العامة وتشمل إحصائيات أعداد الطلاب والمعلمين والمساجد والحلقات",
+        titleKey: "generalDashboard",
     },
 ]
 
 export const health: System[] = [
     {
         id: 1,
-        title: "اتمتة رحلة المستفيد - بوابة المستفيد",
+        titleKey: "beneficiaryJourney",
     },
     {
         id: 2,
-        title: "تطبيق جوال المستفيد",
+        titleKey: "beneficiaryMobileApp",
     },
     {
         id: 3,
-        title: "نظام ادارة الخدمات الصحية",
+        titleKey: "healthServicesSystem",
     },
     {
         id: 4,
-        title: "ادارة الموافقات ومراحل الطلب وتنفيذ الخدمة",
+        titleKey: "approvalsAndRequests",
     },
     {
         id: 5,
-        title: "طلب عروض اسعار من اكثر من مزود خدمة",
+        titleKey: "requestQuotes",
     },
     {
         id: 6,
-        title: "حوكمة الصرف من خلال الموازنات ومحافظ الداعمين",
+        titleKey: "spendingGovernance",
     },
     {
         id: 7,
-        title: "ربط حالة المستفيد بالموارد المالية",
+        titleKey: "linkStatusToFunds",
     },
     {
         id: 8,
-        title: "ادارة مزودي الخدمة الطبية",
+        titleKey: "manageMedicalProviders",
     },
     {
         id: 9,
-        title: "ادارة حسابات المرضى",
+        titleKey: "patientAccounts",
     },
     {
         id: 10,
-        title: "لوحة معلومات تفاعلية",
+        titleKey: "interactiveDashboard",
     },
     {
         id: 11,
-        title: "اشعارات المستفيد ومزود الخدمة",
+        titleKey: "notifications",
     },
     {
         id: 12,
-        title: "تقارير",
+        titleKey: "reports",
     },
 ]
 

@@ -1,0 +1,108 @@
+{
+  "header": {
+    "contact": "تواصل معنا",
+    "openMainMenu": "فتح القائمة الرئيسية",
+    "home": "الرئيسية"
+  },
+  "programs": {
+    "financialAssets": "النظام المالي والاصول",
+    "financialResources": "نظام الموارد المالية",
+    "plansBudgets": "الخطط والموازنات",
+    "strategicPlan": "الخطة الإستراتيجية",
+    "administrativeCommunications": "الإتصالات الإدارية",
+    "volunteerManagement": "إدارة التطوع",
+    "assetsManagement": "إدارة الأملاك",
+    "investmentPortfolioSystem": "نظام إدارة المحافظ الاستثمارية",
+    "inventorySystem": "نظام المخزون",
+    "hrSaudiCompliant": "الموارد البشرية المتوافق مع أنظمة العمل السعودي",
+    "selfServiceApp": "تطبيق الخدمة الذاتية",
+    "membershipSystem": "نظام العضويات",
+    "fleetManagement": "إدارة الأسطول",
+    "assistanceAndRequestsSystem": "نظام إدارة المساعدة وإدارة طلبات الإدارة المختلفة",
+    "procurementSystem": "نظام المشتريات",
+    "governanceAndFinancialSafety": "الحوكمة والسلامة المالية"
+  },
+  "halaqat": {
+    "halaqatTitle": "نظام ســرب لجمعيات تحفيظ القرآن الكريم",
+    "manageComplexes": "إدارة المجمعات / المساجد / الحلقات",
+    "manageTeachers": "إدارة المعلمين",
+    "manageHalaqat": "إدارة الحلقات",
+    "remoteHalaqat": "الحلقات عن بعد",
+    "manageStudents": "إدارة الطلاب",
+    "plansAndCurricula": "إدارة الخطط والمناهج",
+    "educationalSupervision": "الإشراف التربوي",
+    "manageExams": "إدراة الإختبارات",
+    "incentivesManagement": "إدارة التحفيز",
+    "studentApp": "تطبيق الطالب",
+    "teacherApp": "تطبيق المعلم لإدراة الحلقات والتحضير حسب الموقع الجغرافي",
+    "studentDashboard": "لوحة معلومات الطالب",
+    "departmentDashboard": "لوحة معلومات لكل إدارة",
+    "learnMore": "تعرف على المزيد عن النظام",
+    "generalDashboard": "لوحة المعلومات العامة وتشمل إحصائيات أعداد الطلاب والمعلمين والمساجد والحلقات"
+  },
+  "health": {
+    "beneficiaryJourney": "اتمتة رحلة المستفيد - بوابة المستفيد",
+    "beneficiaryMobileApp": "تطبيق جوال المستفيد",
+    "healthServicesSystem": "نظام ادارة الخدمات الصحية",
+    "approvalsAndRequests": "ادارة الموافقات ومراحل الطلب وتنفيذ الخدمة",
+    "requestQuotes": "طلب عروض اسعار من اكثر من مزود خدمة",
+    "spendingGovernance": "حوكمة الصرف من خلال الموازنات ومحافظ الداعمين",
+    "linkStatusToFunds": "ربط حالة المستفيد بالموارد المالية",
+    "manageMedicalProviders": "ادارة مزودي الخدمة الطبية",
+    "patientAccounts": "ادارة حسابات المرضى",
+    "interactiveDashboard": "لوحة معلومات تفاعلية",
+    "notifications": "اشعارات المستفيد ومزود الخدمة",
+    "reports": "تقارير",
+    "healthTitle": "نظام ســرب لجمعيات الخدمات الصحية",
+    "learnMore": "تعرف على المزيد عن النظام",
+    "healthDescription": "رحلة المستفيد من التسجيل على البوابة أو التطبيق وتقديم الطلب والإنتهاء بإكمال الخدمة من خلال اجراءات محوكمة"
+  },
+  "common": {
+    "features": "المميزات",
+    "programs": "البرامج",
+    "system": "النظام",
+    "systemCerp": "أنظمة سرب"
+  },
+  "contact": {
+    "title": "تواصل معنا",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "address": "العنوان",
+    "organization": "اسم الجمعية",
+    "subject": "الموضوع",
+    "send": "إرسال"
+  },
+  "programsMeta": {
+    "heading": "يحتوي نظام سرب على الانظمة التالية"
+  },
+  "customerPartner": {
+    "title": "عملائنــــا"
+  },
+  "footer": {
+    "location": "الموقع",
+    "country": "المملكة العربية السعودية",
+    "contactNumber": "رقم التواصل",
+    "website": "الموقع الإلكتروني",
+    "email": "البريد الإلكتروني",
+    "copyright": "2025 © جميع الحقوق محفوظة لشركة ماسا"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "عذرًا، الصفحة التي تبحث عنها غير موجودة. قد تكون قد تمت إزالتها أو تغيير عنوانها.",
+    "backHome": "العودة إلى الصفحة الرئيسية"
+  },
+  "features": {
+    "title": "المميزات",
+    "dcHosting": "استضافة الخوادم داخل المملكة العربية السعودية",
+    "processGovernance": "حوكمة الاجراءت",
+    "financialGovernance": "الحوكمة المالية لتحقيق معيار السلامة المالية",
+    "cyberSecurity": "يحقق متطلبات الامن السبراني",
+    "supportMaintenance": "الدعم الفني والصيانة",
+    "periodicMaintenance": "الصيانة الدورية لضمان استمرارية الاعمال",
+    "liveChat": "المحادثة الفورية مع فريق الدعم الفني",
+    "backup": "النسخ الاحتياطي",
+    "continuousDevelopment": "التطوير المستمر",
+    "systemIntegration": "التكامل بين الانظمة مع مركزية قاعدة البيانات"
+  }
+}
