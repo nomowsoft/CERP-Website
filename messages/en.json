@@ -1,0 +1,109 @@
+{
+  "header": {
+    "contact": "Contact us",
+    "openMainMenu": "Open main menu",
+    "home": "Home"
+  },
+  "programs": {
+    "financialAssets": "Financial & Assets System",
+    "financialResources": "Financial Resources System",
+    "plansBudgets": "Plans & Budgets",
+    "strategicPlan": "Strategic Plan",
+    "administrativeCommunications": "Administrative Communications",
+    "volunteerManagement": "Volunteer Management",
+    "assetsManagement": "Assets Management",
+    "investmentPortfolioSystem": "Investment Portfolio Management System",
+    "inventorySystem": "Inventory System",
+    "hrSaudiCompliant": "HR (compliant with Saudi Labor Laws)",
+    "selfServiceApp": "Self-Service Application",
+    "membershipSystem": "Membership System",
+    "fleetManagement": "Fleet Management",
+    "assistanceAndRequestsSystem": "Assistance Management and Administrative Requests System",
+    "procurementSystem": "Procurement System",
+    "governanceAndFinancialSafety": "Governance and Financial Safety"
+  },
+  "halaqat": {
+    "manageComplexes": "Management of Complexes / Mosques / Halaqat",
+    "manageTeachers": "Teachers Management",
+    "manageHalaqat": "Halaqat Management",
+    "remoteHalaqat": "Remote Halaqat",
+    "manageStudents": "Students Management",
+    "plansAndCurricula": "Plans and Curricula Management",
+    "educationalSupervision": "Educational Supervision",
+    "manageExams": "Exams Management",
+    "incentivesManagement": "Incentives Management",
+    "studentApp": "Student App",
+    "teacherApp": "Teacher app for managing halaqat and location-based preparation",
+    "studentDashboard": "Student Dashboard",
+    "departmentDashboard": "Dashboard for each department",
+    "generalDashboard": "General dashboard including statistics of students, teachers, mosques and halaqat",
+    "halaqatTitle": "CERP system for Quran Memorization Associations",
+    "learnMore": "Learn more about the system",
+    "healthDescription": "The beneficiary journey from registering on the portal or app, submitting a request, and completing the service through governed procedures"
+  },
+  "health": {
+    "beneficiaryJourney": "Automating the beneficiary journey - Beneficiary portal",
+    "beneficiaryMobileApp": "Beneficiary Mobile App",
+    "healthServicesSystem": "Health Services Management System",
+    "approvalsAndRequests": "Management of approvals, request stages and service execution",
+    "requestQuotes": "Request quotes from multiple service providers",
+    "spendingGovernance": "Spending governance through budgets and donors' portfolios",
+    "linkStatusToFunds": "Linking beneficiary status to financial resources",
+    "manageMedicalProviders": "Managing medical service providers",
+    "patientAccounts": "Patient Accounts Management",
+    "interactiveDashboard": "Interactive Dashboard",
+    "notifications": "Notifications for beneficiary and service provider",
+    "reports": "Reports",
+    "learnMore": "Learn more about the system",
+    "healthTitle": "CERP system for Health Service Associations",
+    "healthDescription": "The beneficiary journey from registering on the portal or app, submitting a request, and completing the service through governed procedures"
+  },
+  "common": {
+    "features": "Features",
+    "programs": "Programs",
+    "system": "System",
+    "systemCerp": "Systems CERP"
+  },
+  "contact": {
+    "title": "Contact us",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "organization": "Organization name",
+    "subject": "Subject",
+    "send": "Send"
+  },
+  "programsMeta": {
+    "heading": "The CERP system includes the following systems"
+  },
+  "customerPartner": {
+    "title": "Our Clients"
+  },
+  "footer": {
+    "location": "Location",
+    "country": "Kingdom of Saudi Arabia",
+    "contactNumber": "Contact number",
+    "website": "Website",
+    "email": "Email",
+    "copyright": "2025 © All rights reserved to Masa"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "Sorry, the page you're looking for couldn't be found. It may have been removed or the URL changed.",
+    "backHome": "Back to home"
+  },
+  "features": {
+    "title": "Features",
+    "dcHosting": "Data center hosting inside the Kingdom of Saudi Arabia",
+    "processGovernance": "Process governance",
+    "financialGovernance": "Financial governance to meet financial safety standards",
+    "cyberSecurity": "Meets cybersecurity requirements",
+    "supportMaintenance": "Technical support and maintenance",
+    "periodicMaintenance": "Periodic maintenance to ensure business continuity",
+    "liveChat": "Instant chat with the technical support team",
+    "backup": "Backup",
+    "continuousDevelopment": "Continuous development",
+    "systemIntegration": "System integration with centralized database"
+  }
+}

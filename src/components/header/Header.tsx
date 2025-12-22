@@ -4,11 +4,16 @@ import { useState, useEffect } from "react";
 import Navlink from "./nav_link";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import LanguageSwitcher from "../common/LanguageSwitcher";
 
 export default function Header() {
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const new_path = `${pathname}`
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const t = useTranslations("header");
+  const local = useLocale();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
@@ -28,12 +33,23 @@ export default function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [open]);
+
   return (
     <header>
-      <nav className="bg-white border-gray-200 px-4 lg:px-6 w-full z-50">
-        <div className="flex flex-wrap justify-between items-center mx-5 lg:mx-10 xl:mx-20 py-4 relative">
+      <nav className="bg-white border-gray-200 lg:px-6 w-full z-50">
+        <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-4 relative">
           <div className="flex items-center space-x-6">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center px-5 lg:px-0">
               <Image
                 height={20}
                 width={150}
@@ -46,11 +62,12 @@ export default function Header() {
             </div>
           </div>
           <div className="hidden lg:flex items-center space-x-6">
+            <LanguageSwitcher />
             <Link
-              href="/contact_us"
+              href={`${local}/contact_us`}
               className="mx-2 border border-success bg-white text-success hover:text-white hover:bg-success py-2 px-8 rounded-md text-xl font-extrabold"
             >
-              تواصل معنا
+              {t('contact')}
             </Link>
           </div>
 
@@ -58,11 +75,10 @@ export default function Header() {
           <button
             type="button"
             aria-controls="mobile-menu"
-            aria-expanded={isMobileMenuOpen}
-            onClick={toggleMobileMenu}
-            className="lg:hidden inline-flex items-center p-2 text-sm text-success rounded-lg hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-200 border border-success"
+            onClick={() => setOpen(!open)}
+            className="lg:hidden inline-flex items-center p-2  mx-5 lg:mx-0 text-sm text-success rounded-lg hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-200 border border-success"
           >
-            <span className="sr-only">فتح القائمة الرئيسية</span>
+            <span className="sr-only">{t('openMainMenu')}</span>
             {isMobileMenuOpen ? (
               <svg
                 className="w-6 h-6"
@@ -93,28 +109,30 @@ export default function Header() {
           </button>
 
           {/* Mobile menu */}
-          <div
-            className={`absolute top-28 py-4 left-0 bg-white shadow-lg transition-all duration-300 ease-in-out text-center ${
-              isMobileMenuOpen
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 translate-x-full"
-            } lg:hidden w-full z-50`}
-            id="mobile-menu"
-          >
-            <div className={`${ new_path === `/` ? 'hidden' : ''}`}>
-              <Navlink closeMenu={closeMobileMenu}  />
-            </div>
-
-            <div className="mt-4">
-              <Link
-                href="/contact_us"
-                onClick={closeMobileMenu}
-                className="text-white bg-success hover:bg-success hover:text-success hover:border hover:border-success focus:ring-4 focus:ring-succecc-300 text-xl rounded-lg px-2 md:px-4 lg:px-5 py-2 lg:py-2.5 focus:outline-2"
-              >
-                تواصل معنا
+          {open && (
+        <div className="inset-0 z-[999] h-screen flex justify-center bg-success/20 backdrop-blur-sm lg:hidden mb-20 w-full">
+          <nav className="py-4">
+            <div className="mt-4 text-center text-success text-2xl font-bold">
+              <Link href="/"  onClick={() => setOpen(false)}>
+                {t("home")}
               </Link>
             </div>
-          </div>
+            <div className="mt-8 flex justify-center gap-4">
+              <LanguageSwitcher />
+            </div>
+            <div className="mt-10">
+              <Link
+                href="/contact_us"
+                className="bg-success text-white py-2 px-5 rounded-3xl hover:bg-white hover:text-success border border-white transition-all"
+                onClick={() => setOpen(false)}
+              >
+                {t('contact')}
+              </Link>
+            </div>
+
+          </nav>
+        </div>
+      )}
         </div>
       </nav>
     </header>

@@ -1,9 +1,10 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/Home/features/page": "app/Home/features/page.js",
-  "/Home/slider/page": "app/Home/slider/page.js",
-  "/page": "app/page.js",
-  "/contact_us/page": "app/contact_us/page.js",
-  "/Home/program_cerp/page": "app/Home/program_cerp/page.js",
-  "/Home/system/page": "app/Home/system/page.js"
+  "/[locale]/Home/features/page": "app/[locale]/Home/features/page.js",
+  "/[locale]/Home/program_cerp/page": "app/[locale]/Home/program_cerp/page.js",
+  "/[locale]/Home/slider/page": "app/[locale]/Home/slider/page.js",
+  "/[locale]/Home/system/page": "app/[locale]/Home/system/page.js",
+  "/[locale]/contact_us/page": "app/[locale]/contact_us/page.js",
+  "/[locale]/page": "app/[locale]/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js"
 }

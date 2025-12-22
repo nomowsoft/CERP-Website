@@ -1,8 +1,9 @@
-"use client"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslations } from 'next-intl';
 
 const NotFOUNFPAge = () => {
+  const t = useTranslations("notFound");
   return (
     <section className="fix-height m-auto pt-7 text-center">
       <div className="flex flex-col items-center">
@@ -13,13 +14,13 @@ const NotFOUNFPAge = () => {
           height={200}
         />
         <h1 className="text-3xl font-bold text-success mb-4">
-          الصفحة غير موجودة
+          {t('title')}
         </h1>
         <p className="text-gray-500 mb-6">
-          عذرًا، الصفحة التي تبحث عنها غير موجودة. قد تكون قد تمت إزالتها أو تغيير عنوانها.
+          {t('description')}
         </p>
         <Link href="/" className="bg-success text-white py-2 px-4 rounded">
-          العودة إلى الصفحة الرئيسية
+          {t('backHome')}
         </Link>
       </div>
     </section>

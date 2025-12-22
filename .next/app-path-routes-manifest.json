@@ -1,1 +1,10 @@
-{"/_not-found/page":"/_not-found","/Home/features/page":"/Home/features","/Home/slider/page":"/Home/slider","/page":"/","/contact_us/page":"/contact_us","/Home/program_cerp/page":"/Home/program_cerp","/Home/system/page":"/Home/system"}
+{
+  "/[locale]/Home/features/page": "/[locale]/Home/features",
+  "/[locale]/Home/program_cerp/page": "/[locale]/Home/program_cerp",
+  "/[locale]/Home/slider/page": "/[locale]/Home/slider",
+  "/[locale]/Home/system/page": "/[locale]/Home/system",
+  "/[locale]/contact_us/page": "/[locale]/contact_us",
+  "/[locale]/page": "/[locale]",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found"
+}
