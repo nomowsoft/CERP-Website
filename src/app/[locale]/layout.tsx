@@ -25,9 +25,9 @@ export default async function RootLayout({ children, params }: { children: React
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
       <head>
-        <link rel="icon" href="/header/cerp.svg" />
+        <link rel="icon" href="/header/CERP.svg" />
       </head>
-      <body style={{ fontFamily: 'CustomFontName, sans-serif' }}>
+      <body className="font-tajawalregular font-bold">
         <NextIntlClientProvider messages={messages}>
           <Header />
           <main>

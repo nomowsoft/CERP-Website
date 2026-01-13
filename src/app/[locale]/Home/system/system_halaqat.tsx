@@ -12,43 +12,62 @@ const SystemHalaqat = () => {
 
   return (
     <div className="w-full max-w-screen-xl mx-auto mt-10 px-4">
-      <div className="rounded-3xl bg-slate-500 text-white bg-health relative bg-cover bg-no-repeat" data-aos="zoom-in">
+      <div className="rounded-3xl bg-health relative bg-cover bg-no-repeat" data-aos="zoom-in">
         <div className="flex flex-col md:flex-row">
-            <Image
-                src="/system_health/New Project (3).png"
-                alt="System Image"
-                height={200}
-                width={5000}
-                className="w-full md:w-auto"
-            />
           <div className="mt-6 md:mt-0 w-full md:ml-10">
-            <h1 className={`text-white text-2xl text-center ${useLocale() === 'ar' ? 'md:text-right' : 'md:text-left'} md:text-4xl font-bold mt-20`}>
+            <div className="flex justify-start mt-10">
+              <span className="text-primary flex items-center gap-2  border border-primary rounded-3xl px-4 py-2 bg-primary/10">
+                <span>التعليم القراني</span>
+              </span>
+            </div>
+            <h1 className={`text-2xl md:text-3xl font-bold mt-4 font-doto2`}>
               {t('halaqatTitle')}
             </h1>
-            <div className="flex justify-center md:justify-end">
-                <button
+            <p className={`text-gray-500 mt-6 md:mt-10 text-md md:text-lg text-start`}>
+              {t('halaqatDescription')}
+            </p>
+            <div className="flex justify-center">
+              <button
+                dir={`${locale === 'ar' ? 'rtl' : 'ltr'}`}
                 onClick={() => setIsOpen(!isOpen)}
-                className="bg-success text-white font-semibold py-2 px-4 rounded-md flex items-center justify-center mt-20 mb-5 md:float-end"
-                >
-                {t('learnMore')}
-                <div className="bg-gray-500 rounded p-1 mr-2 flex justify-center items-center">
-                    <Image
-                    src={isOpen ? "/system/Vector2.png" : "/system/Vector.png"}
+                className="bg-success font-semibold py-3 px-4 rounded-xl flex items-center justify-between w-full mt-10 mb-5 border border-primary bg-primary/10"
+              >
+                <p>{t('learnMore')}</p>
+                <div className="rounded p-1 mr-2 flex justify-center items-center">
+                  <Image
+                    src={isOpen ? "/system/Background (1).svg" : "/system/Background (1).svg"}
                     alt="Toggle Icon"
                     height={20}
                     width={20}
-                    />
+                  />
                 </div>
-                </button>
+              </button>
+            </div>
+          </div>
+          <div className="relative">
+            <Image
+              src="/system_hifz/New Project(3).svg"
+              alt="System Image"
+              height={200}
+              width={1050}
+              className="rounded-3xl"
+            />
+            <div className="absolute -bottom-15 right-3">
+              <Image
+                src="/system_hifz/Component 14 (1).svg"
+                alt="System Image"
+                height={200}
+                width={150}
+                className="rounded-3xl"
+              />
             </div>
           </div>
         </div>
       </div>
 
       <div
-        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-          isOpen ? "max-h-[1000px]" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isOpen ? "max-h-[1000px]" : "max-h-0"
+          }`}
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
           <div className="md:col-span-5">

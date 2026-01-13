@@ -1,13 +1,20 @@
 export type Program = {
-    id:number;
-    image:string;
+    id: number;
+    image: string;
     titleKey: string;
 }
 export type System = {
-    id:number;
+    id: number;
     titleKey: string;
 }
 export type CutomerPartner = {
-    id:number;
-    image:string;
+    id: number;
+    image: string;
+}
+
+export type Programs = {
+    id: number,
+    img: string,
+    nameKey: string,
+    descKey: string
 }

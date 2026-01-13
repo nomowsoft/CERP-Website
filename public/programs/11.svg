@@ -1,0 +1,23 @@
+<svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_2003_1962)">
+<rect x="20" y="14" width="48" height="48" rx="12" fill="url(#paint0_linear_2003_1962)" shape-rendering="crispEdges"/>
+<path opacity="0.2" d="M50 31.25V44.75H38V31.25H50Z" fill="white"/>
+<path d="M48.5 27.5H39.5C38.9033 27.5 38.331 27.7371 37.909 28.159C37.4871 28.581 37.25 29.1533 37.25 29.75V46.25C37.25 46.8467 37.4871 47.419 37.909 47.841C38.331 48.2629 38.9033 48.5 39.5 48.5H48.5C49.0967 48.5 49.669 48.2629 50.091 47.841C50.5129 47.419 50.75 46.8467 50.75 46.25V29.75C50.75 29.1533 50.5129 28.581 50.091 28.159C49.669 27.7371 49.0967 27.5 48.5 27.5ZM38.75 32H49.25V44H38.75V32ZM39.5 29H48.5C48.6989 29 48.8897 29.079 49.0303 29.2197C49.171 29.3603 49.25 29.5511 49.25 29.75V30.5H38.75V29.75C38.75 29.5511 38.829 29.3603 38.9697 29.2197C39.1103 29.079 39.3011 29 39.5 29ZM48.5 47H39.5C39.3011 47 39.1103 46.921 38.9697 46.7803C38.829 46.6397 38.75 46.4489 38.75 46.25V45.5H49.25V46.25C49.25 46.4489 49.171 46.6397 49.0303 46.7803C48.8897 46.921 48.6989 47 48.5 47Z" fill="white"/>
+</g>
+<defs>
+<filter id="filter0_d_2003_1962" x="0" y="0" width="88" height="88" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="6"/>
+<feGaussianBlur stdDeviation="10"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.0392157 0 0 0 0 0.545098 0 0 0 0 0.545098 0 0 0 0.3 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2003_1962"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2003_1962" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_2003_1962" x1="20" y1="14" x2="68" y2="62" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3B82F6"/>
+<stop offset="1" stop-color="#60A5FA"/>
+</linearGradient>
+</defs>
+</svg>

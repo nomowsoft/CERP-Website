@@ -5,11 +5,12 @@ import { useTranslations } from "next-intl";
 const Navlink = ({ closeMenu }: { closeMenu?: () => void }) => {
   const t = useTranslations();
   const links = [
-    { name: t('header.home'), href: "/" },
+    { name: t('header.home'), href: "" },
+    { name: t('header.contact'), href: "/contact_us" },
   ];
 
   return (
-    <ul className="flex justify-center items-center lg:flex-row">
+    <ul className="flex lg:flex-row flex-col">
       {links.map((link) => (
         <Navitem
           key={link.href}

@@ -46,26 +46,24 @@ export default function Header() {
 
   return (
     <header>
-      <nav className="bg-white border-gray-200 lg:px-6 w-full z-50">
-        <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-4 relative">
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="flex items-center px-5 lg:px-0">
-              <Image
-                height={20}
-                width={150}
-                src="/header/cerp.svg"
-                alt="Logo"
-              />
-            </Link>
-            <div className={`${ new_path === `/` ? 'hidden' : 'hidden lg:flex px-14'}`}>
-              <Navlink />
-            </div>
+      <nav className="fixed bg-info top-0 left-0 right-0 z-50">
+        <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-4">
+          <Link href="/" className="flex items-center px-5 lg:px-0">
+            <Image
+              height={20}
+              width={150}
+              src="/header/CERP.svg"
+              alt="Logo"
+            />
+          </Link>
+          <div className="hidden lg:block">
+            <Navlink />
           </div>
           <div className="hidden lg:flex items-center space-x-6">
             <LanguageSwitcher />
             <Link
               href={`${local}/contact_us`}
-              className="mx-2 border border-success bg-white text-success hover:text-white hover:bg-success py-2 px-8 rounded-md text-xl font-extrabold"
+              className="mx-2 bg-gradient-to-r from-primary to-emerald-600 text-info py-3 px-8 rounded-xl text-xl font-extrabold"
             >
               {t('contact')}
             </Link>
@@ -76,10 +74,10 @@ export default function Header() {
             type="button"
             aria-controls="mobile-menu"
             onClick={() => setOpen(!open)}
-            className="lg:hidden inline-flex items-center p-2  mx-5 lg:mx-0 text-sm text-success rounded-lg hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-200 border border-success"
+            className="lg:hidden inline-flex items-center px-2 h-10  mx-5 lg:mx-0 text-sm text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 border border-primary"
           >
             <span className="sr-only">{t('openMainMenu')}</span>
-            {isMobileMenuOpen ? (
+            {open ? (
               <svg
                 className="w-6 h-6"
                 fill="currentColor"
@@ -110,29 +108,26 @@ export default function Header() {
 
           {/* Mobile menu */}
           {open && (
-        <div className="inset-0 z-[999] h-screen flex justify-center bg-success/20 backdrop-blur-sm lg:hidden mb-20 w-full">
-          <nav className="py-4">
-            <div className="mt-4 text-center text-success text-2xl font-bold">
-              <Link href="/"  onClick={() => setOpen(false)}>
-                {t("home")}
-              </Link>
-            </div>
-            <div className="mt-8 flex justify-center gap-4">
-              <LanguageSwitcher />
-            </div>
-            <div className="mt-10">
-              <Link
-                href="/contact_us"
-                className="bg-success text-white py-2 px-5 rounded-3xl hover:bg-white hover:text-success border border-white transition-all"
-                onClick={() => setOpen(false)}
-              >
-                {t('contact')}
-              </Link>
-            </div>
+            <div className="inset-0 z-[999] h-screen flex justify-center bg-success/20 backdrop-blur-sm lg:hidden mb-20 w-full">
+              <nav className="py-4">
+                <div className="mt-4 text-center text-success text-2xl font-bold">
+                  <Navlink />
+                </div>
+                <div className="mt-8 flex justify-center gap-4">
+                  <LanguageSwitcher />
+                </div>
+                <div className="mt-10">
+                  <Link
+                    href={`${local}/contact_us`}
+                    className="mx-2 bg-gradient-to-r from-primary to-emerald-600 text-info py-3 px-8 rounded-xl text-xl font-extrabold"
+                  >
+                    {t('contact')}
+                  </Link>
+                </div>
 
-          </nav>
-        </div>
-      )}
+              </nav>
+            </div>
+          )}
         </div>
       </nav>
     </header>
