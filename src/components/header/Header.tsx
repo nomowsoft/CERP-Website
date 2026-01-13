@@ -10,22 +10,13 @@ import LanguageSwitcher from "../common/LanguageSwitcher";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  console.log(pathname)
   const t = useTranslations("header");
   const local = useLocale();
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => !prev);
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        setMobileMenuOpen(false);
+        setOpen(false);
       }
     };
     window.addEventListener("resize", handleResize);
