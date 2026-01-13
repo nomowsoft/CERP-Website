@@ -17,7 +17,7 @@ export default function LanguageSwitcher() {
     return (
         <button
             onClick={toggleLanguage}
-            className="text-success font-bold cursor-pointer mx-5 border border-success px-2.5 py-2 rounded-full hover:bg-success hover:text-white transition-all"
+            className="text-primary font-bold cursor-pointer mx-5 border border-primary w-10 h-10 pt-1 rounded-full transition-all"
         >
             {locale === "ar" ? "EN" : "AR"}
         </button>

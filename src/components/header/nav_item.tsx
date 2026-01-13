@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { useLocale } from "next-intl";
 
 const Navitem = ({
   name,
@@ -13,26 +14,27 @@ const Navitem = ({
   closeMenu?: () => void;
 }) => {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const locale = useLocale();
+  const isActive = pathname === `/${locale}${href}`;
 
   return (
     <motion.li 
-      className="mx-12"
+      className="mx-6"
       initial={{ opacity: 0, y: 10 }} 
       animate={{ opacity: 1, y: 0 }} 
       transition={{ duration: 0.3 }}
     >
       <Link
-        className={`block py-2 text-2xl transition-colors duration-300 ${
-          isActive ? "text-success" : "text-gray-500 hover:text-success"
+        className={`block pt-5 text-xl transition-colors duration-300 ${
+          isActive ? "text-primary" : "text-gray-500 hover:text-primary"
         }`}
-        href={href}
+        href={`/${locale}/${href}`}
         onClick={closeMenu}
       >
         {name}
       </Link>
       <motion.hr
-        className="border border-success  mt-4"
+        className="border border-primary"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: isActive ? 1 : 0 }}
         transition={{ duration: 0.3 }}

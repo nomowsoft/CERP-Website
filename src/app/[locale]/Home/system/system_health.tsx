@@ -7,49 +7,65 @@ import { useTranslations, useLocale } from 'next-intl';
 const SystemHealth = () => {
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations('health');
+  const tCommon = useTranslations('common');
+  const locale = useLocale();
 
   return (
     <div className="w-full max-w-screen-xl mx-auto mt-10 px-4">
-      <div className="rounded-3xl bg-slate-500 text-white bg-hifz relative bg-cover bg-no-repeat" data-aos="zoom-in">
+      <div className="rounded-3xl" data-aos="zoom-in">
         <div className="flex flex-col md:flex-row">
-          <div className="mt-6 md:mt-0  md:mr-10 text-center">
-            <h1 className={`text-white text-2xl ${useLocale() === 'ar' ? 'md:text-right' : 'md:text-left'} md:text-4xl font-bold mt-20`}>
-            {t('healthTitle')}
-            </h1>
-            <p className={`text-white mt-6 md:mt-10 text-md md:text-lg ${useLocale() === 'ar' ? 'md:text-right' : 'md:text-left'}`}>
-              {t('healthDescription')}
-            </p>
-            <div className="flex md:justify-start justify-center">
-                <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-success text-white font-semibold py-2 px-4 rounded-md flex items-center justify-center mt-10 mb-5"
-                >
-                {t('learnMore')}
-                <div className="bg-gray-500 rounded p-1 mr-2 flex justify-center items-center">
-                    <Image
-                    src={isOpen ? "/system/Vector2.png" : "/system/Vector.png"}
-                    alt="Toggle Icon"
-                    height={20}
-                    width={20}
-                    />
-                </div>
-                </button>
-            </div>
-          </div>
-          <Image
-                src="/system_hifz/New Project (4).png"
+          <div className="relative">
+            <Image
+              src="/system_health/New Project(2).svg"
+              alt="System Image"
+              height={200}
+              width={800}
+              className="rounded-3xl"
+            />
+            <div className="absolute -bottom-20">
+              <Image
+                src="/system_health/Component 14.svg"
                 alt="System Image"
                 height={200}
-                width={5000}
-                className="w-full md:w-auto"
-            />
+                width={150}
+                className="rounded-3xl"
+              />
+            </div>
+          </div>
+          <div className="mt-6 md:mt-0  md:mr-10">
+            <div className="flex justify-start">
+              <span className="text-primary flex items-center gap-2 mb-4 border border-primary rounded-3xl px-4 py-2 bg-primary/10">
+                <span>{tCommon('specializedSolutions')}</span>
+              </span>
+            </div>
+            <h1 className={`mt-5 text-2xl md:text-3xl font-doto2`}>
+              {t('healthTitle')}
+            </h1>
+            <p className={`text-gray-500 mt-6 md:mt-10 text-md md:text-lg`}>
+              {t('healthDescription')}
+            </p>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              dir={`${locale === 'ar' ? 'rtl' : 'ltr'}`}
+              className="bg-success font-semibold py-3 px-4 rounded-xl flex items-center justify-between w-full mt-10 mb-5 border border-primary bg-primary/10"
+            >
+              <p>{t('learnMore')}</p>
+              <div className="rounded p-1 mr-2 flex justify-center items-center">
+                <Image
+                  src={isOpen ? "/system/Background (1).svg" : "/system/Background (1).svg"}
+                  alt="Toggle Icon"
+                  height={20}
+                  width={20}
+                />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
       <div
-        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-          isOpen ? "max-h-[1000px]" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isOpen ? "max-h-[1000px]" : "max-h-0"
+          }`}
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6" dir={useLocale() === 'ar' ? 'rtl' : 'ltr'}>
           <div className="md:col-span-5">

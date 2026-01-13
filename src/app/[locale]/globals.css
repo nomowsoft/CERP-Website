@@ -1,19 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@font-face {
-  font-family: 'CustomFontName';
-  src: url('/fonts/AvenirArabic-Medium.otf') format('woff2');
-  font-weight: bold;
-  font-style: normal;
+@font-face{
+  font-family: Doto;
+  src: url("/fonts/Tajawal-Black.ttf");
+}
+@font-face{
+  font-family: Doto2;
+  src: url("/fonts/Tajawal-Bold.ttf");
+}
+@font-face{
+  font-family: Tajawal-Regular;
+  src: url("/fonts/Tajawal-Regular.ttf");
+}
+@theme{
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --color-primary: #0A8B8B;
+  --color-secondary: #F59E0B;
+  --color-info: #FFFFFF;
+  --color-color1: #F5F5F5;
+  /* font */
+  --font-doto: Doto, "sans-serif";
+  --font-doto2: Doto2, "sans-serif";
+  --font-tajawalregular: Tajawal-Regular, "sans-serif";
 }
 
 main{
   min-height: calc(100vh - 142px);
   direction: rtl;
-}
-
-body {
-  font-family: MyCustomFont sans-serif;
 }
