@@ -28,7 +28,7 @@ const Navitem = ({
         className={`block pt-5 text-xl transition-colors duration-300 ${
           isActive ? "text-primary" : "text-gray-500 hover:text-primary"
         }`}
-        href={`/${locale}/${href}`}
+        href={`/${locale}${href}`}
         onClick={closeMenu}
       >
         {name}
