@@ -8,6 +8,8 @@ import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export const metadata: Metadata = {
@@ -32,6 +34,7 @@ export default async function RootLayout({ children, params }: { children: React
           <Header />
           <main>
             {children}
+            <ToastContainer />
           </main>
           <Footer />
           <div style={{

@@ -117,7 +117,32 @@
     "send": "إرسال",
     "ctaHeading": "جاهز لتطوير <highlight>إدارة مؤسستك</highlight>؟",
     "ctaSubHeading": "دقيقة فقط.",
-    "ctaButton": "اطلب عرضًا توضيحيًا الآن"
+    "ctaButton": "اطلب عرضًا توضيحيًا الآن",
+    "intro": {
+      "titlePart1": "تواصل",
+      "titlePart2": "معنا",
+      "description": "نحن هنا للإجابة على جميع استفساراتك ومساعدتك في اختيار الحل الأمثل لمؤسستك",
+      "locationLabel": "الموقع",
+      "locationValue": "ص.ب 295940، 12612 الرياض",
+      "locationSub": "المملكة العربية السعودية",
+      "phoneLabel": "رقم التواصل",
+      "emailLabel": "البريد الإلكتروني"
+    },
+    "form": {
+      "title": "أرسل لنا رسالة",
+      "successMessage": "تم إرسال رسالتك بنجاح!",
+      "fullNameLabel": "الاسم الكامل",
+      "fullNamePlaceholder": "أدخل اسمك الكامل",
+      "phoneLabel": "رقم الجوال",
+      "phonePlaceholder": "05XXXXXXXX",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "example@domain.com",
+      "orgLabel": "اسم المؤسسة",
+      "orgPlaceholder": "اسم الجمعية أو المنظمة",
+      "messageLabel": "الرسالة",
+      "messagePlaceholder": "اكتب رسالتك هنا...",
+      "submitButton": "إرسال الرسالة"
+    }
   },
   "faq": {
     "heading": "الأسئلة <highlight>الشائعة</highlight>",

@@ -137,7 +137,32 @@
     "send": "Send",
     "ctaHeading": "Ready to develop <highlight>your organization's management</highlight>?",
     "ctaSubHeading": "Takes only a minute.",
-    "ctaButton": "Request a demo now"
+    "ctaButton": "Request a demo now",
+    "intro": {
+      "titlePart1": "Contact",
+      "titlePart2": "Us",
+      "description": "We are here to answer all your inquiries and help you choose the perfect solution for your organization.",
+      "locationLabel": "Location",
+      "locationValue": "P.O.Box 295940, 12612 Riyadh",
+      "locationSub": "Kingdom of Saudi Arabia",
+      "phoneLabel": "Contact Number",
+      "emailLabel": "Email"
+    },
+    "form": {
+      "title": "Send us a message",
+      "successMessage": "Your message has been sent successfully!",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "05XXXXXXXX",
+      "emailLabel": "Email",
+      "emailPlaceholder": "example@domain.com",
+      "orgLabel": "Organization Name",
+      "orgPlaceholder": "Association or Organization Name",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Write your message here...",
+      "submitButton": "Send Message"
+    }
   },
   "faq": {
     "heading": "<highlight>Frequently</highlight> Asked Questions",

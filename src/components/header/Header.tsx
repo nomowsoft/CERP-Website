@@ -10,8 +10,7 @@ import LanguageSwitcher from "../common/LanguageSwitcher";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const new_path = `${pathname}`
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  console.log(pathname)
   const t = useTranslations("header");
   const local = useLocale();
 
@@ -46,7 +45,7 @@ export default function Header() {
 
   return (
     <header>
-      <nav className="fixed bg-info top-0 left-0 right-0 z-50">
+      <nav className={`bg-info top-0 left-0 right-0 z-50 ${['/ar', '/en'].includes(pathname) ? 'fixed' : ''}`}>
         <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-4">
           <Link href="/" className="flex items-center px-5 lg:px-0">
             <Image
@@ -63,7 +62,7 @@ export default function Header() {
             <LanguageSwitcher />
             <Link
               href={`${local}/contact_us`}
-              className="mx-2 bg-gradient-to-r from-primary to-emerald-600 text-info py-3 px-8 rounded-xl text-xl font-extrabold"
+              className="mx-2 bg-gradient-to-l from-primary/70 to-primary text-info py-3 px-8 rounded-2xl text-xl font-doto2"
             >
               {t('contact')}
             </Link>
