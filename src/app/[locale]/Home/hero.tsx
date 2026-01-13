@@ -39,7 +39,7 @@ export const Hero = () => {
     const t = useTranslations('hero');
     const locale = useLocale();
     return (
-        <section className="bg-gray-100 lg:h-screen flex items-center py-20 relative">
+        <section className="bg-gray-100 flex items-center py-20 lg:py-40 relative">
             <video
                 className="absolute inset-0 w-full h-full object-cover opacity-5"
                 autoPlay
