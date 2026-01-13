@@ -52,7 +52,7 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-6">
             <LanguageSwitcher />
             <Link
-              href={`${local}/contact_us`}
+              href={`/${local}/contact-us`}
               className="mx-2 bg-gradient-to-l from-primary/70 to-primary text-info py-3 px-8 rounded-2xl text-xl font-doto2"
             >
               {t('contact')}
@@ -108,7 +108,7 @@ export default function Header() {
                 </div>
                 <div className="mt-10">
                   <Link
-                    href={`${local}/contact_us`}
+                    href={`/${local}/contact-us`}
                     className="mx-2 bg-gradient-to-r from-primary to-emerald-600 text-info py-3 px-8 rounded-xl text-xl font-extrabold"
                   >
                     {t('contact')}
