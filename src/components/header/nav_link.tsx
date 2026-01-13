@@ -6,7 +6,7 @@ const Navlink = ({ closeMenu }: { closeMenu?: () => void }) => {
   const t = useTranslations();
   const links = [
     { name: t('header.home'), href: "" },
-    { name: t('header.contact'), href: "contact-us" },
+    { name: t('header.contact'), href: "/contact-us" },
   ];
 
   return (
