@@ -2,7 +2,8 @@
   "header": {
     "contact": "تواصل معنا",
     "openMainMenu": "فتح القائمة الرئيسية",
-    "home": "الرئيسية"
+    "home": "الرئيسية",
+    "subscription": "اشترك الآن"
   },
   "hero": {
     "integratedSystem": "نظام سعودي متكامل",
@@ -231,5 +232,67 @@
     "continuousDevelopmentDesc": "تحديثات وتطويرات مستمرة لمواكبة أحدث التقنيات والالمتطلبات",
     "systemIntegration": "التكامل بين الانظمة مع مركزية قاعدة البيانات",
     "systemIntegrationDesc": "مركزية قاعدة البيانات مع تكامل تام بين جميع الأنظمة الفرعية"
+  },
+  "subscription": {
+    "title": "اشترك في <highlight>الباقة الأساسية</highlight>",
+    "subtitle": "ابدأ رحلتك الرقمية مع نظام سرب المتكامل",
+    "steps": {
+      "personalInfo": "المعلومات الشخصية",
+      "associationData": "بيانات الجمعية",
+      "domainSelection": "اختيار النطاق",
+      "payment": "الدفع"
+    },
+    "buttons": {
+      "back": "السابق",
+      "next": "التالي",
+      "processing": "جاري المعالجة...",
+      "completePayment": "إتمام الدفع",
+      "confirmOrder": "تأكيد الطلب"
+    },
+    "messages": {
+      "successTitle": "تم بنجاح!",
+      "paymentSuccessDesc": "تم إتمام الدفع بنجاح. شكراً لاشتراكك!",
+      "orderConfirmDesc": "تم تأكيد طلبك بنجاح. سيتم مراجعة الإيصال البنكي.",
+      "errorTitle": "حدث خطأ",
+      "errorDesc": "يرجى المحاولة مرة أخرى"
+    },
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "fullNameLabel": "الاسم الكامل",
+      "fullNamePlaceholder": "أدخل اسمك الكامل",
+      "emailLabel": "البريد الإلكتروني",
+      "phoneLabel": "رقم الجوال"
+    },
+    "associationData": {
+      "title": "بيانات الجمعية",
+      "associationNumberLabel": "رقم سجل الجمعية",
+      "associationNumberPlaceholder": "أدخل رقم السجل",
+      "licenseLabel": "رخصة الجمعية",
+      "licensePlaceholder": "أدخل رقم الرخصة",
+      "licenseFileLabel": "اختر ملف الرخصة",
+      "licenseFilePlaceholder": "اختر ملف الرخصة",
+      "fileSelected": "تم اختيار:"
+    },
+    "domainSelection": {
+      "title": "اختيار النطاق",
+      "subdomainOption": "نطاق فرعي",
+      "customDomainOption": "نطاق مخصص",
+      "subdomainLabel": "اسم جمعيتك",
+      "customDomainLabel": "النطاق المخصص"
+    },
+    "payment": {
+      "title": "اختر طريقة الدفع",
+      "electronicPayment": "الدفع الإلكتروني",
+      "electronicPaymentDesc": "ادفع بشكل آمن عبر البطاقة البنكية",
+      "bankTransfer": "رفع إيصال بنكي",
+      "bankTransferDesc": "قم برفع صورة الإيصال البنكي",
+      "cardDetailsTitle": "بيانات البطاقة",
+      "cardNumberLabel": "رقم البطاقة",
+      "cardHolderLabel": "اسم حامل البطاقة",
+      "cardHolderPlaceholder": "الاسم كما هو مكتوب على البطاقة",
+      "expiryDateLabel": "تاريخ الانتهاء",
+      "uploadBankReceiptTitle": "رفع الإيصال البنكي",
+      "uploadReceiptPlaceholder": "اختر ملف الإيصال"
+    }
   }
 }

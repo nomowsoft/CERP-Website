@@ -2,7 +2,8 @@
   "header": {
     "contact": "Contact us",
     "openMainMenu": "Open main menu",
-    "home": "Home"
+    "home": "Home",
+    "subscription": "Subscribe now"
   },
   "hero": {
     "integratedSystem": "Integrated Saudi System",
@@ -232,5 +233,67 @@
     "continuousDevelopmentDesc": "Continuous updates and developments to keep pace with the latest technologies and requirements.",
     "systemIntegration": "System integration with centralized database",
     "systemIntegrationDesc": "Centralized database with complete integration between all subsystems."
+  },
+  "subscription": {
+    "title": "Subscribe to <highlight>Basic Plan</highlight>",
+    "subtitle": "Start your digital journey with the integrated CERP system",
+    "steps": {
+      "personalInfo": "Personal Info",
+      "associationData": "Association Data",
+      "domainSelection": "Domain Selection",
+      "payment": "Payment"
+    },
+    "buttons": {
+      "back": "Back",
+      "next": "Next",
+      "processing": "Processing...",
+      "completePayment": "Complete Payment",
+      "confirmOrder": "Confirm Order"
+    },
+    "messages": {
+      "successTitle": "Success!",
+      "paymentSuccessDesc": "Payment completed successfully. Thank you for subscribing!",
+      "orderConfirmDesc": "Order confirmed successfully. Bank receipt will be reviewed.",
+      "errorTitle": "An error occurred",
+      "errorDesc": "Please try again"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone Number"
+    },
+    "associationData": {
+      "title": "Association Data",
+      "associationNumberLabel": "Association Registry Number",
+      "associationNumberPlaceholder": "Enter registry number",
+      "licenseLabel": "Association License",
+      "licensePlaceholder": "Enter license number",
+      "licenseFileLabel": "Choose License File",
+      "licenseFilePlaceholder": "Choose license file",
+      "fileSelected": "Selected:"
+    },
+    "domainSelection": {
+      "title": "Domain Selection",
+      "subdomainOption": "Subdomain",
+      "customDomainOption": "Custom Domain",
+      "subdomainLabel": "Your Association Name",
+      "customDomainLabel": "Custom Domain"
+    },
+    "payment": {
+      "title": "Choose Payment Method",
+      "electronicPayment": "Electronic Payment",
+      "electronicPaymentDesc": "Pay securely via credit card",
+      "bankTransfer": "Upload Bank Receipt",
+      "bankTransferDesc": "Upload an image of the bank receipt",
+      "cardDetailsTitle": "Card Details",
+      "cardNumberLabel": "Card Number",
+      "cardHolderLabel": "Card Holder Name",
+      "cardHolderPlaceholder": "Name as appears on card",
+      "expiryDateLabel": "Expiry Date",
+      "uploadBankReceiptTitle": "Upload Bank Receipt",
+      "uploadReceiptPlaceholder": "Choose receipt file"
+    }
   }
 }
