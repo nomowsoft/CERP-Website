@@ -1,3 +1,4 @@
+"use client";
 import { useTranslations } from "next-intl";
 import ContactForm from "./contactform";
 import ContactInfo from "./contactintro";
