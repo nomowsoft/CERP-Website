@@ -3,8 +3,9 @@
   "/[locale]/Home/program_cerp/page": "/[locale]/Home/program_cerp",
   "/[locale]/Home/slider/page": "/[locale]/Home/slider",
   "/[locale]/Home/system/page": "/[locale]/Home/system",
-  "/[locale]/contact_us/page": "/[locale]/contact_us",
+  "/[locale]/contact-us/page": "/[locale]/contact-us",
   "/[locale]/page": "/[locale]",
+  "/[locale]/subscription/page": "/[locale]/subscription",
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found"
 }

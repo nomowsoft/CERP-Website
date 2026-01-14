@@ -52,12 +52,12 @@
       "namedRegex": "^/(?<nxtPlocale>[^/]+?)(?:/)?$"
     },
     {
-      "page": "/[locale]/contact_us",
-      "regex": "^/([^/]+?)/contact_us(?:/)?$",
+      "page": "/[locale]/contact-us",
+      "regex": "^/([^/]+?)/contact\\-us(?:/)?$",
       "routeKeys": {
         "nxtPlocale": "nxtPlocale"
       },
-      "namedRegex": "^/(?<nxtPlocale>[^/]+?)/contact_us(?:/)?$"
+      "namedRegex": "^/(?<nxtPlocale>[^/]+?)/contact\\-us(?:/)?$"
     },
     {
       "page": "/[locale]/Home/features",
@@ -90,6 +90,14 @@
         "nxtPlocale": "nxtPlocale"
       },
       "namedRegex": "^/(?<nxtPlocale>[^/]+?)/Home/system(?:/)?$"
+    },
+    {
+      "page": "/[locale]/subscription",
+      "regex": "^/([^/]+?)/subscription(?:/)?$",
+      "routeKeys": {
+        "nxtPlocale": "nxtPlocale"
+      },
+      "namedRegex": "^/(?<nxtPlocale>[^/]+?)/subscription(?:/)?$"
     }
   ],
   "staticRoutes": [

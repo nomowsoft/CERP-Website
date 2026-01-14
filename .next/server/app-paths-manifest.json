@@ -3,8 +3,9 @@
   "/[locale]/Home/program_cerp/page": "app/[locale]/Home/program_cerp/page.js",
   "/[locale]/Home/slider/page": "app/[locale]/Home/slider/page.js",
   "/[locale]/Home/system/page": "app/[locale]/Home/system/page.js",
-  "/[locale]/contact_us/page": "app/[locale]/contact_us/page.js",
+  "/[locale]/contact-us/page": "app/[locale]/contact-us/page.js",
   "/[locale]/page": "app/[locale]/page.js",
+  "/[locale]/subscription/page": "app/[locale]/subscription/page.js",
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js"
 }
