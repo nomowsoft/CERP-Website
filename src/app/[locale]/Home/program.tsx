@@ -106,7 +106,7 @@ const data: Programs[] = [
 export const Program = () => {
   const t = useTranslations('programs');
   return (
-    <section className="py-40 container mx-auto">
+    <section className="py-40 container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
       <section>
         <div className="px-4">
           <div className="flex justify-center">
