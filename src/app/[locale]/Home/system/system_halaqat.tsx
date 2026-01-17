@@ -11,7 +11,7 @@ const SystemHalaqat = () => {
   const locale = useLocale();
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto mt-10 px-4">
+    <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0 mt-10 ">
       <div className="rounded-3xl bg-health relative bg-cover bg-no-repeat" data-aos="zoom-in">
         <div className="flex flex-col md:flex-row">
           <div className="mt-6 md:mt-0 w-full md:ml-10">

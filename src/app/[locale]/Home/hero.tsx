@@ -39,7 +39,7 @@ export const Hero = () => {
     const t = useTranslations('hero');
     const locale = useLocale();
     return (
-        <section className="bg-gray-100 flex items-center py-20 lg:py-40 relative">
+        <section className="bg-gray-100 flex items-center py-24 lg:py-40 relative">
             <video
                 className="absolute inset-0 w-full h-full object-cover opacity-5"
                 autoPlay
@@ -50,7 +50,7 @@ export const Hero = () => {
                 <source src="/hero/video1.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* Right side: Text & Buttons */}
                     <div className="w-full lg:w-1/2">

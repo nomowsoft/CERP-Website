@@ -36,8 +36,8 @@ export default function Header() {
 
   return (
     <header>
-      <nav className={`top-0 left-0 right-0 z-50 ${['/ar', '/en'].includes(pathname) ? 'fixed bg-info/10' : 'bg-info'}`}>
-        <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-4">
+      <nav className={`top-0 left-0 right-0 z-50 ${['/ar', '/en'].includes(pathname) ? 'fixed bg-info' : 'bg-info'}`}>
+        <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-2">
           <Link href="/" className="flex items-center px-5 lg:px-0">
             <Image
               height={20}

@@ -5,7 +5,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 type FaqData = {
     id: string,
@@ -38,6 +38,7 @@ const faqData: FaqData[] = [
 
 export const FAQAccordion = () => {
     const t = useTranslations('faq');
+    const locale = useLocale();
     return (
         <section className="mx-auto container py-20">
             <section>
@@ -56,22 +57,43 @@ export const FAQAccordion = () => {
             </section>
             <div className="w-full max-w-4xl mx-auto">
                 {/* Accordion */}
-                <Accordion type="single" collapsible defaultValue="1" className="space-y-4">
+                <Accordion
+                    type="single"
+                    collapsible
+                    defaultValue="1"
+                    className="space-y-4"
+                    dir={locale == 'ar' ? "rtl" : "ltr"}
+                >
                     {faqData.map((item) => (
                         <AccordionItem
                             key={item.id}
                             value={item.id}
-                            className="bg-card rounded-xl border-0 shadow-sm px-6 overflow-hidden data-[state=open]:shadow-md transition-shadow duration-300"
+                            className="
+                                bg-card rounded-xl border-0 shadow-sm px-6 overflow-hidden
+                                data-[state=open]:shadow-md transition-shadow duration-300
+                            "
                         >
-                            <AccordionTrigger className="text-lg font-semibold text-foreground hover:no-underline py-5 flex-row-reverse justify-between gap-4">
+                            <AccordionTrigger
+                                className={`
+                                    text-lg font-semibold py-5 flex items-center justify-between gap-4
+                                    ${locale === 'ar' ? "flex-row-reverse text-right" : "text-left"}
+                                `}
+                            >
                                 {t(item.qKey)}
                             </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground text-base leading-relaxed pb-5 text-gray-500">
+
+                            <AccordionContent
+                                className={`
+                                    text-base leading-relaxed pb-5 text-gray-500
+                                    ${locale === 'ar' ? "text-right" : "text-left"}
+                                `}
+                            >
                                 {t(item.aKey)}
                             </AccordionContent>
                         </AccordionItem>
                     ))}
                 </Accordion>
+
             </div>
         </section>
     );

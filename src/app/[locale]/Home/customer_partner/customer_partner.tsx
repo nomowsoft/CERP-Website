@@ -13,24 +13,22 @@ import { Card } from "@/components/ui/card";
 const CustomerPartner = () => {
     const t = useTranslations('customerPartner');
     return (
-        <section className="py-30 container mx-auto">
+        <section className="py-30 container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
             <section>
-                <div className="container mx-auto px-4">
-                    <div className="flex justify-center">
-                        <span className="text-primary flex items-center gap-2 mb-4 border border-primary rounded-3xl px-4 py-2 bg-primary/10">
-                            <span>{t('tag')}</span>
-                        </span>
-                    </div>
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-doto2 font-bold mb-6">
-                            {t.rich('heading', {
-                                highlight: (chunks) => <span className="bg-gradient-to-l from-primary/50 to-primary bg-clip-text text-transparent font-bold leading-tight py-1 inline-block">{chunks}</span>
-                            })}
-                        </h1>
-                        <p className="text-xl text-gray-500 mb-8">
-                            {t('subHeading')}
-                        </p>
-                    </div>
+                <div className="flex justify-center">
+                    <span className="text-primary flex items-center gap-2 mb-4 border border-primary rounded-3xl px-4 py-2 bg-primary/10">
+                        <span>{t('tag')}</span>
+                    </span>
+                </div>
+                <div className="max-w-4xl mx-auto text-center">
+                    <h1 className="text-4xl md:text-5xl font-doto2 font-bold mb-6">
+                        {t.rich('heading', {
+                            highlight: (chunks) => <span className="bg-gradient-to-l from-primary/50 to-primary bg-clip-text text-transparent font-bold leading-tight py-1 inline-block">{chunks}</span>
+                        })}
+                    </h1>
+                    <p className="text-xl text-gray-500 mb-8">
+                        {t('subHeading')}
+                    </p>
                 </div>
             </section>
             <div className="mt-2 lg:mt-16" data-aos="fade-up">
@@ -64,7 +62,9 @@ const CustomerPartner = () => {
                             <Card
                                 className="mx-5 overflow-hidden group bg-info  transition-all duration-300 rounded-3xl border border-primary/20 hover:scale-105"
                             >
-                                <Image src={cp.image} alt="" width={300} height={20} className="shadow-2xl" />
+                                <div className="flex justify-center">
+                                    <Image src={cp.image} alt="" width={300} height={20} />
+                                </div>
                             </Card>
                         </SwiperSlide>
                     ))}

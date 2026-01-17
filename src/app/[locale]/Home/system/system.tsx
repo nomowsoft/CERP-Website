@@ -9,7 +9,7 @@ const System = () => {
     <section>
       <section>
         <div className="px-4">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
             <h1 className="text-4xl md:text-5xl font-doto2 font-bold mb-6">
               {t.rich('specializedSystemsHeading', {
                 highlight: (chunks) => <span className="bg-gradient-to-l from-primary/50 to-primary bg-clip-text text-transparent font-bold leading-tight py-1 inline-block">{chunks}</span>
