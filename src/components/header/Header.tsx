@@ -52,6 +52,12 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-6">
             <LanguageSwitcher />
             <Link
+              href={`/${local}/login`}
+              className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2"
+            >
+              تسجيل الدخول
+            </Link>
+            <Link
               href={`/${local}/contact-us`}
               className="mx-2 bg-gradient-to-l from-primary/70 to-primary text-info py-3 px-8 rounded-2xl text-xl font-doto2"
             >
