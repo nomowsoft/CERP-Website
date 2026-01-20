@@ -21,12 +21,11 @@ const LoginForm = () => {
         try {
             setLoading(true);
             await axios.post(`${DOMAIN}/api/users/login`, { email, password });
-            router.replace('/');
+            router.replace(`/${locale}/admin`);
             setLoading(false);
             router.refresh();
         } catch (error: any) {
             toast.error(error?.response?.data.message);
-            console.log(error);
             setLoading(false);
         }
 
