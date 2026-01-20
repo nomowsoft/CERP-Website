@@ -18,3 +18,32 @@ export type Programs = {
     nameKey: string,
     descKey: string
 }
+export type RegisterUserDTO = {
+    email: string,
+    password: string,
+    confirmPassword: string,
+    name: string,
+    phone: string,
+    charityName: string
+}
+export type LoginUserDTO = {
+    email: string,
+    password: string
+}
+export type UpdateUserDTO = {
+    email?: string,
+    password?: string,
+    name?: string,
+    phone?: string,
+    charityname?: string
+}
+
+export type JWTUserPayload = {
+    id: string;
+    email: string;
+};
+
+export type JWTPayload = {
+    id: number;
+    email: string | null;
+}

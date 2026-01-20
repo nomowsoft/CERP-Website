@@ -3,7 +3,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
  
 const nextConfig: NextConfig = {
     env: {
-        NEXT_PUBLIC_API_URL: "https://cerp.sa",
+        NEXT_PUBLIC_API_URL: "http://localhost:3001",
     },
     images: {
         remotePatterns: [
