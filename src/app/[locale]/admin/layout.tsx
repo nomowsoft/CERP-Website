@@ -1,6 +1,8 @@
+
 import AdminSidebar from "./AdminSidebar";
-import prisma from "@/utils/db";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { verifyTokenForPage } from "@/utils/verifyToken";
 
 export default async function AdminLayout({
   children,
@@ -10,14 +12,18 @@ export default async function AdminLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const userCount = await prisma.user.count();
-  if (userCount === 0) {
-    redirect(`/${locale}/setup`);
+  const cookieStore = await cookies();
+  const jwtToken = cookieStore.get("jwtToken")?.value;
+  const userPayload = jwtToken ? verifyTokenForPage(jwtToken) : null;
+
+  if (!userPayload) {
+    redirect(`/${locale}/login`);
   }
+
   return (
-    <div className="flex bg-white min-h-screen">
+    <div className="flex bg-white min-h-screen" dir={`${locale === "ar" ? "rtl" : "ltr"}`}>
       <AdminSidebar />
-      <main className="flex-1 p-8 ms-64 transition-all bg-gray-400/10">
+      <main className={`flex-1 p-8 ${locale === "ar" ? "ms-64" : "me-64"} transition-all bg-gray-400/10`}>
         {children}
       </main>
     </div>

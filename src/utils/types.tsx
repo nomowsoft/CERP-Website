@@ -47,3 +47,19 @@ export type JWTPayload = {
     id: number;
     email: string | null;
 }
+
+
+export type UserDashbord = {   
+    id: number;
+    email: string;
+    name: string;
+    createdAt: string;
+    charityName: string;
+}
+
+export type UserState = {
+    userInfo: UserDashbord | any;
+    loading: boolean;
+    error: string | null;
+    isAuthenticated: boolean;
+}

@@ -8,7 +8,7 @@ export default function LanguageSwitcher() {
     const router = useRouter();
     const pathname = usePathname();
 
-    const toggleLanguage = () => {
+    const toggleLanguagesidebar = () => {
         const nextLocale = locale === "ar" ? "en" : "ar";
         startTransition(() => {
             router.replace(pathname, { locale: nextLocale });
@@ -16,7 +16,7 @@ export default function LanguageSwitcher() {
     };
     return (
         <button
-            onClick={toggleLanguage}
+            onClick={toggleLanguagesidebar}
             className="flex w-full items-center gap-2 px-3 py-3 rounded-lg hover:bg-primary hover:text-white transition-colors text-primary font-bold border border-primary/10"
             title={locale === 'en' ? 'Switch to Arabic' : 'تغيير للإنجليزية'}
         >

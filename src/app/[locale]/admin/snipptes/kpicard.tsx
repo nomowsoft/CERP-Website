@@ -32,7 +32,7 @@ export async function KpiCard() {
                     <div key={stat.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
                         <div className="flex items-center">
                             <div className="flex items-center justify-center p-4">
-                                <Image src={stat.img} alt={stat.name} width={100} height={50} /> 
+                                <Image src={stat.img} alt={stat.title} width={100} height={50} /> 
                             </div>
                             {/* <div className="text-3xl font-bold text-slate-900">{stat.value}</div> */}
                             <div className="ml-4">
