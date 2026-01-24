@@ -8,7 +8,7 @@ export default function Footer() {
     const t = useTranslations('footer');
     const pathname = usePathname();
     return (
-        <footer className={`bg-gray-100 pt-20 pb-10 border-t border-primary/2 ${['/ar/admin', '/en/admin'].includes(pathname) ? 'hidden' : ''}`}>
+        <footer className={`bg-gray-100 pt-20 pb-10 border-t border-primary/2 ${pathname.includes('/admin') ? 'hidden' : ''}`}>
             <section className="mx-auto container ">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Logo & Description */}

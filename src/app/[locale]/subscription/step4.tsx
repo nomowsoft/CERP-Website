@@ -9,7 +9,7 @@ interface PaymentStepProps {
   onChange: (data: Partial<SubscriptionFormData>) => void;
 }
 
-const PaymentStep = ({ data, onChange }: PaymentStepProps) => {
+const Step4 = ({ data, onChange }: PaymentStepProps) => {
   const t = useTranslations('subscription.payment');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,9 +163,9 @@ const PaymentStep = ({ data, onChange }: PaymentStepProps) => {
               <span className="text-sm font-doto2">{t('uploadReceiptPlaceholder')}</span>
             </div>
 
-            {data.licenseFile && (
+            {data.bankReceiptFile && (
               <p className="text-sm text-muted-foreground mt-2">
-                {t('fileSelected')} {data.licenseFile.name}
+                {t('fileSelected')} {data.bankReceiptFile.name}
               </p>
             )}
           </div>
@@ -175,4 +175,4 @@ const PaymentStep = ({ data, onChange }: PaymentStepProps) => {
   );
 };
 
-export default PaymentStep;
+export default Step4;

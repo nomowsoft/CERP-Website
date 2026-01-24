@@ -18,6 +18,19 @@ export type Programs = {
     nameKey: string,
     descKey: string
 }
+
+//token  DTO
+export type JWTUserPayload = {
+    id: string;
+    email: string;
+};
+
+export type JWTPayload = {
+    id: number;
+    email: string | null;
+}
+
+//User  DTO
 export type RegisterUserDTO = {
     email: string,
     password: string,
@@ -38,28 +51,54 @@ export type UpdateUserDTO = {
     charityname?: string
 }
 
-export type JWTUserPayload = {
-    id: string;
-    email: string;
-};
-
-export type JWTPayload = {
-    id: number;
-    email: string | null;
-}
-
-
-export type UserDashbord = {   
+export type UserDashbord = {
     id: number;
     email: string;
     name: string;
     createdAt: string;
     charityName: string;
+    role: string;
 }
 
+//Subscription DTO
+type DomainType = 'SUBDOMAIN' | 'CUSTOM_DOMAIN';
+type PaymentMethod = 'ONLINE' | 'BANK';
+type State = 'DRAFT' | 'PROGRES' | 'DONE' | 'CANCEL';
+
+export type CreateSubscriptionDTO = {
+    fullName: string;
+    email: string;
+    phone: string;
+    charityRegisterNo: string;
+    licenseFile: string;
+    domainType: DomainType;
+    domainName?: string;
+    paymentMethod: PaymentMethod;
+    cardNumber?: string;
+    cardHolderName?: string;
+    cardExpiryDate?: string;
+    cardCVV?: string;
+    bankReceipt?: string;
+    state?: State
+};
+
+export type SubscriptionDTO = CreateSubscriptionDTO & {
+    id: number;
+    userId: number;
+    createdAt: string;
+    updatedAt: string;
+};
+
+//redux DTO
 export type UserState = {
     userInfo: UserDashbord | any;
     loading: boolean;
     error: string | null;
     isAuthenticated: boolean;
+}
+
+export type subscriptionState = {
+    subscriptionInfo: SubscriptionDTO | any;
+    loading: boolean;
+    error: string | null;
 }

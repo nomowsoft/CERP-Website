@@ -36,8 +36,8 @@ export default function AdminSidebar() {
 
     const navItems = [
         { label: "لوحة المعلومات", href: '/admin', icon: LayoutDashboard },
-        { label: "الفواتير", href: '/admin/websites', icon: Globe },
-        { label: "الإشتراكات", href: '/admin/pages', icon: FileText },
+        { label: "الفواتير", href: '/admin/invoice', icon: Globe },
+        { label: "الإشتراكات", href: '/admin/subscription', icon: FileText },
         { label: "الإعدادات", href: '/admin/menus', icon: MenuIcon },
     ];
 

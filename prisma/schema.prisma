@@ -20,14 +20,61 @@ enum Role {
   VIEWER
 }
 
+enum DomainType {
+  SUBDOMAIN
+  CUSTOM_DOMAIN
+}
+
+enum PaymentMethod {
+  ONLINE
+  BANK
+}
+enum Status {
+  DRAFT
+  PROGRES
+  DONE
+  CANCEL
+}
+
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String?  @unique
-  password    String
-  name        String?
-  charityName String?
-  phone       String?  @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  role        Role     @default(ADMIN)
+  id            Int            @id @default(autoincrement())
+  email         String?        @unique
+  password      String
+  name          String?
+  charityName   String?
+  phone         String?        @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  role          Role           @default(ADMIN)
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName String
+  email    String
+  phone    String
+
+  charityRegisterNo String
+  licenseFile       String
+
+  domainType DomainType
+  domainName String?
+
+  paymentMethod PaymentMethod
+
+  cardNumber     String?
+  cardHolderName String?
+  cardExpiryDate String?
+  cardCVV        String?
+
+  bankReceipt String?
+  status Status
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

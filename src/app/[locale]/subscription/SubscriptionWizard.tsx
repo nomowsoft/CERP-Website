@@ -4,21 +4,27 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import StepIndicator from "./StepIndicator";
-import PersonalInfoStep from "./PersonalInfoStep";
-import AssociationDataStep from "./AssociationDataStep";
-import DomainSelectionStep from "./DomainSelectionStep";
-import PaymentStep from "./PaymentStep";
+import Step1 from "./step1";
+import Step2 from "./step2";
+import Step3 from "./step3";
+import Step4 from "./step4";
 import { SubscriptionFormData, initialFormData } from "@/utils/subscription";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { Schemastep1, Schemastep2, Schemastep3Subdomain, Schemastep3customdomain, Schemastep4bank } from "@/utils/validiton";
+import { toast } from 'react-toastify';
+
 
 interface SubscriptionWizardProps {
   onSubmit?: (data: SubscriptionFormData) => Promise<void>;
 }
 
 const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
+  const router = useRouter();
   const t = useTranslations('subscription');
   const locale = useLocale();
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const steps = [
     { id: 1, label: t('steps.personalInfo') },
@@ -36,7 +42,64 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
 
   const handleNext = () => {
     if (currentStep < steps.length) {
-      setCurrentStep((prev) => prev + 1);
+      if (currentStep == 1) {
+        const validation = Schemastep1.safeParse(formData);
+        if (!validation.success) {
+          const errors = validation.error.flatten().fieldErrors;
+          const firstError = Object.values(errors)
+            .flat()
+            .find(Boolean);
+          if (firstError) {
+            toast.error(firstError);
+          }
+          return;
+        }
+        setCurrentStep((prev) => prev + 1);
+      }
+      if (currentStep == 2) {
+        const validation = Schemastep2.safeParse(formData);
+        if (!validation.success) {
+          const errors = validation.error.flatten().fieldErrors;
+          const firstError = Object.values(errors)
+            .flat()
+            .find(Boolean);
+          if (firstError) {
+            toast.error(firstError);
+          }
+          return;
+        }
+        setCurrentStep((prev) => prev + 1);
+      }
+      if (currentStep == 3) {
+        if (formData.domainType === "subdomain") {
+          const validation = Schemastep3Subdomain.safeParse(formData);
+          if (!validation.success) {
+            const errors = validation.error.flatten().fieldErrors;
+            const firstError = Object.values(errors)
+              .flat()
+              .find(Boolean);
+            if (firstError) {
+              toast.error(firstError);
+            }
+            return;
+          }
+          setCurrentStep((prev) => prev + 1);
+        }
+        if (formData.domainType === "custom") {
+          const validation = Schemastep3customdomain.safeParse(formData);
+          if (!validation.success) {
+            const errors = validation.error.flatten().fieldErrors;
+            const firstError = Object.values(errors)
+              .flat()
+              .find(Boolean);
+            if (firstError) {
+              toast.error(firstError);
+            }
+            return;
+          }
+          setCurrentStep((prev) => prev + 1);
+        }
+      }
     }
   };
 
@@ -47,28 +110,53 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   };
 
   const handleSubmit = async () => {
+    // Final Validation
+    const validation = Schemastep4bank.safeParse(formData);
+    if (!validation.success) {
+      const errors = validation.error.flatten().fieldErrors;
+      const firstError = Object.values(errors).flat().find(Boolean);
+      if (firstError) toast.error(firstError);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      if (onSubmit) {
-        await onSubmit(formData);
-      } else {
-        // Default behavior without API
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        console.log("Form submitted:", formData);
+      // Helper function to convert File to Base64
+      const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = (error) => reject(error);
+        });
+      };
+
+      // Prepare payload (convert Files to Base64 strings)
+      const payload: any = { ...formData };
+      if (formData.licenseFile instanceof File) {
+        payload.licenseFile = await fileToBase64(formData.licenseFile);
+      }
+      if (formData.bankReceiptFile instanceof File) {
+        payload.bankReceiptFile = await fileToBase64(formData.bankReceiptFile);
       }
 
-      toast({
-        title: t('messages.successTitle'),
-        description: formData.paymentMethod === 'electronic'
+      const response = await axios.post('/api/subscription', payload);
+
+      toast.success(
+        formData.paymentMethod === 'electronic'
           ? t('messages.paymentSuccessDesc')
-          : t('messages.orderConfirmDesc'),
-      });
-    } catch (error) {
-      toast({
-        title: t('messages.errorTitle'),
-        description: t('messages.errorDesc'),
-        variant: "destructive",
-      });
+          : t('messages.orderConfirmDesc')
+      );
+
+      // Redirect or show success state
+      setTimeout(() => {
+        router.push(`/${locale}`);
+      }, 3000);
+
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      const message = error.response?.data?.message || (locale === 'ar' ? 'حدث خطأ أثناء تقديم الاشتراك' : 'Error submitting subscription');
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -77,13 +165,13 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <PersonalInfoStep data={formData} onChange={handleDataChange} />;
+        return <Step1 data={formData} onChange={handleDataChange} />;
       case 2:
-        return <AssociationDataStep data={formData} onChange={handleDataChange} />;
+        return <Step2 data={formData} onChange={handleDataChange} />;
       case 3:
-        return <DomainSelectionStep data={formData} onChange={handleDataChange} />;
+        return <Step3 data={formData} onChange={handleDataChange} />;
       case 4:
-        return <PaymentStep data={formData} onChange={handleDataChange} />;
+        return <Step4 data={formData} onChange={handleDataChange} />;
       default:
         return null;
     }

@@ -9,9 +9,8 @@ interface PersonalInfoStepProps {
   onChange: (data: Partial<SubscriptionFormData>) => void;
 }
 
-const PersonalInfoStep = ({ data, onChange }: PersonalInfoStepProps) => {
+const Step1 = ({ data, onChange }: PersonalInfoStepProps) => {
   const t = useTranslations('subscription.personalInfo');
-
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold font-doto mb-6">
@@ -69,4 +68,4 @@ const PersonalInfoStep = ({ data, onChange }: PersonalInfoStepProps) => {
   );
 };
 
-export default PersonalInfoStep;
+export default Step1;
