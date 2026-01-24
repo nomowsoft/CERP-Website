@@ -17,17 +17,18 @@ import { UserDashbord } from '@/utils/types';
 export async function POST(request: NextRequest) {
     try {
         const userFromToken = verifyToken(request);
-    
+
         if (!userFromToken) {
-            return NextResponse.json({ message: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
         const body = await request.json() as SubscriptionDTO;
+        console.log(body)
         const validation = SubscriptionSchema.safeParse(body);
-        if (!validation.success) {
-            return NextResponse.json({ message: validation.error.message }, { status: 400 });
-        }
-        if (!body.cardCVV) {
+        // if (!validation.success) {
+        //     return NextResponse.json({ message: validation.error.message }, { status: 400 });
+        // }
+        if (!body.cardCVV && body.paymentMethod === 'ONLINE') {
             return NextResponse.json({ message: "CVV is required" }, { status: 400 });
         }
         const salt = await bcrypt.genSalt(10);
@@ -35,9 +36,10 @@ export async function POST(request: NextRequest) {
         let hashedCVV: string | null = null;
         if (body.paymentMethod === "ONLINE") {
             if (!body.cardNumber || !body.cardCVV) {
+                console.log("sdfsdfsdf")
                 return NextResponse.json(
-                { message: "Card details are required for online payment" },
-                { status: 400 }
+                    { message: "Card details are required for online payment" },
+                    { status: 400 }
                 );
             }
 
@@ -76,7 +78,7 @@ export async function POST(request: NextRequest) {
                 bankReceipt: true,
             }
         });
-        return NextResponse.json({ ...newSubscription, message: "Subscription Successfully" }, { status: 201,});
+        return NextResponse.json({ ...newSubscription, message: "Subscription Successfully" }, { status: 201, });
     }
     catch (error) {
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
@@ -95,25 +97,36 @@ export async function GET(request: NextRequest) {
     try {
         const userFromToken = verifyToken(request);
         if (!userFromToken) {
-            return NextResponse.json({ message: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
         const user = await prisma.user.findUnique({
-            where:{ id: userFromToken.id },
-            select: { 
+            where: { id: userFromToken.id },
+            select: {
                 id: true,
                 role: true,
             }
         }) as UserDashbord;
-        
-        const subscription = await prisma.subscription.findMany({});
 
+        let subscription;
+        if (user.role === 'ADMIN') {
+            subscription = await prisma.subscription.findMany({
+                include: { user: { select: { name: true, email: true } } }
+            });
+        } else {
+            subscription = await prisma.subscription.findMany({
+                where: {
+                    userId: user.id,
+                },
+            });
+        }
         if (!subscription) {
             return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
         }
         if ((userFromToken !== null && userFromToken.id === user.id) || user.role === 'ADMIN') {
-             const cleanSubscriptions = subscription.map(
+            const cleanSubscriptions = subscription.map(
                 ({ cardNumber, cardCVV, ...rest }) => rest
             );
+            console.log(cleanSubscriptions)
             return NextResponse.json(cleanSubscriptions, { status: 200 });
         }
 

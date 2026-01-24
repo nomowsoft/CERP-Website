@@ -15,111 +15,116 @@ type Props = {
  * @access private (to be implemented only user him self delete his profile)
  */
 
+
 export async function DELETE(request: NextRequest, { params }: Props) {
     try {
         const { id } = await params;
-        const user = await prisma.user.findUnique({where: { id: parseInt(id) }});
+        const userFromToken = verifyToken(request);
+        if (!userFromToken) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
 
-        if (!user) {
+        const adminUser = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        const targetUser = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+
+        if (!targetUser) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        const JwtToken = request.cookies.get("jwtToken")?.value as string;
-        if(!JwtToken) {
-            return NextResponse.json({ message: 'not token provider, message from delete profile' }, { status: 401 });
-        }
-        const userFromToken = verifyToken(request);
-
-        if (userFromToken !== null && userFromToken.id === user.id) {
-            await prisma.user.delete({where: { id: parseInt(id) }});
+        // Allow if it's the user themselves OR if they are an ADMIN
+        if (userFromToken.id === targetUser.id || adminUser?.role === 'ADMIN') {
+            await prisma.user.delete({ where: { id: parseInt(id) } });
             return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
         }
 
-        return NextResponse.json({ message: 'only user can delete his profile' }, { status: 403 });
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
 
     } catch (error) {
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
 
-/**
- * @method GET
- * @route ~/api/users/profile/:id
- * @desc Get user profile by ID
- * @access private (to be implemented only user him self delete his profile)
- */
-
 export async function GET(request: NextRequest, { params }: Props) {
     try {
         const { id } = await params;
-        const user = await prisma.user.findUnique({
-            where:{ id: parseInt(id) },
+        const userFromToken = verifyToken(request);
+        if (!userFromToken) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        const adminUser = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        const targetUser = await prisma.user.findUnique({
+            where: { id: parseInt(id) },
             select: {
                 id: true,
                 email: true,
                 name: true,
                 createdAt: true,
                 role: true,
+                phone: true,
+                charityName: true,
             }
         });
 
-        if (!user) {
+        if (!targetUser) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        const authToken = request.headers.get('authtoken') as string;
-
-        const userFromToken = verifyToken(request);
-
-        if (userFromToken === null || userFromToken.id !== user.id) {
-            return NextResponse.json({ message: 'you are not allowed, access denied' }, { status: 403 });
+        if (userFromToken.id === targetUser.id || adminUser?.role === 'ADMIN') {
+            return NextResponse.json(targetUser, { status: 200 });
         }
 
-        return NextResponse.json(user, { status: 200 });
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
 
     } catch (error) {
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
 
-/**
- * @method PUT
- * @route ~/api/users/profile/:id
- * @desc update user profile by ID
- * @access private (to be implemented only user him self delete his profile)
- */
-
 export async function PUT(request: NextRequest, { params }: Props) {
     try {
         const { id } = await params;
-        const user = await prisma.user.findUnique({where: { id: parseInt(id) }});
+        const userFromToken = verifyToken(request);
+        if (!userFromToken) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
 
-        if (!user) {
+        const adminUser = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        const targetUser = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+
+        if (!targetUser) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        const userFromToken = verifyToken(request);
-
-        if (userFromToken === null || userFromToken.id !== user.id) {
-            return NextResponse.json({ message: 'you are not allowed, access denied' }, { status: 403 });
-        }
-        const body = await request.json() as UpdateUserDTO;
-        if (body.password) {
-            const salt = await bcrypt.genSalt(10);
-            body.password = await bcrypt.hash(body.password, salt);
-        }
-        const updatedUser = await prisma.user.update({
-            where: { id: parseInt(id) },
-            data: {
+        if (userFromToken.id === targetUser.id || adminUser?.role === 'ADMIN') {
+            const body = await request.json() as UpdateUserDTO & { role?: string };
+            const dataToUpdate: any = {
                 name: body.name,
                 email: body.email,
                 phone: body.phone,
-                password: body.password
-            },
-        });
-        const { password, ...other } = updatedUser;
+                charityName: body.charityName,
+            };
 
-        return NextResponse.json(other, { status: 200 });
+            if (body.password) {
+                const salt = await bcrypt.genSalt(10);
+                dataToUpdate.password = await bcrypt.hash(body.password, salt);
+            }
+
+            // Only ADMIN can change roles
+            if (body.role && adminUser?.role === 'ADMIN') {
+                dataToUpdate.role = body.role;
+            }
+
+            const updatedUser = await prisma.user.update({
+                where: { id: parseInt(id) },
+                data: dataToUpdate,
+            });
+
+            const { password, ...other } = updatedUser;
+            return NextResponse.json(other, { status: 200 });
+        }
+
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
 
     } catch (error) {
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

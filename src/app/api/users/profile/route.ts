@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         createdAt: true,
         role: true,
         charityName: true,
+        phone: true,
       },
     });
 

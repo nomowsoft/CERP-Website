@@ -29,17 +29,17 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Electronic Payment */}
         <div
-          onClick={() => onChange({ paymentMethod: 'electronic' })}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.paymentMethod === 'electronic'
+          onClick={() => onChange({ paymentMethod: 'ONLINE' })}
+          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.paymentMethod === 'ONLINE'
               ? 'border-secondary bg-secondary/5 shadow-md'
               : 'border-primary hover:border-primary/50'
             }`}
         >
           <div className="flex flex-col items-center text-center">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.paymentMethod === 'electronic' ? 'bg-accent' : 'bg-muted'
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.paymentMethod === 'ONLINE' ? 'bg-accent' : 'bg-muted'
               }`}>
-              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.paymentMethod === 'electronic' ? 'bg-secondary' : 'bg-primary'}`}>
-                <CreditCard className={`w-7 h-7 ${data.paymentMethod === 'electronic' ? 'text-info' : 'text-info'
+              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.paymentMethod === 'ONLINE' ? 'bg-secondary' : 'bg-primary'}`}>
+                <CreditCard className={`w-7 h-7 ${data.paymentMethod === 'ONLINE' ? 'text-info' : 'text-info'
                   }`} />
               </div>
             </div>
@@ -52,17 +52,17 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
 
         {/* Bank Transfer */}
         <div
-          onClick={() => onChange({ paymentMethod: 'bank' })}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.paymentMethod === 'bank'
+          onClick={() => onChange({ paymentMethod: 'BANK' })}
+          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.paymentMethod === 'BANK'
               ? 'border-secondary bg-secondary/5 shadow-md'
               : 'border-primary hover:border-primary/50'
             }`}
         >
           <div className="flex flex-col items-center text-center">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.paymentMethod === 'bank' ? 'bg-accent' : 'bg-muted'
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.paymentMethod === 'BANK' ? 'bg-accent' : 'bg-muted'
               }`}>
-              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.paymentMethod === 'bank' ? 'bg-secondary' : 'bg-primary'}`}>
-                <Building className={`w-7 h-7 ${data.paymentMethod === 'bank' ? 'text-info' : 'text-info'
+              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.paymentMethod === 'BANK' ? 'bg-secondary' : 'bg-primary'}`}>
+                <Building className={`w-7 h-7 ${data.paymentMethod === 'BANK' ? 'text-info' : 'text-info'
                   }`} />
               </div>
             </div>
@@ -75,7 +75,7 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
       </div>
 
       {/* Payment Form */}
-      {data.paymentMethod === 'electronic' ? (
+      {data.paymentMethod === 'ONLINE' ? (
         <div className="space-y-4 mt-6 p-6 bg-muted/30 rounded-xl">
           <h3 className="font-doto2 text-xl mb-4">{t('cardDetailsTitle')}</h3>
 
@@ -165,7 +165,7 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
 
             {data.bankReceiptFile && (
               <p className="text-sm text-muted-foreground mt-2">
-                {t('fileSelected')} {data.bankReceiptFile.name}
+                {data.bankReceiptFile.name}
               </p>
             )}
           </div>

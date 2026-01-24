@@ -32,14 +32,14 @@ export default async function RootLayout({ children, params }: { children: React
       </head>
       <body className="font-tajawalregular font-bold">
         <NextIntlClientProvider messages={messages}>
-          <Header />
           <ReduxProvider>
-            <main>
-              {children}
-              <ToastContainer />
-            </main>
-          </ReduxProvider>
-          <Footer />
+            <Header />
+              <main>
+                {children}
+                <ToastContainer />
+              </main>
+            <Footer />
+          </ReduxProvider>  
           <div className={`fixed bottom-20 ${locale === "ar" ? "left-8" : "right-8"} z-50`}>
             <Link href="https://wa.me/+9660537802802" target="_blank" className="block lg:hidden">
               <Image src="/footer/whatsapp.png" alt="..." width={60} height={20} />

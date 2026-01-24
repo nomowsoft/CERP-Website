@@ -20,25 +20,25 @@ export async function DELETE(request: NextRequest, { params }: Props) {
     try {
         const userFromToken = verifyToken(request);
         const { id } = await params;
-    
+
         if (!userFromToken) {
-            return NextResponse.json({ message: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
         const user = await prisma.user.findUnique({
-            where:{ id: userFromToken.id },
-            select: { 
+            where: { id: userFromToken.id },
+            select: {
                 id: true,
                 role: true,
             }
         }) as UserDashbord;
-        
-        const subscription = await prisma.subscription.findUnique({where: { id: parseInt(id) }});
+
+        const subscription = await prisma.subscription.findUnique({ where: { id: parseInt(id) } });
 
         if (!subscription) {
             return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
         }
         if ((userFromToken !== null && userFromToken.id === user.id) || user.role === 'ADMIN') {
-            await prisma.subscription.delete({where: { id: parseInt(id) }});
+            await prisma.subscription.delete({ where: { id: parseInt(id) } });
             return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
         }
 
@@ -60,19 +60,19 @@ export async function GET(request: NextRequest, { params }: Props) {
     try {
         const userFromToken = verifyToken(request);
         const { id } = await params;
-    
+
         if (!userFromToken) {
-            return NextResponse.json({ message: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
         const user = await prisma.user.findUnique({
-            where:{ id: userFromToken.id },
-            select: { 
+            where: { id: userFromToken.id },
+            select: {
                 id: true,
                 role: true,
             }
         }) as UserDashbord;
-        
-        const subscription = await prisma.subscription.findUnique({where: { id: parseInt(id) }});
+
+        const subscription = await prisma.subscription.findUnique({ where: { id: parseInt(id) } });
 
         if (!subscription) {
             return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
@@ -100,26 +100,27 @@ export async function PUT(request: NextRequest, { params }: Props) {
     try {
         const userFromToken = verifyToken(request);
         const { id } = await params;
-    
+
         if (!userFromToken) {
-            return NextResponse.json({ message: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
         const user = await prisma.user.findUnique({
-            where:{ id: userFromToken.id },
-            select: { 
+            where: { id: userFromToken.id },
+            select: {
                 id: true,
                 role: true,
             }
         }) as UserDashbord;
-        
-        const subscription = await prisma.subscription.findUnique({where: { id: parseInt(id) }});
-        
+
+        const subscription = await prisma.subscription.findUnique({ where: { id: parseInt(id) } });
+
         if (!subscription) {
             return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
         }
         const body = await request.json() as SubscriptionDTO;
-        
+
         if ((userFromToken !== null && userFromToken.id === user.id) || user.role === 'ADMIN') {
+            const statusToUse = user.role === 'ADMIN' ? (body.status || subscription.status) : subscription.status;
             const UpdateSubscription = await prisma.subscription.update({
                 where: { id: parseInt(id) },
                 data: {
@@ -135,6 +136,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     cardHolderName: body.cardHolderName,
                     cardExpiryDate: body.cardExpiryDate,
                     bankReceipt: body.bankReceipt,
+                    status: statusToUse, // Use the determined status
                 },
             });
             const { cardCVV, cardNumber, ...other } = UpdateSubscription;

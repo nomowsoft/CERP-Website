@@ -9,12 +9,12 @@ export interface SubscriptionFormData {
   licenseFile?: File;
   
   // اختيار النطاق
-  domainType: 'subdomain' | 'custom';
+  domainType: 'SUBDOMAIN' | 'CUSTOM_DOMAIN';
   subdomain: string;
   customDomain: string;
   
   // الدفع
-  paymentMethod: 'electronic' | 'bank';
+  paymentMethod: 'ONLINE' | 'BANK';
   cardNumber: string;
   cardHolder: string;
   expiryDate: string;
@@ -27,10 +27,10 @@ export const initialFormData: SubscriptionFormData = {
   email: '',
   phone: '',
   charityRegisterNo: '',
-  domainType: 'subdomain',
+  domainType: 'SUBDOMAIN',
   subdomain: '',
   customDomain: '',
-  paymentMethod: 'electronic',
+  paymentMethod: 'ONLINE',
   cardNumber: '',
   cardHolder: '',
   expiryDate: '',

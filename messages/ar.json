@@ -247,7 +247,8 @@
       "next": "التالي",
       "processing": "جاري المعالجة...",
       "completePayment": "إتمام الدفع",
-      "confirmOrder": "تأكيد الطلب"
+      "confirmOrder": "تأكيد الطلب",
+      "returnToDraft": "الرجوع الي المسودة"
     },
     "messages": {
       "successTitle": "تم بنجاح!",
@@ -294,5 +295,86 @@
       "uploadBankReceiptTitle": "رفع الإيصال البنكي",
       "uploadReceiptPlaceholder": "اختر ملف الإيصال"
     }
+  },
+  "dashboard": {
+    "title": "لوحة المعلومات",
+    "subtitle": "نظرة عامة على لوحة المعلومات",
+    "hideSidebar": "إخفاء القائمة",
+    "showSidebar": "إظهار القائمة",
+    "logout": "تسجيل الخروج",
+    "nav": {
+      "dashboard": "لوحة المعلومات",
+      "invoices": "الفواتير",
+      "subscriptions": "الإشتراكات",
+      "settings": "الإعدادات",
+      "users": "المستخدمين"
+    },
+    "stats": {
+      "activeSubscriptions": "الأشتراكات النشطة",
+      "basicPlan": "الباقة الأساسية",
+      "activeUntil": "نشط حتى",
+      "totalInvoices": "إجمالي الفواتير",
+      "paidPending": "{paid} مدفوعه ، {pending} في الإنتظار",
+      "nextPayment": "الدفع القادم",
+      "currency": "ر.س"
+    },
+    "invoices": {
+      "latestInvoices": "الفواتير الأخيرة",
+      "viewAll": "عرض جميع الفواتير",
+      "invoiceNumber": "رقم الفاتورة",
+      "date": "التاريخ",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "pending": "انتظار الدفع",
+      "suspended": "معلقة",
+      "paid": "مدفوعه"
+    },
+    "common": {
+      "details": "تفاصيل الإشتراك",
+      "currentInfo": "عرض معلومات الإشتراك الحالي",
+      "allInvoices": "جميع الفواتير",
+      "browseDownload": "استعرض وحمل الفواتير الخاصة بك.",
+      "confirmDelete": "تأكيد الحذف",
+      "deleteWarning": "هل أنت متأكد من رغبتك في حذف هذا الإشتراك؟ لا يمكن التراجع عن هذا الإجراء.",
+      "yesDelete": "نعم، حذف",
+      "cancel": "إلغاء",
+      "editSubscription": "تعديل بيانات الإشتراك",
+      "approval": "موافق",
+      "rejection": "رفض",
+      "draft": "مسودة",
+      "inProgress": "تحت التنفيذ",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "returnToDraft": "إعادة للمسودة"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "إدارة المستخدمين",
+      "subtitle": "إدارة الصلاحيات والحسابات في النظام"
+    }
+  },
+  "settings": {
+    "title": "إعدادات الحساب",
+    "subtitle": "إدارة معلوماتك الشخصية وإعدادات مؤسستك",
+    "profile": "الملف الشخصي",
+    "organization": "المؤسسة",
+    "security": "الأمان",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "charityName": "اسم الجمعية",
+    "saveChanges": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "successUpdate": "تم تحديث البيانات بنجاح",
+    "errorUpdate": "فشل تحديث البيانات",
+    "loading": "جاري التحميل...",
+    "changePassword": "تغيير كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "personalInfo": "المعلومات الشخصية",
+    "orgInfo": "معلومات الجمعية",
+    "passwordHint": "حماية حسابك تبدأ من كلمة مرور قوية. ننصح باستخدام مزيج من الحروف الكبيرة والصغيرة والأرقام والرموز الخاصة.",
+    "passwordMismatch": "كلمات المرور غير متطابقة"
   }
 }

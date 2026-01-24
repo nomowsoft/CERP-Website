@@ -1,5 +1,5 @@
 
-import AdminSidebar from "./AdminSidebar";
+import DashboardWrapper from "./DashboardWrapper";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { verifyTokenForPage } from "@/utils/verifyToken";
@@ -21,11 +21,8 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex bg-white min-h-screen" dir={`${locale === "ar" ? "rtl" : "ltr"}`}>
-      <AdminSidebar />
-      <main className={`flex-1 p-8 ${locale === "ar" ? "ms-64" : "me-64"} transition-all bg-gray-400/10`}>
-        {children}
-      </main>
-    </div>
+    <DashboardWrapper>
+      {children}
+    </DashboardWrapper>
   );
 }

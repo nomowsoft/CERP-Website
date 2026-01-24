@@ -16,7 +16,6 @@ const RegisterForm = () => {
     const [charityName, setCharityName] = useState("");
     const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
-
     const formSubmitHandler = async (e: React.FormEvent) => {
         e.preventDefault();
         if (username === "") return toast.error("Username is required");

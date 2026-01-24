@@ -20,17 +20,17 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Subdomain Option */}
         <div
-          onClick={() => onChange({ domainType: 'subdomain' })}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.domainType === 'subdomain'
+          onClick={() => onChange({ domainType: 'SUBDOMAIN' })}
+          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.domainType === 'SUBDOMAIN'
               ? 'border-secondary bg-secondary/5 shadow-md'
               : 'border-primary hover:border-primary/50'
             }`}
         >
           <div className="flex flex-col items-center text-center">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.domainType === 'subdomain' ? 'bg-accent' : 'bg-muted'
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.domainType === 'SUBDOMAIN' ? 'bg-accent' : 'bg-muted'
               }`}>
-              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.domainType === 'subdomain' ? 'bg-secondary' : 'bg-primary'}`}>
-                <Globe className={`w-7 h-7 text-info ${data.domainType === 'subdomain' ? 'text-accent-foreground' : 'text-muted-foreground'
+              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.domainType === 'SUBDOMAIN' ? 'bg-secondary' : 'bg-primary'}`}>
+                <Globe className={`w-7 h-7 text-info ${data.domainType === 'SUBDOMAIN' ? 'text-accent-foreground' : 'text-muted-foreground'
                   }`} />
               </div>
             </div>
@@ -43,17 +43,17 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
 
         {/* Custom Domain Option */}
         <div
-          onClick={() => onChange({ domainType: 'custom' })}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.domainType === 'custom'
+          onClick={() => onChange({ domainType: 'CUSTOM_DOMAIN' })}
+          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.domainType === 'CUSTOM_DOMAIN'
               ? 'border-secondary bg-secondary/5 shadow-md'
               : 'border-primary hover:border-primary/50'
             }`}
         >
           <div className="flex flex-col items-center text-center">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.domainType === 'custom' ? 'bg-accent' : 'bg-muted'
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.domainType === 'CUSTOM_DOMAIN' ? 'bg-accent' : 'bg-muted'
               }`}>
-              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.domainType === 'custom' ? 'bg-secondary' : 'bg-primary'}`}>
-                <Link className={`w-7 h-7 ${data.domainType === 'custom' ? 'text-info' : 'text-info'
+              <div className={`h-15 w-15 flex justify-center items-center rounded-2xl ${data.domainType === 'CUSTOM_DOMAIN' ? 'bg-secondary' : 'bg-primary'}`}>
+                <Link className={`w-7 h-7 ${data.domainType === 'CUSTOM_DOMAIN' ? 'text-info' : 'text-info'
                   }`} />
               </div>
             </div>
@@ -67,7 +67,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
 
       {/* Domain Input */}
       <div className="space-y-2 mt-6">
-        {data.domainType === 'subdomain' ? (
+        {data.domainType === 'SUBDOMAIN' ? (
           <div className="space-y-2">
             <Label htmlFor="subdomain" className="font-doto2">{t('subdomainLabel')}</Label>
             <div className="flex items-center gap-2" dir="ltr">

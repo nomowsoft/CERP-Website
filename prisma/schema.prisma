@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -34,6 +28,12 @@ enum Status {
   PROGRES
   DONE
   CANCEL
+}
+
+enum PackageType {
+  STARTER
+  BUSINESS
+  ENTERPRISE
 }
 
 model User {
@@ -77,4 +77,39 @@ model Subscription {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Package {
+  id          Int              @id @default(autoincrement())
+  image       String
+  name        String
+  type        PackageType
+  description String
+  features    PackageFeature[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model PackageFeature {
+  id        Int     @id @default(autoincrement())
+  text      String
+  packageId Int
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+}
+
+model Service {
+  id          Int           @id @default(autoincrement())
+  image       String
+  name        String
+  description String
+  contents    ServiceType[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model ServiceType {
+  id        Int     @id @default(autoincrement())
+  name      String
+  serviceId Int
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }

@@ -48,13 +48,14 @@ export type UpdateUserDTO = {
     password?: string,
     name?: string,
     phone?: string,
-    charityname?: string
+    charityName?: string
 }
 
 export type UserDashbord = {
     id: number;
     email: string;
     name: string;
+    phone: string;
     createdAt: string;
     charityName: string;
     role: string;
@@ -79,7 +80,7 @@ export type CreateSubscriptionDTO = {
     cardExpiryDate?: string;
     cardCVV?: string;
     bankReceipt?: string;
-    state?: State
+    status?: State
 };
 
 export type SubscriptionDTO = CreateSubscriptionDTO & {

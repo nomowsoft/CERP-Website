@@ -248,7 +248,8 @@
       "next": "Next",
       "processing": "Processing...",
       "completePayment": "Complete Payment",
-      "confirmOrder": "Confirm Order"
+      "confirmOrder": "Confirm Order",
+      "returnToDraft": "Return to Draft"
     },
     "messages": {
       "successTitle": "Success!",
@@ -295,5 +296,86 @@
       "uploadBankReceiptTitle": "Upload Bank Receipt",
       "uploadReceiptPlaceholder": "Choose receipt file"
     }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of the dashboard",
+    "hideSidebar": "Hide Sidebar",
+    "showSidebar": "Show Sidebar",
+    "logout": "Logout",
+    "nav": {
+      "dashboard": "Dashboard",
+      "invoices": "Invoices",
+      "subscriptions": "Subscriptions",
+      "settings": "Settings",
+      "users": "Users"
+    },
+    "stats": {
+      "activeSubscriptions": "Active Subscriptions",
+      "basicPlan": "Basic Plan",
+      "activeUntil": "Active until",
+      "totalInvoices": "Total Invoices",
+      "paidPending": "{paid} Paid , {pending} Pending",
+      "nextPayment": "Next Payment",
+      "currency": "SAR"
+    },
+    "invoices": {
+      "latestInvoices": "Latest Invoices",
+      "viewAll": "View All Invoices",
+      "invoiceNumber": "Invoice Number",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status",
+      "pending": "Pending Payment",
+      "suspended": "Suspended",
+      "paid": "Paid"
+    },
+    "common": {
+      "details": "Subscription Details",
+      "currentInfo": "View current subscription information",
+      "allInvoices": "All Invoices",
+      "browseDownload": "Browse and download your invoices.",
+      "confirmDelete": "Confirm Delete",
+      "deleteWarning": "Are you sure you want to delete this subscription? This action cannot be undone.",
+      "yesDelete": "Yes, Delete",
+      "cancel": "Cancel",
+      "editSubscription": "Edit Subscription Data",
+      "approval": "Approve",
+      "rejection": "Reject",
+      "draft": "Draft",
+      "inProgress": "In Progress",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "returnToDraft": "Return to Draft"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "Users Management",
+      "subtitle": "Manage roles and accounts in the system"
+    }
+  },
+  "settings": {
+    "title": "Account Settings",
+    "subtitle": "Manage your personal information and organization settings",
+    "profile": "Profile",
+    "organization": "Organization",
+    "security": "Security",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "charityName": "Organization Name",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "successUpdate": "Information updated successfully",
+    "errorUpdate": "Failed to update information",
+    "loading": "Loading...",
+    "changePassword": "Change Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "personalInfo": "Personal Information",
+    "orgInfo": "Organization Information",
+    "passwordHint": "Securing your account starts with a strong password. We recommend using a mix of uppercase, lowercase, numbers, and special symbols.",
+    "passwordMismatch": "Passwords do not match"
   }
 }

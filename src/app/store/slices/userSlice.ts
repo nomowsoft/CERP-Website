@@ -11,7 +11,7 @@ const initialState: UserState = {
     isAuthenticated: false,
 };
 
-export const getUser = createAsyncThunk<any,void,{ rejectValue: string }>(
+export const getUser = createAsyncThunk<any, void, { rejectValue: string }>(
     'user/getUser',
     async (_, { rejectWithValue, signal }) => {
         try {
@@ -41,6 +41,26 @@ export const logoutUser = createAsyncThunk(
             return true;
         } catch (error) {
             return rejectWithValue((error as Error).message);
+        }
+    }
+);
+
+export const updateUser = createAsyncThunk<any, { id: number, data: any }, { rejectValue: string }>(
+    'user/updateUser',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axios.put<any>(
+                `/api/users/profile/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error: any) {
+            if (axios.isAxiosError(error)) {
+                return rejectWithValue(
+                    error.response?.data?.message || 'Failed to update user'
+                );
+            }
+            return rejectWithValue('Unexpected error occurred');
         }
     }
 );
@@ -80,6 +100,18 @@ const UserSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
                 state.isAuthenticated = true;
+            })
+            .addCase(updateUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userInfo = action.payload;
+            })
+            .addCase(updateUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
             });
     },
 });
