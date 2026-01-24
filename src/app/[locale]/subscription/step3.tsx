@@ -9,7 +9,7 @@ interface DomainSelectionStepProps {
   onChange: (data: Partial<SubscriptionFormData>) => void;
 }
 
-const DomainSelectionStep = ({ data, onChange }: DomainSelectionStepProps) => {
+const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
   const t = useTranslations('subscription.domainSelection');
   return (
     <div className="space-y-6">
@@ -99,4 +99,4 @@ const DomainSelectionStep = ({ data, onChange }: DomainSelectionStepProps) => {
   );
 };
 
-export default DomainSelectionStep;
+export default Step3;

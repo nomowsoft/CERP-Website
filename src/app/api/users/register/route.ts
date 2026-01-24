@@ -36,8 +36,6 @@ export async function POST(request: NextRequest) {
         if (!body.password) {
             return NextResponse.json({ message: "Password is required" }, { status: 400 });
         }
-        console.log(body);
-        console.log(body.password, body.confirmPassword);
         if (body.password != body.confirmPassword) {
             return NextResponse.json({ message: "Passwords do not match" }, { status: 400 });
         }

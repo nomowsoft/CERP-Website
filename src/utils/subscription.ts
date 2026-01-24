@@ -5,8 +5,7 @@ export interface SubscriptionFormData {
   phone: string;
   
   // بيانات الجمعية
-  associationNumber: string;
-  license: string;
+  charityRegisterNo: string;
   licenseFile?: File;
   
   // اختيار النطاق
@@ -27,8 +26,7 @@ export const initialFormData: SubscriptionFormData = {
   fullName: '',
   email: '',
   phone: '',
-  associationNumber: '',
-  license: '',
+  charityRegisterNo: '',
   domainType: 'subdomain',
   subdomain: '',
   customDomain: '',

@@ -44,15 +44,6 @@ const StepIndicator = ({ steps, currentStep }: StepIndicatorProps) => {
               {step.label}
             </span>
           </div>
-          
-          {/* Connector Line */}
-          {/* {index < steps.length - 1 && (
-            <hr
-              className={`w-16 md:w-24 h-0.5 -mt-5  transition-colors ${
-                currentStep > step.id ? "bg-primary" : ""
-              }`}
-            />
-          )} */}
         </div>
       ))}
     </div>

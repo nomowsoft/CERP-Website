@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
+import ReduxProvider from "@/app/store/ReduxProvider";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
 import { ToastContainer } from 'react-toastify';
@@ -25,24 +26,21 @@ export default async function RootLayout({ children, params }: { children: React
     notFound();
   }
   return (
-    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
+    <html lang={locale} dir={`${locale === "ar" ? "rtl" : "ltr"}`}>
       <head>
         <link rel="icon" href="/header/CERP.svg" />
       </head>
       <body className="font-tajawalregular font-bold">
         <NextIntlClientProvider messages={messages}>
           <Header />
-          <main>
-            {children}
-            <ToastContainer />
-          </main>
+          <ReduxProvider>
+            <main>
+              {children}
+              <ToastContainer />
+            </main>
+          </ReduxProvider>
           <Footer />
-          <div style={{
-            position: "fixed",
-            left: "2rem",
-            bottom: "5rem",
-            zIndex: 1000,
-          }}>
+          <div className={`fixed bottom-20 ${locale === "ar" ? "left-8" : "right-8"} z-50`}>
             <Link href="https://wa.me/+9660537802802" target="_blank" className="block lg:hidden">
               <Image src="/footer/whatsapp.png" alt="..." width={60} height={20} />
             </Link>

@@ -2,11 +2,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
     const t = useTranslations('footer');
+    const pathname = usePathname();
     return (
-        <footer className="bg-gray-100 pt-20 pb-10 border-t border-primary/20">
+        <footer className={`bg-gray-100 pt-20 pb-10 border-t border-primary/2 ${pathname.includes('/admin') ? 'hidden' : ''}`}>
             <section className="mx-auto container ">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Logo & Description */}
