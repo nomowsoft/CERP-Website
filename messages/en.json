@@ -3,7 +3,7 @@
     "contact": "Contact us",
     "openMainMenu": "Open main menu",
     "home": "Home",
-    "subscription": "Subscribe now"
+    "package_service": "Package & Serviec"
   },
   "hero": {
     "integratedSystem": "Integrated Saudi System",
@@ -267,7 +267,7 @@
     },
     "associationData": {
       "title": "Association Data",
-      "associationNumberLabel": "Association Registry Number",
+      "associationNumberLabel": "National Center License Number",
       "associationNumberPlaceholder": "Enter registry number",
       "licenseLabel": "Association License",
       "licensePlaceholder": "Enter license number",
@@ -308,7 +308,9 @@
       "invoices": "Invoices",
       "subscriptions": "Subscriptions",
       "settings": "Settings",
-      "users": "Users"
+      "users": "Users",
+      "packages": "Packages",
+      "services": "Services"
     },
     "stats": {
       "activeSubscriptions": "Active Subscriptions",

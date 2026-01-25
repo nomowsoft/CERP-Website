@@ -23,7 +23,6 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json() as SubscriptionDTO;
-        console.log(body)
         const validation = SubscriptionSchema.safeParse(body);
         // if (!validation.success) {
         //     return NextResponse.json({ message: validation.error.message }, { status: 400 });
@@ -36,7 +35,6 @@ export async function POST(request: NextRequest) {
         let hashedCVV: string | null = null;
         if (body.paymentMethod === "ONLINE") {
             if (!body.cardNumber || !body.cardCVV) {
-                console.log("sdfsdfsdf")
                 return NextResponse.json(
                     { message: "Card details are required for online payment" },
                     { status: 400 }
@@ -126,7 +124,6 @@ export async function GET(request: NextRequest) {
             const cleanSubscriptions = subscription.map(
                 ({ cardNumber, cardCVV, ...rest }) => rest
             );
-            console.log(cleanSubscriptions)
             return NextResponse.json(cleanSubscriptions, { status: 200 });
         }
 
@@ -136,4 +133,3 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
-

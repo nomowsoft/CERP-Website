@@ -183,9 +183,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     if (formData.bankReceiptFile instanceof File) {
       payload.bankReceiptFile = await fileToBase64(formData.bankReceiptFile);
     }
-    console.log("ahmed", payload)
     const response = await axios.post('/api/subscription', payload);
-    console.log(response)
 
     toast.success(
       formData.paymentMethod === 'ONLINE'

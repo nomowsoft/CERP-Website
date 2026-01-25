@@ -7,7 +7,9 @@ import {
     LogOut,
     X,
     Settings,
-    Users
+    Users,
+    Package,
+    Layers
 
 } from 'lucide-react';
 import { motion } from "framer-motion";
@@ -44,6 +46,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         { id: "invoice", label: t('nav.invoices'), href: '/admin/invoice', icon: Globe },
         { id: "subscription", label: t('nav.subscriptions'), href: '/admin/subscription', icon: FileText },
         { id: "users", label: t('nav.users' as any), href: '/admin/users', icon: Users, adminOnly: true },
+        { id: "packages", label: t('nav.packages' as any), href: '/admin/packages', icon: Package, adminOnly: true },
+        { id: "services", label: t('nav.services' as any), href: '/admin/services', icon: Layers, adminOnly: true },
         { id: "settings", label: t('nav.settings'), href: '/admin/settings', icon: Settings },
     ];
 
@@ -54,7 +58,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
             <div className="flex items-center justify-between px-6 pt-5 lg:block lg:text-center">
                 <Link href="/" className="text-4xl font-doto2 text-gray-700" >
                     <span>
-                        نظام 
+                        نظام
                     </span>
                     <span className="bg-gradient-to-l mx-1 from-primary/50 to-primary bg-clip-text text-transparent font-bold leading-tight py-1 inline-block">
                         سِرب
@@ -69,7 +73,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
             </div>
             <div className="p-4 text-center bg-info shadow-2xl m-5 rounded-3xl flex items-center">
                 <div>
-                    <Image src="/admin/user.svg" alt="..." width={100} height={50} />
+                    <Image src="/admin/user.svg" alt="..." width={80} height={50} />
                 </div>
                 <div className="w-40">
                     <h2 className="text-2xl font-bold  text-gray-700 ">

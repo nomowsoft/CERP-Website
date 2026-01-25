@@ -3,7 +3,7 @@
     "contact": "تواصل معنا",
     "openMainMenu": "فتح القائمة الرئيسية",
     "home": "الرئيسية",
-    "subscription": "اشترك الآن"
+    "package_service": "الباقات والخدمات"
   },
   "hero": {
     "integratedSystem": "نظام سعودي متكامل",
@@ -266,7 +266,7 @@
     },
     "associationData": {
       "title": "بيانات الجمعية",
-      "associationNumberLabel": "رقم سجل الجمعية",
+      "associationNumberLabel": "رقم ترخيص المركز الوطني",
       "associationNumberPlaceholder": "أدخل رقم السجل",
       "licenseLabel": "رخصة الجمعية",
       "licensePlaceholder": "أدخل رقم الرخصة",
@@ -307,7 +307,9 @@
       "invoices": "الفواتير",
       "subscriptions": "الإشتراكات",
       "settings": "الإعدادات",
-      "users": "المستخدمين"
+      "users": "المستخدمين",
+      "packages": "الباقات",
+      "services": "الخدمات"
     },
     "stats": {
       "activeSubscriptions": "الأشتراكات النشطة",
@@ -352,6 +354,14 @@
     "users": {
       "title": "إدارة المستخدمين",
       "subtitle": "إدارة الصلاحيات والحسابات في النظام"
+    },
+    "packages": {
+      "title": "إدارة الباقات",
+      "subtitle": "إضافة وتعديل باقات الاشتراك والمميزات"
+    },
+    "services": {
+      "title": "إدارة الخدمات",
+      "subtitle": "إدارة الخدمات المقدمة ومحتوياتها"
     }
   },
   "settings": {

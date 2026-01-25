@@ -1,3 +1,5 @@
+import { JSX } from "react/jsx-runtime";
+
 export type Program = {
     id: number;
     image: string;
@@ -102,4 +104,39 @@ export type subscriptionState = {
     subscriptionInfo: SubscriptionDTO | any;
     loading: boolean;
     error: string | null;
+}
+
+export type PackageFeturesDto = {
+    map(arg0: (feature: PackageFeturesDto) => JSX.Element): import("react").ReactNode;
+    id: number,
+    text: string
+    packageId: number
+}
+
+export type PackageDTO = {
+    id: number
+    image: string
+    name: string
+    type: string
+    description: string
+    features: PackageFeturesDto
+    createdAt: string
+    updatedAt: string
+}
+
+export type ServiceTypeDto = {
+    map(arg0: (content: ServiceTypeDto) => JSX.Element): import("react").ReactNode;
+    id: number,
+    name: string
+    serviceId: number
+}
+
+export type ServiceDTO = {
+    id: number
+    image: string
+    name: string
+    description: string
+    contents: ServiceTypeDto
+    createdAt: string
+    updatedAt: string
 }
