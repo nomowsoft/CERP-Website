@@ -58,10 +58,10 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
             <div className="flex items-center justify-between px-6 pt-5 lg:block lg:text-center">
                 <Link href="/" className="text-4xl font-doto2 text-gray-700" >
                     <span>
-                        نظام
+                        {t('systemName')}
                     </span>
                     <span className="bg-gradient-to-l mx-1 from-primary/50 to-primary bg-clip-text text-transparent font-bold leading-tight py-1 inline-block">
-                        سِرب
+                        {t('systemTitle')}
                     </span>
                 </Link>
                 <button
@@ -77,10 +77,10 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 </div>
                 <div className="w-40">
                     <h2 className="text-2xl font-bold  text-gray-700 ">
-                        {userInfo.name || (locale === 'ar' ? 'جاري التحميل...' : 'loading...')}
+                        {userInfo.name || t('loading')}
                     </h2>
                     <p className="text-gray-500 mt-2 truncate">
-                        {userInfo.charityName || (locale === 'ar' ? 'جاري التحميل...' : 'loading...')}
+                        {userInfo.charityName || t('loading')}
                     </p>
                 </div>
             </div>

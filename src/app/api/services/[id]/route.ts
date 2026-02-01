@@ -37,7 +37,11 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 where: { id: parseInt(id) },
                 data: {
                     name: body.name,
+                    name_en: body.name_en,
+                    name_ar: body.name_ar,
                     description: body.description,
+                    description_en: body.description_en,
+                    description_ar: body.description_ar,
                     image: body.image,
                 }
             });
@@ -49,6 +53,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     await tx.serviceType.createMany({
                         data: body.contents.map((c: any) => ({
                             name: typeof c === 'string' ? c : c.name,
+                            name_en: typeof c === 'object' ? c.name_en : '',
+                            name_ar: typeof c === 'object' ? c.name_ar : '',
                             serviceId: parseInt(id)
                         }))
                     });

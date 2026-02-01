@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getPackages } from '@/app/store/slices/packagesSlice';
 import { useEffect } from 'react';
 import { PackageDTO, PackageFeturesDto } from '@/utils/types';
-import { useLocale } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 
 export const Backages = () => {
     const locale = useLocale();
+    const t = useTranslations("programs");
+    const tHeader = useTranslations("header");
     const dispatch = useDispatch<AppDispatch>();
     useEffect(() => {
         dispatch(getPackages());
@@ -18,10 +20,10 @@ export const Backages = () => {
 
     const Packeges = useSelector((state: any) => state.packages.packages);
     return (
-        <section className="container md:mx-auto">
+        <section className="container md:mx-auto" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
             <div className="text-center my-10">
-                <h1 className="text-4xl font-doto2">الباقات</h1>
-                <p className="text-xl text-gray-500 mt-2">اختر الباقة التي تناسب حجم مؤسستك واحتياجاتك</p>
+                <h1 className="text-4xl font-doto2">{t('packages')}</h1>
+                <p className="text-xl text-gray-500 mt-2">{t('packagesSubtitle')}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:mx-0 mx-10">
                 {Packeges.map((packege: PackageDTO) => (
@@ -30,10 +32,10 @@ export const Backages = () => {
                             <div className="flex justify-center items-center">
                                 <Image src={packege.image} alt="" width={120} height={10} />
                             </div>
-                            <h1 className="font-doto2 text-2xl mt-5">{packege.name}</h1>
+                            <h1 className="font-doto2 text-2xl mt-5">{locale === 'en' ? packege.name_en || packege.name : packege.name_ar || packege.name}</h1>
                             <span className="text-lg text-gray-500">{packege.type}</span>
-                            <p className="py-4 text-xl text-gray-500">{packege.description}</p>
-                            <a className="text-primary text-xl">تواصل معنا</a>
+                            <p className="py-4 text-xl text-gray-500">{locale === 'en' ? packege.description_en || packege.description : packege.description_ar || packege.description}</p>
+                            <a className="text-primary text-xl" href={`/${locale}/contact-us`}>{tHeader('contact')}</a>
                             <ul className="text-start px-10 mt-10">
                                 {packege.features?.map((feature: PackageFeturesDto) => (
                                     <li key={feature.id}>
@@ -41,7 +43,7 @@ export const Backages = () => {
                                             <div className="flex items-center">
                                                 <Image src="/backage_service/Vector.svg" alt="" width={20} height={20} />
                                             </div>
-                                            <p className="text-lg text-gray-500 ps-2">{feature.text}</p>
+                                            <p className={`text-lg text-gray-500 ${locale === 'ar' ? 'pr-2' : 'pl-2'}`}>{locale === 'en' ? feature.text_en || feature.text : feature.text_ar || feature.text}</p>
                                         </div>
                                         <hr className="text-gray-300 my-3" />
                                     </li>
@@ -50,8 +52,8 @@ export const Backages = () => {
                         </div>
                         <div className="px-5 w-full">
                             <a href={`/${locale}/subscription`} className="bg-info my-5 flex justify-center mx- w-full border border-gray-200 rounded-2xl py-3 hover:text-info  hover:bg-primary text-xl font-doto2">
-                                <span>اشترك الأن</span>
-                                <ArrowLeft />
+                                <span>{t('subscribeNow')}</span>
+                                <ArrowLeft className={locale === 'ar' ? 'rotate-180' : ''} />
                             </a>
                         </div>
                     </div>

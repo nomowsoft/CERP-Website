@@ -5,8 +5,12 @@ export interface Service {
     id: number;
     image: string;
     name: string;
+    name_en: string;
+    name_ar: string;
     description: string;
-    contents: { id: number, name: string }[];
+    description_en: string;
+    description_ar: string;
+    contents: { id: number, name: string, name_en: string, name_ar: string }[];
     createdAt: string;
 }
 

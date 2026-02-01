@@ -71,20 +71,20 @@ export default function UsersManagement() {
         e.preventDefault();
         try {
             await dispatch(adminUpdateUser({ id: selectedUser.id, data: editData })).unwrap();
-            toast.success(isAr ? "تم تحديث المستخدم بنجاح" : "User updated successfully");
+            toast.success(t("updateSuccess"));
             setShowEditModal(false);
         } catch (error: any) {
-            toast.error(error || (isAr ? "فشل التحديث" : "Update failed"));
+            toast.error(error || t("updateError"));
         }
     };
 
     const confirmDelete = async () => {
         try {
             await dispatch(adminDeleteUser(selectedUser.id)).unwrap();
-            toast.success(isAr ? "تم حذف المستخدم" : "User deleted");
+            toast.success(t("deleteSuccess"));
             setShowDeleteModal(false);
         } catch (error: any) {
-            toast.error(error || (isAr ? "فشل الحذف" : "Deletion failed"));
+            toast.error(error || t("deleteError"));
         }
     };
 
@@ -98,8 +98,8 @@ export default function UsersManagement() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
                 <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
-                <h2 className="text-2xl font-bold text-gray-800">{isAr ? "وصول غير مصرح" : "Access Denied"}</h2>
-                <p className="text-gray-500">{isAr ? "هذه الصفحة للمدراء فقط" : "This page is for administrators only"}</p>
+                <h2 className="text-2xl font-bold text-gray-800">{t("accessDenied")}</h2>
+                <p className="text-gray-500">{t("adminOnly")}</p>
             </div>
         );
     }
@@ -114,10 +114,10 @@ export default function UsersManagement() {
                     </div>
                     <div>
                         <h2 className="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
-                            {isAr ? "إدارة المستخدمين" : "Users Management"}
+                            {t("title")}
                         </h2>
                         <p className="text-gray-500 mt-1 font-medium">
-                            {isAr ? "إدارة الصلاحيات والحسابات في النظام" : "Manage roles and accounts in the system"}
+                            {t("subtitle")}
                         </p>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ export default function UsersManagement() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={`py-6 ${isAr ? 'pr-12' : 'pl-12'} rounded-2xl bg-gray-50/50 border-none focus-visible:ring-2 focus-visible:ring-primary/20 font-bold transition-all`}
-                        placeholder={isAr ? "البحث بالاسم، البريد أو الهاتف..." : "Search by name, email or phone..."}
+                        placeholder={t("searchPlaceholder")}
                     />
                 </div>
             </div>
@@ -142,10 +142,10 @@ export default function UsersManagement() {
                     <table className="w-full text-start">
                         <thead>
                             <tr className="bg-gray-50/50 border-b border-gray-100">
-                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-start">{isAr ? "المستخدم" : "User"}</th>
-                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-start">{isAr ? "الصلاحية" : "Role"}</th>
-                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-start">{isAr ? "المنظمة" : "Organization"}</th>
-                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-center">{isAr ? "الإجراءات" : "Actions"}</th>
+                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-start">{t("userColumn")}</th>
+                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-start">{t("roleColumn")}</th>
+                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-start">{t("orgColumn")}</th>
+                                <th className="py-6 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-center">{t("actionsColumn")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -175,7 +175,7 @@ export default function UsersManagement() {
                                         </span>
                                     </td>
                                     <td className="py-6 px-8">
-                                        <div className="font-black text-gray-600">{user.charityName || (isAr ? "غير محدد" : "Not Set")}</div>
+                                        <div className="font-black text-gray-600">{user.charityName || t("notSet")}</div>
                                         <div className="text-xs text-gray-400 font-bold mt-1 flex items-center gap-1">
                                             <Phone className="w-3 h-3" />
                                             {user.phone}
@@ -224,11 +224,11 @@ export default function UsersManagement() {
                             exit={{ scale: 0.95, opacity: 0 }}
                             className="bg-white rounded-[3rem] shadow-2xl p-10 w-full max-w-xl relative z-10 overflow-hidden"
                         >
-                            <h3 className="text-2xl font-black text-gray-900 mb-8">{isAr ? "تعديل بيانات المستخدم" : "Edit User Data"}</h3>
+                            <h3 className="text-2xl font-black text-gray-900 mb-8">{t("editTitle")}</h3>
 
                             <form onSubmit={handleUpdate} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "الاسم الكامل" : "Full Name"}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("settings.fullName")}</label>
                                     <Input
                                         value={editData.name}
                                         onChange={e => setEditData({ ...editData, name: e.target.value })}
@@ -236,7 +236,7 @@ export default function UsersManagement() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "البريد الإلكتروني" : "Email"}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("settings.email")}</label>
                                     <Input
                                         value={editData.email}
                                         onChange={e => setEditData({ ...editData, email: e.target.value })}
@@ -245,7 +245,7 @@ export default function UsersManagement() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "الصلاحية" : "Role"}</label>
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{t("roleColumn")}</label>
                                         <select
                                             value={editData.role}
                                             onChange={e => setEditData({ ...editData, role: e.target.value })}
@@ -255,7 +255,7 @@ export default function UsersManagement() {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "رقم الهاتف" : "Phone"}</label>
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("settings.phone")}</label>
                                         <Input
                                             value={editData.phone}
                                             onChange={e => setEditData({ ...editData, phone: e.target.value })}
@@ -266,10 +266,10 @@ export default function UsersManagement() {
 
                                 <div className="pt-6 flex gap-4">
                                     <Button type="submit" className="flex-1 py-8 rounded-2xl bg-primary text-white font-black shadow-xl shadow-primary/20 hover:opacity-90 transition-all">
-                                        {isAr ? "حفظ التغييرات" : "Save Changes"}
+                                        {td("settings.saveChanges")}
                                     </Button>
                                     <Button type="button" variant="outline" onClick={() => setShowEditModal(false)} className="flex-1 py-8 rounded-2xl font-black border-2 border-gray-100">
-                                        {isAr ? "إلغاء" : "Cancel"}
+                                        {td("settings.cancel")}
                                     </Button>
                                 </div>
                             </form>
@@ -298,16 +298,16 @@ export default function UsersManagement() {
                             <div className="w-20 h-20 bg-red-100 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
                                 <Trash2 className="w-10 h-10" />
                             </div>
-                            <h3 className="text-2xl font-black text-gray-900 mb-2">{isAr ? "تأكيد الحذف" : "Confirm Delete"}</h3>
+                            <h3 className="text-2xl font-black text-gray-900 mb-2">{t("deleteTitle")}</h3>
                             <p className="text-gray-500 font-bold mb-8">
-                                {isAr ? `هل أنت متأكد من حذف حساب ${selectedUser?.name}؟` : `Are you sure you want to delete ${selectedUser?.name}'s account?`}
+                                {t('deleteConfirm', { name: selectedUser?.name })}
                             </p>
                             <div className="flex gap-4">
                                 <Button onClick={confirmDelete} className="flex-1 py-6 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700">
-                                    {isAr ? "نعم، حذف" : "Yes, Delete"}
+                                    {td("common.yesDelete")}
                                 </Button>
                                 <Button variant="outline" onClick={() => setShowDeleteModal(false)} className="flex-1 py-6 rounded-2xl font-black border-2 border-gray-100">
-                                    {isAr ? "إلغاء" : "Cancel"}
+                                    {td("common.cancel")}
                                 </Button>
                             </div>
                         </motion.div>

@@ -3,7 +3,8 @@
     "contact": "تواصل معنا",
     "openMainMenu": "فتح القائمة الرئيسية",
     "home": "الرئيسية",
-    "package_service": "الباقات والخدمات"
+    "package_service": "الباقات والخدمات",
+    "login": "تسجيل الدخول"
   },
   "hero": {
     "integratedSystem": "نظام سعودي متكامل",
@@ -58,7 +59,12 @@
     "assistanceDesc": "إدارة طلبات الدعم",
     "procurementSystem": "نظام المشتريات",
     "procurementSystemDesc": "إدارة عمليات الشراء",
-    "governanceAndFinancialSafety": "الحوكمة والسلامة المالية"
+    "governanceAndFinancialSafety": "الحوكمة والسلامة المالية",
+    "packages": "الباقات",
+    "packagesSubtitle": "اختر الباقة التي تناسب حجم مؤسستك واحتياجاتك",
+    "subscribeNow": "اشترك الآن",
+    "additionalServices": "خدمات إضافية",
+    "additionalServicesSubtitle": "خدمات متخصصة لدعم عملياتك وتعزيز كفاءة مؤسستك"
   },
   "news": {
     "tag": "أحدث الأخبار",
@@ -143,6 +149,32 @@
       "messageLabel": "الرسالة",
       "messagePlaceholder": "اكتب رسالتك هنا...",
       "submitButton": "إرسال الرسالة"
+    },
+    "login": {
+      "title": "تسجيل",
+      "subtitle": "الدخول",
+      "welcome": "مرحبًا بك في النظام المتكامل سِرب",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "forgotPassword": "هل نسيت كلمة المرور؟",
+      "loginButton": "دخول",
+      "noAccount": "لا تملك حساب؟",
+      "registerNow": "التسجيل الأن"
+    },
+    "register": {
+      "title": "إنشاء",
+      "subtitle": "حساب جديد",
+      "welcome": "انضم إلينا وابدأ رحلتك الرقمية",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الجوال",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "registerButton": "إنشاء حساب",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "loginNow": "تسجيل الدخول"
     }
   },
   "faq": {
@@ -255,8 +287,11 @@
       "paymentSuccessDesc": "تم إتمام الدفع بنجاح. شكراً لاشتراكك!",
       "orderConfirmDesc": "تم تأكيد طلبك بنجاح. سيتم مراجعة الإيصال البنكي.",
       "errorTitle": "حدث خطأ",
-      "errorDesc": "يرجى المحاولة مرة أخرى"
+      "errorDesc": "يرجى المحاولة مرة أخرى",
+      "successReturn": "تم العودة للمسودة بنجاح",
+      "errorReturn": "فشل العودة للمسودة"
     },
+    "currentStatus": "حالة الاشتراك الحالية",
     "personalInfo": {
       "title": "المعلومات الشخصية",
       "fullNameLabel": "الاسم الكامل",
@@ -302,6 +337,9 @@
     "hideSidebar": "إخفاء القائمة",
     "showSidebar": "إظهار القائمة",
     "logout": "تسجيل الخروج",
+    "loading": "جاري التحميل...",
+    "systemName": "نظام",
+    "systemTitle": "سِرب",
     "nav": {
       "dashboard": "لوحة المعلومات",
       "invoices": "الفواتير",
@@ -347,13 +385,31 @@
       "inProgress": "تحت التنفيذ",
       "accepted": "مقبول",
       "rejected": "مرفوض",
-      "returnToDraft": "إعادة للمسودة"
+      "returnToDraft": "إعادة للمسودة",
+      "confirmAction": "تأكيد الإجراء",
+      "confirmMessage": "هل أنت متأكد من هذا الإجراء؟",
+      "confirm": "تأكيد"
     }
   },
   "admin": {
     "users": {
       "title": "إدارة المستخدمين",
-      "subtitle": "إدارة الصلاحيات والحسابات في النظام"
+      "subtitle": "إدارة الصلاحيات والحسابات في النظام",
+      "searchPlaceholder": "البحث بالاسم، البريد أو الهاتف...",
+      "userColumn": "المستخدم",
+      "roleColumn": "الصلاحية",
+      "orgColumn": "المنظمة",
+      "actionsColumn": "الإجراءات",
+      "editTitle": "تعديل بيانات المستخدم",
+      "deleteTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد من حذف حساب {name}؟",
+      "notSet": "غير محدد",
+      "accessDenied": "وصول غير مصرح",
+      "adminOnly": "هذه الصفحة للمدراء فقط",
+      "updateSuccess": "تم تحديث المستخدم بنجاح",
+      "updateError": "فشل التحديث",
+      "deleteSuccess": "تم حذف المستخدم",
+      "deleteError": "فشل الحذف"
     },
     "packages": {
       "title": "إدارة الباقات",

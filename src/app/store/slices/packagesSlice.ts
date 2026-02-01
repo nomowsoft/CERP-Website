@@ -6,9 +6,13 @@ export interface Package {
     id: number;
     image: string;
     name: string;
+    name_en: string;
+    name_ar: string;
     type: PackageType;
     description: string;
-    features: { id: number, text: string }[];
+    description_en: string;
+    description_ar: string;
+    features: { id: number, text: string, text_en: string, text_ar: string }[];
     createdAt: string;
 }
 

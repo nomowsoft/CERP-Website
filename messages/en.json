@@ -3,7 +3,8 @@
     "contact": "Contact us",
     "openMainMenu": "Open main menu",
     "home": "Home",
-    "package_service": "Package & Serviec"
+    "package_service": "Package & Serviec",
+    "login": "Login"
   },
   "hero": {
     "integratedSystem": "Integrated Saudi System",
@@ -58,7 +59,12 @@
     "assistanceDesc": "Support request management",
     "procurementSystem": "Procurement System",
     "procurementSystemDesc": "Purchasing process management",
-    "governanceAndFinancialSafety": "Governance and Financial Safety"
+    "governanceAndFinancialSafety": "Governance and Financial Safety",
+    "packages": "Packages",
+    "packagesSubtitle": "Choose the package that suits your organization size and needs",
+    "subscribeNow": "Subscribe Now",
+    "additionalServices": "Additional Services",
+    "additionalServicesSubtitle": "Specialized services to support your operations and enhance your organization's efficiency"
   },
   "news": {
     "tag": "Latest News",
@@ -163,6 +169,32 @@
       "messageLabel": "Message",
       "messagePlaceholder": "Write your message here...",
       "submitButton": "Send Message"
+    },
+    "login": {
+      "title": "Login",
+      "subtitle": "",
+      "welcome": "Welcome to the integrated system CERP",
+      "email": "Email",
+      "password": "Password",
+      "emailPlaceholder": "Enter Your Email",
+      "passwordPlaceholder": "Enter Your Password",
+      "forgotPassword": "Forgot your password?",
+      "loginButton": "Login",
+      "noAccount": "Don't have an account?",
+      "registerNow": "Register Now"
+    },
+    "register": {
+      "title": "Create",
+      "subtitle": "New Account",
+      "welcome": "Join us and start your digital journey",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "registerButton": "Create Account",
+      "haveAccount": "Already have an account?",
+      "loginNow": "Login Now"
     }
   },
   "faq": {
@@ -256,8 +288,11 @@
       "paymentSuccessDesc": "Payment completed successfully. Thank you for subscribing!",
       "orderConfirmDesc": "Order confirmed successfully. Bank receipt will be reviewed.",
       "errorTitle": "An error occurred",
-      "errorDesc": "Please try again"
+      "errorDesc": "Please try again",
+      "successReturn": "Returned to draft successfully",
+      "errorReturn": "Failed to return to draft"
     },
+    "currentStatus": "Current Subscription Status",
     "personalInfo": {
       "title": "Personal Information",
       "fullNameLabel": "Full Name",
@@ -303,6 +338,9 @@
     "hideSidebar": "Hide Sidebar",
     "showSidebar": "Show Sidebar",
     "logout": "Logout",
+    "loading": "Loading...",
+    "systemName": "System",
+    "systemTitle": "CERP",
     "nav": {
       "dashboard": "Dashboard",
       "invoices": "Invoices",
@@ -348,7 +386,10 @@
       "inProgress": "In Progress",
       "accepted": "Accepted",
       "rejected": "Rejected",
-      "returnToDraft": "Return to Draft"
+      "returnToDraft": "Return to Draft",
+      "confirmAction": "Confirm Action",
+      "confirmMessage": "Are you sure you want to proceed?",
+      "confirm": "Confirm"
     }
   },
   "admin": {

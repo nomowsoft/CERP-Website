@@ -30,10 +30,18 @@ export async function POST(request: NextRequest) {
         const newService = await prisma.service.create({
             data: {
                 name: body.name,
+                name_en: body.name_en,
+                name_ar: body.name_ar,
                 description: body.description,
+                description_en: body.description_en,
+                description_ar: body.description_ar,
                 image: body.image,
                 contents: {
-                    create: body.contents?.map((c: string) => ({ name: c })) || []
+                    create: body.contents?.map((c: any) => ({
+                        name: typeof c === 'string' ? c : c.name,
+                        name_en: typeof c === 'object' ? c.name_en : '',
+                        name_ar: typeof c === 'object' ? c.name_ar : ''
+                    })) || []
                 }
             },
             include: { contents: true }

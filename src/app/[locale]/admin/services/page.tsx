@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 export default function ServicesManagement() {
     const t = useTranslations('admin.services');
@@ -31,11 +32,15 @@ export default function ServicesManagement() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedService, setSelectedService] = useState<Service | null>(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [serviceToDelete, setServiceToDelete] = useState<number | null>(null);
     const [formData, setFormData] = useState({
         name: "",
+        name_en: "",
         description: "",
+        description_en: "",
         image: "",
-        contents: [""]
+        contents: [{ name: "", name_en: "" }]
     });
 
     useEffect(() => {
@@ -45,9 +50,11 @@ export default function ServicesManagement() {
     const resetForm = () => {
         setFormData({
             name: "",
+            name_en: "",
             description: "",
+            description_en: "",
             image: "",
-            contents: [""]
+            contents: [{ name: "", name_en: "" }]
         });
         setIsEditing(false);
         setSelectedService(null);
@@ -62,9 +69,11 @@ export default function ServicesManagement() {
         setSelectedService(svc);
         setFormData({
             name: svc.name,
+            name_en: svc.name_en || "",
             description: svc.description,
+            description_en: svc.description_en || "",
             image: svc.image,
-            contents: (svc.contents && svc.contents.length > 0) ? svc.contents.map(c => c.name) : [""]
+            contents: (svc.contents && svc.contents.length > 0) ? svc.contents.map(c => ({ name: c.name, name_en: c.name_en || "" })) : [{ name: "", name_en: "" }]
         });
         setIsEditing(true);
         setShowModal(true);
@@ -73,7 +82,7 @@ export default function ServicesManagement() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const cleanContents = formData.contents.filter(c => c.trim() !== "");
+            const cleanContents = formData.contents.filter(c => c.name.trim() !== "");
             const payload = { ...formData, contents: cleanContents };
 
             if (isEditing && selectedService) {
@@ -91,24 +100,31 @@ export default function ServicesManagement() {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm(isAr ? "هل أنت متأكد من الحذف؟" : "Are you sure you want to delete?")) {
-            try {
-                await dispatch(deleteService(id)).unwrap();
-                toast.success(isAr ? "تم الحذف بنجاح" : "Deleted successfully");
-            } catch (error: any) {
-                toast.error(error || (isAr ? "فشل الحذف" : "Deletion failed"));
-            }
+        setServiceToDelete(id);
+        setShowDeleteDialog(true);
+    };
+
+    const confirmDelete = async () => {
+        if (serviceToDelete === null) return;
+
+        try {
+            await dispatch(deleteService(serviceToDelete)).unwrap();
+            toast.success(isAr ? "تم الحذف بنجاح" : "Deleted successfully");
+        } catch (error: any) {
+            toast.error(error || (isAr ? "فشل الحذف" : "Deletion failed"));
+        } finally {
+            setServiceToDelete(null);
         }
     };
 
-    const handleContentChange = (index: number, value: string) => {
+    const handleContentChange = (index: number, field: 'name' | 'name_en', value: string) => {
         const newContents = [...formData.contents];
-        newContents[index] = value;
+        newContents[index] = { ...newContents[index], [field]: value };
         setFormData({ ...formData, contents: newContents });
     };
 
     const addContent = () => {
-        setFormData({ ...formData, contents: [...formData.contents, ""] });
+        setFormData({ ...formData, contents: [...formData.contents, { name: "", name_en: "" }] });
     };
 
     const removeContent = (index: number) => {
@@ -205,7 +221,7 @@ export default function ServicesManagement() {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-2xl relative z-10 max-h-[90vh] overflow-y-auto"
+                            className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-3xl relative z-10 max-h-[90vh] overflow-y-auto"
                         >
                             <h3 className="text-2xl font-black text-gray-900 mb-6">
                                 {isEditing ? (isAr ? "تعديل الخدمة" : "Edit Service") : (isAr ? "إضافة خدمة جديدة" : "Add New Service")}
@@ -213,8 +229,15 @@ export default function ServicesManagement() {
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "اسم الخدمة" : "Service Name"}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇸🇦 {isAr ? "اسم الخدمة بالعربية" : "Service Name (Arabic)"}</label>
                                     <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الاسم بالإنجليزية" : "Name (English)"}</label>
+                                        <Input value={formData.name_en} onChange={e => setFormData({ ...formData, name_en: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -250,13 +273,25 @@ export default function ServicesManagement() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "الوصف" : "Description"}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇸🇦 {isAr ? "الوصف بالعربية" : "Description (Arabic)"}</label>
                                     <textarea
                                         value={formData.description}
                                         onChange={e => setFormData({ ...formData, description: e.target.value })}
                                         className="w-full p-4 rounded-2xl bg-gray-50 border-none font-bold min-h-[100px] outline-none resize-none"
                                         required
+                                        dir="rtl"
                                     />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الوصف بالإنجليزية" : "Description (English)"}</label>
+                                        <textarea
+                                            value={formData.description_en}
+                                            onChange={e => setFormData({ ...formData, description_en: e.target.value })}
+                                            className="w-full p-4 rounded-2xl bg-gray-50 border-none font-bold min-h-[80px] outline-none resize-none"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-4">
@@ -266,18 +301,30 @@ export default function ServicesManagement() {
                                             <Plus className="w-3 h-3" /> {isAr ? "إضافة محتوى" : "Add Content"}
                                         </button>
                                     </label>
-                                    <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                                    <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                         {formData.contents.map((content, index) => (
-                                            <div key={index} className="flex gap-2">
+                                            <div key={index} className="border border-gray-200 rounded-2xl p-4 space-y-2">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-xs font-bold text-gray-400">{isAr ? `محتوى ${index + 1}` : `Content ${index + 1}`}</span>
+                                                    <button type="button" onClick={() => removeContent(index)} className="p-1 text-red-400 hover:text-red-600">
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                                 <Input
-                                                    value={content}
-                                                    onChange={e => handleContentChange(index, e.target.value)}
+                                                    value={content.name}
+                                                    onChange={e => handleContentChange(index, 'name', e.target.value)}
                                                     className="rounded-xl bg-gray-50 border-none font-bold text-sm"
-                                                    placeholder={isAr ? `نص المحتوى ${index + 1}` : `Content text ${index + 1}`}
+                                                    placeholder={isAr ? "النص بالعربية" : "Arabic text"}
+                                                    dir="rtl"
                                                 />
-                                                <button type="button" onClick={() => removeContent(index)} className="p-2 text-red-400 hover:text-red-600">
-                                                    <X className="w-4 h-4" />
-                                                </button>
+                                                <div className="grid grid-cols-1 gap-2">
+                                                    <Input
+                                                        value={content.name_en}
+                                                        onChange={e => handleContentChange(index, 'name_en', e.target.value)}
+                                                        className="rounded-xl bg-gray-50 border-none font-bold text-xs"
+                                                        placeholder="🇬🇧 English"
+                                                    />
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -296,6 +343,19 @@ export default function ServicesManagement() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={confirmDelete}
+                title={isAr ? "تأكيد الحذف" : "Confirm Delete"}
+                message={isAr ? "هل أنت متأكد من حذف هذه الخدمة؟ لا يمكن التراجع عن هذا الإجراء." : "Are you sure you want to delete this service? This action cannot be undone."}
+                confirmText={isAr ? "حذف" : "Delete"}
+                cancelText={isAr ? "إلغاء" : "Cancel"}
+                locale={locale}
+                variant="danger"
+            />
         </section>
     );
 }

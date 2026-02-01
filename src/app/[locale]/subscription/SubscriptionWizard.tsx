@@ -62,11 +62,11 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
           id: mySubscription.id,
           data: { ...mySubscription, status: 'DRAFT' }
         })).unwrap();
-        toast.success(locale === 'ar' ? "تم العودة للمسودة بنجاح" : "Returned to draft successfully");
+        toast.success(t('messages.successTitle'));
         dispatch(getSubscription());
         setCurrentStep(1);
       } catch (error: any) {
-        toast.error(error || (locale === 'ar' ? "فشل العودة للمسودة" : "Failed to return to draft"));
+        toast.error(error || t('messages.errorDesc'));
       }
     }
   };
@@ -241,7 +241,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
             ? 'bg-green-50 border-green-200 text-green-700'
             : 'bg-red-50 border-red-200 text-red-700'
             }`}>
-            <span className="block text-sm opacity-70 mb-1">{locale === 'ar' ? 'حالة الاشتراك الحالية:' : 'Current Subscription Status:'}</span>
+            <span className="block text-sm opacity-70 mb-1">{t('currentStatus')}:</span>
             {mySubscription.status === 'DONE' ? td('common.accepted') : td('common.rejected')}
           </div>
         )}

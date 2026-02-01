@@ -83,8 +83,12 @@ model Package {
   id          Int              @id @default(autoincrement())
   image       String
   name        String
+  name_en     String   @default("")
+  name_ar     String   @default("")
   type        PackageType
   description String
+  description_en String @default("")
+  description_ar String @default("")
   features    PackageFeature[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -93,6 +97,8 @@ model Package {
 model PackageFeature {
   id        Int     @id @default(autoincrement())
   text      String
+  text_en   String  @default("")
+  text_ar   String  @default("")
   packageId Int
   package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
 }
@@ -101,7 +107,11 @@ model Service {
   id          Int           @id @default(autoincrement())
   image       String
   name        String
+  name_en     String   @default("")
+  name_ar     String   @default("")
   description String
+  description_en String @default("")
+  description_ar String @default("")
   contents    ServiceType[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -110,6 +120,8 @@ model Service {
 model ServiceType {
   id        Int     @id @default(autoincrement())
   name      String
+  name_en   String @default("")
+  name_ar   String @default("")
   serviceId Int
   service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }

@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 export default function PackagesManagement() {
     const t = useTranslations('admin.packages');
@@ -33,12 +34,16 @@ export default function PackagesManagement() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [packageToDelete, setPackageToDelete] = useState<number | null>(null);
     const [formData, setFormData] = useState({
         name: "",
+        name_en: "",
         type: "STARTER",
         description: "",
+        description_en: "",
         image: "",
-        features: [""]
+        features: [{ text: "", text_en: "" }]
     });
 
     useEffect(() => {
@@ -48,10 +53,12 @@ export default function PackagesManagement() {
     const resetForm = () => {
         setFormData({
             name: "",
+            name_en: "",
             type: "STARTER",
             description: "",
+            description_en: "",
             image: "",
-            features: [""]
+            features: [{ text: "", text_en: "" }]
         });
         setIsEditing(false);
         setSelectedPackage(null);
@@ -66,10 +73,12 @@ export default function PackagesManagement() {
         setSelectedPackage(pkg);
         setFormData({
             name: pkg.name,
+            name_en: pkg.name_en || "",
             type: pkg.type,
             description: pkg.description,
+            description_en: pkg.description_en || "",
             image: pkg.image,
-            features: (pkg.features && pkg.features.length > 0) ? pkg.features.map(f => f.text) : [""]
+            features: (pkg.features && pkg.features.length > 0) ? pkg.features.map(f => ({ text: f.text, text_en: f.text_en || "" })) : [{ text: "", text_en: "" }]
         });
         setIsEditing(true);
         setShowModal(true);
@@ -79,7 +88,7 @@ export default function PackagesManagement() {
         e.preventDefault();
         try {
             // Filter empty features
-            const cleanFeatures = formData.features.filter(f => f.trim() !== "");
+            const cleanFeatures = formData.features.filter(f => f.text.trim() !== "");
             const payload = { ...formData, features: cleanFeatures };
 
             if (isEditing && selectedPackage) {
@@ -97,24 +106,31 @@ export default function PackagesManagement() {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm(isAr ? "هل أنت متأكد من الحذف؟" : "Are you sure you want to delete?")) {
-            try {
-                await dispatch(deletePackage(id)).unwrap();
-                toast.success(isAr ? "تم الحذف بنجاح" : "Deleted successfully");
-            } catch (error: any) {
-                toast.error(error || (isAr ? "فشل الحذف" : "Deletion failed"));
-            }
+        setPackageToDelete(id);
+        setShowDeleteDialog(true);
+    };
+
+    const confirmDelete = async () => {
+        if (packageToDelete === null) return;
+
+        try {
+            await dispatch(deletePackage(packageToDelete)).unwrap();
+            toast.success(isAr ? "تم الحذف بنجاح" : "Deleted successfully");
+        } catch (error: any) {
+            toast.error(error || (isAr ? "فشل الحذف" : "Deletion failed"));
+        } finally {
+            setPackageToDelete(null);
         }
     };
 
-    const handleFeatureChange = (index: number, value: string) => {
+    const handleFeatureChange = (index: number, field: 'text' | 'text_en', value: string) => {
         const newFeatures = [...formData.features];
-        newFeatures[index] = value;
+        newFeatures[index] = { ...newFeatures[index], [field]: value };
         setFormData({ ...formData, features: newFeatures });
     };
 
     const addFeature = () => {
-        setFormData({ ...formData, features: [...formData.features, ""] });
+        setFormData({ ...formData, features: [...formData.features, { text: "", text_en: "" }] });
     };
 
     const removeFeature = (index: number) => {
@@ -213,7 +229,7 @@ export default function PackagesManagement() {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-2xl relative z-10 max-h-[90vh] overflow-y-auto"
+                            className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-3xl relative z-10 max-h-[90vh] overflow-y-auto"
                         >
                             <h3 className="text-2xl font-black text-gray-900 mb-6">
                                 {isEditing ? (isAr ? "تعديل الباقة" : "Edit Package") : (isAr ? "إضافة باقة جديدة" : "Add New Package")}
@@ -222,7 +238,7 @@ export default function PackagesManagement() {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "اسم الباقة" : "Package Name"}</label>
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇸🇦 {isAr ? "الاسم بالعربية" : "Name (Arabic)"}</label>
                                         <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
                                     </div>
                                     <div className="space-y-2">
@@ -232,6 +248,13 @@ export default function PackagesManagement() {
                                             <option value="BUSINESS">Business</option>
                                             <option value="ENTERPRISE">Enterprise</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الاسم بالإنجليزية" : "Name (English)"}</label>
+                                        <Input value={formData.name_en} onChange={e => setFormData({ ...formData, name_en: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" />
                                     </div>
                                 </div>
 
@@ -268,13 +291,25 @@ export default function PackagesManagement() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "الوصف" : "Description"}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇸🇦 {isAr ? "الوصف بالعربية" : "Description (Arabic)"}</label>
                                     <textarea
                                         value={formData.description}
                                         onChange={e => setFormData({ ...formData, description: e.target.value })}
                                         className="w-full p-4 rounded-2xl bg-gray-50 border-none font-bold min-h-[100px] outline-none resize-none"
                                         required
+                                        dir="rtl"
                                     />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">�� {isAr ? "الوصف بالإنجليزية" : "Description (English)"}</label>
+                                        <textarea
+                                            value={formData.description_en}
+                                            onChange={e => setFormData({ ...formData, description_en: e.target.value })}
+                                            className="w-full p-4 rounded-2xl bg-gray-50 border-none font-bold min-h-[80px] outline-none resize-none"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-4">
@@ -284,18 +319,30 @@ export default function PackagesManagement() {
                                             <Plus className="w-3 h-3" /> {isAr ? "إضافة ميزة" : "Add Feature"}
                                         </button>
                                     </label>
-                                    <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                                    <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                         {formData.features.map((feature, index) => (
-                                            <div key={index} className="flex gap-2">
+                                            <div key={index} className="border border-gray-200 rounded-2xl p-4 space-y-2">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-xs font-bold text-gray-400">{isAr ? `ميزة ${index + 1}` : `Feature ${index + 1}`}</span>
+                                                    <button type="button" onClick={() => removeFeature(index)} className="p-1 text-red-400 hover:text-red-600">
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                                 <Input
-                                                    value={feature}
-                                                    onChange={e => handleFeatureChange(index, e.target.value)}
+                                                    value={feature.text}
+                                                    onChange={e => handleFeatureChange(index, 'text', e.target.value)}
                                                     className="rounded-xl bg-gray-50 border-none font-bold text-sm"
-                                                    placeholder={isAr ? `ميزة ${index + 1}` : `Feature ${index + 1}`}
+                                                    placeholder={isAr ? "النص بالعربية" : "Arabic text"}
+                                                    dir="rtl"
                                                 />
-                                                <button type="button" onClick={() => removeFeature(index)} className="p-2 text-red-400 hover:text-red-600">
-                                                    <X className="w-4 h-4" />
-                                                </button>
+                                                <div className="grid grid-cols-1 gap-2">
+                                                    <Input
+                                                        value={feature.text_en}
+                                                        onChange={e => handleFeatureChange(index, 'text_en', e.target.value)}
+                                                        className="rounded-xl bg-gray-50 border-none font-bold text-xs"
+                                                        placeholder="�� English"
+                                                    />
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -314,7 +361,19 @@ export default function PackagesManagement() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={confirmDelete}
+                title={isAr ? "تأكيد الحذف" : "Confirm Delete"}
+                message={isAr ? "هل أنت متأكد من حذف هذه الباقة؟ لا يمكن التراجع عن هذا الإجراء." : "Are you sure you want to delete this package? This action cannot be undone."}
+                confirmText={isAr ? "حذف" : "Delete"}
+                cancelText={isAr ? "إلغاء" : "Cancel"}
+                locale={locale}
+                variant="danger"
+            />
         </section>
     );
 }
-

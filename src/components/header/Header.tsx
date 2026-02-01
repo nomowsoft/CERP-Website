@@ -18,10 +18,10 @@ export default function Header() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-        dispatch(getUser());
-    }, [dispatch]);
+    dispatch(getUser());
+  }, [dispatch]);
 
-    const { userInfo } = useSelector((state : any) => state.user);
+  const { userInfo } = useSelector((state: any) => state.user);
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,14 +62,14 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-6">
             <LanguageSwitcher />
             {userInfo.id && (
-              <Link className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2"  href={`/${local}/admin`}>{userInfo.name}</Link>
+              <Link className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2" href={`/${local}/admin`}>{userInfo.name}</Link>
             )}
             {!userInfo.id && (
               <Link
                 href={`/${local}/login`}
                 className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2"
               >
-                تسجيل الدخول
+                {t('login')}
               </Link>
             )}
             <Link

@@ -110,6 +110,8 @@ export type PackageFeturesDto = {
     map(arg0: (feature: PackageFeturesDto) => JSX.Element): import("react").ReactNode;
     id: number,
     text: string
+    text_en: string
+    text_ar: string
     packageId: number
 }
 
@@ -117,8 +119,12 @@ export type PackageDTO = {
     id: number
     image: string
     name: string
+    name_en: string
+    name_ar: string
     type: string
     description: string
+    description_en: string
+    description_ar: string
     features: PackageFeturesDto
     createdAt: string
     updatedAt: string
@@ -128,6 +134,8 @@ export type ServiceTypeDto = {
     map(arg0: (content: ServiceTypeDto) => JSX.Element): import("react").ReactNode;
     id: number,
     name: string
+    name_en: string
+    name_ar: string
     serviceId: number
 }
 
@@ -135,7 +143,11 @@ export type ServiceDTO = {
     id: number
     image: string
     name: string
+    name_en: string
+    name_ar: string
     description: string
+    description_en: string
+    description_ar: string
     contents: ServiceTypeDto
     createdAt: string
     updatedAt: string

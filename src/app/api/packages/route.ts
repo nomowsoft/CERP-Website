@@ -33,11 +33,19 @@ export async function POST(request: NextRequest) {
         const newPackage = await prisma.package.create({
             data: {
                 name: body.name,
+                name_en: body.name_en,
+                name_ar: body.name_ar,
                 type: body.type as PackageType,
                 description: body.description,
+                description_en: body.description_en,
+                description_ar: body.description_ar,
                 image: body.image,
                 features: {
-                    create: body.features?.map((f: string) => ({ text: f })) || []
+                    create: body.features?.map((f: any) => ({
+                        text: typeof f === 'string' ? f : f.text,
+                        text_en: typeof f === 'object' ? f.text_en : '',
+                        text_ar: typeof f === 'object' ? f.text_ar : ''
+                    })) || []
                 }
             },
             include: { features: true }
