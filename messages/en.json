@@ -191,6 +191,7 @@
       "email": "Email",
       "phone": "Phone Number",
       "password": "Password",
+      "organization": "Organization Name",
       "confirmPassword": "Confirm Password",
       "registerButton": "Create Account",
       "haveAccount": "Already have an account?",
@@ -390,6 +391,19 @@
       "confirmAction": "Confirm Action",
       "confirmMessage": "Are you sure you want to proceed?",
       "confirm": "Confirm"
+    },
+    "subscriptionDetails": {
+      "title": "Subscription Details",
+      "subtitle": "Your subscription information and current plan",
+      "activePackage": "Active Package",
+      "activeStatus": "Active Subscription",
+      "startDate": "Start Date",
+      "renewalDate": "Renewal Date",
+      "monthlyAmount": "Monthly Amount",
+      "domain": "Domain",
+      "packageFeatures": "Package Features",
+      "invoiceHistory": "Invoice History",
+      "totalPayments": "Total Payments"
     }
   },
   "admin": {

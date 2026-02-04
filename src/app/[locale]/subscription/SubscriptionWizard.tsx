@@ -14,7 +14,7 @@ import Step3 from "./step3";
 import Step4 from "./step4";
 import { SubscriptionFormData, initialFormData } from "@/utils/subscription";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { Schemastep1, Schemastep2, Schemastep3Subdomain, Schemastep3customdomain, Schemastep4bank } from "@/utils/validiton";
 import { toast } from 'react-toastify';
@@ -35,9 +35,20 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    dispatch(getSubscription());
     dispatch(getUser());
   }, [dispatch]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                           Get Package ID from URL                          */
+  /* -------------------------------------------------------------------------- */
+  const searchParams = useSearchParams();
+  const packageId = searchParams.get('packageId');
+
+  useEffect(() => {
+    if (packageId) {
+      setFormData((prev) => ({ ...prev, packageId: Number(packageId) }));
+    }
+  }, [packageId]);
 
   // Find the relevant subscription for the current user
   const mySubscription = subscriptionInfo?.find((s: any) => s.userId === userInfo?.id);

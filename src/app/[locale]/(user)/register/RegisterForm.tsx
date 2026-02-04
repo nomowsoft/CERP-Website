@@ -9,7 +9,7 @@ const RegisterForm = () => {
     const router = useRouter();
     const locale = useLocale();
     const t = useTranslations("contact.register");
-    const tCommon = useTranslations("dashboard.common");
+    const tCommon = useTranslations("form");
     const DOMAIN = process.env.NEXT_PUBLIC_API_URL;
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -82,11 +82,11 @@ const RegisterForm = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <label className="font-doto2">{tCommon('organization')}</label>
+                <label className="font-doto2">{t('organization')}</label>
                 <input
                     className="mb-4  border border-gray-300 rounded-xl py-4 px-2"
                     type="text"
-                    placeholder={tCommon('organization')}
+                    placeholder={t('organization')}
                     value={charityName}
                     onChange={(e) => setCharityName(e.target.value)}
                 />

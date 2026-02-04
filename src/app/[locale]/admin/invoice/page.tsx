@@ -1,108 +1,166 @@
+"use client";
 import Image from "next/image";
-import prisma from "@/utils/db";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button"; // Assuming Button component exists
+import { Search } from "lucide-react"; // Assuming lucide-react icons are used
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { getSubscription } from "@/app/store/slices/subscriptionSlice";
+import { SubscriptionDTO } from "@/utils/types";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
-export default async function Invoice() {
-    const subscription = await prisma.subscription.findMany({
+export default function Invoice() {
+    const dispatch = useDispatch<any>();
+    const { subscriptionInfo: subscriptions, loading } = useSelector((state: any) => state.subscription);
 
-    })
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('ALL');
+
+    const params = useParams();
+    const isAr = params.locale === 'ar';
+    const dir = isAr ? 'rtl' : 'ltr';
+
+    useEffect(() => {
+        dispatch(getSubscription());
+    }, [dispatch]);
+
+    const filteredSubscriptions = subscriptions.filter((item: SubscriptionDTO) => {
+        const matchesSearch =
+            item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (item.domainName && item.domainName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.id && item.id.toString().includes(searchTerm));
+
+        const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+    });
+
     return (
-        <section className="container mx-auto p-4">
-            <div className="mb-10">
-                <div className="flex items-center space-x-4">
-                    <div className="flex items-center">
+        <section className="container mx-auto p-4 lg:p-8" dir={dir}>
+            <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                    <div className="p-4 bg-primary/10 rounded-2xl">
                         <Image
                             src="/admin/SVG1.svg"
                             alt="Invoice Icon"
-                            width={32}
-                            height={32}
+                            width={40}
+                            height={40}
                         />
                     </div>
-                    <h2 className="text-5xl font-doto2">
-                        الفواتير
-                    </h2>
-                </div>
-                <div>
-                    <p className="text-xl text-gray-500">
-                        عرض وإدارة جميع فواتيرك
-                    </p>
-
-                </div>
-            </div>
-            <div className="bg-white shadow-md rounded-2xl p-6 mb-8">
-                <div className="flex justify-between items-center gap-8">
-                    <div className="relative w-full">
-                        <Input type="serch" className="border border-gray-300 py-6 rounded-xl px-20" placeholder="البحث في الفواتير" />
-                        <p className="absolute top-3.5 right-5">icon</p> 
-                    </div>
-                    <div className="relative w-full">
-                        <Input type="serch" className="border border-gray-300 py-6 rounded-xl px-20" placeholder="البحث في الفواتير" />
-                        <p className="absolute top-3.5 right-5">icon</p> 
-                    </div>
-                </div>
-            </div>
-            <div className="bg-white shadow-md rounded-2xl p-6">
-                <div className="mb-20 flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                            <Image
-                                src="/admin/SVG1.svg"
-                                alt="Invoice Icon"
-                                width={32}
-                                height={32}
-                            />
-                        </div>
-                        <h2 className="text-2xl font-bold">
-                            الفواتير الأخيرة
-                        </h2>
-                    </div>
                     <div>
-                        <button className="hover:bg-primary border border-primary text-primary hover:text-white px-4 py-2 rounded-xl transition-colors">عرض جميع الفواتير</button>
+                        <h2 className="text-3xl lg:text-4xl font-bold text-gray-800">
+                            {isAr ? "الفواتير" : "Invoices"}
+                        </h2>
+                        <p className="text-gray-500 mt-1">
+                            {isAr ? "عرض وإدارة جميع فواتيرك" : "View and manage all your invoices"}
+                        </p>
                     </div>
                 </div>
-                <table className="min-w-full bg-white">
-                    <thead>
-                        <tr>
-                            <th className="py-2 px-4 border-b border-gray-400 text-center text-gray-500">رقم الفاتورة</th>
-                            <th className="py-2 px-4 border-b border-gray-400 text-center text-gray-500">التاريخ</th>
-                            <th className="py-2 px-4 border-b border-gray-400 text-center text-gray-500">المبلغ</th>
-                            <th className="py-2 px-4 border-b border-gray-400 text-center text-gray-500">الحالة</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center">INV-001</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">2024-01-15</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">$150.00</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">
-                                <span className="border border-blue-600 text-blue-600 px-2 py-1 rounded-full text-sm bg-blue-50">
-                                    انتظار الدفع
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center">INV-002</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">2024-02-10</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">$200.00</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">
-                                <span className="border border-red-600 text-red-600 px-2 py-1 rounded-full text-sm bg-red-50">
-                                    معلقة
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center">INV-003</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">2024-03-05</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">$250.00</td>
-                            <td className="py-6 px-4 border-b border-gray-300 text-center text-gray-500">
-                                <span className="border border-green-600 text-green-600 px-2 py-1 rounded-full text-sm bg-green-50">
-                                    مدفوعه
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            </div>
 
+            <div className="bg-white shadow-sm border border-gray-100 rounded-3xl p-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                    <div className="relative md:col-span-6 lg:col-span-7">
+                        <Input
+                            type="search"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full border border-gray-200 py-6 rounded-2xl ps-12 focus:ring-primary focus:border-primary transition-all"
+                            placeholder={isAr ? "البحث برقم الفاتورة، الاسم..." : "Search by invoice #, name..."}
+                        />
+                        <Search className={`absolute top-1/2 -translate-y-1/2 ${isAr ? 'right-4' : 'left-4'} text-gray-400 w-5 h-5`} />
+                    </div>
+                    <div className="flex gap-2 md:col-span-6 lg:col-span-5 overflow-x-auto pb-2 md:pb-0">
+                        <Button
+                            variant={statusFilter === 'ALL' ? 'default' : 'outline'}
+                            onClick={() => setStatusFilter('ALL')}
+                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'ALL' ? 'bg-primary text-white' : ''}`}
+                        >
+                            {isAr ? "الكل" : "All"}
+                        </Button>
+                        <Button
+                            variant={statusFilter === 'DRAFT' ? 'default' : 'outline'}
+                            onClick={() => setStatusFilter('DRAFT')}
+                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'DRAFT' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 border-blue-100'}`}
+                        >
+                            {isAr ? "مسودة" : "Draft"}
+                        </Button>
+                        <Button
+                            variant={statusFilter === 'PROGRES' ? 'default' : 'outline'}
+                            onClick={() => setStatusFilter('PROGRES')}
+                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'PROGRES' ? 'bg-yellow-600 text-white' : 'bg-yellow-50 text-yellow-600 border-yellow-100'}`}
+                        >
+                            {isAr ? "تحت التنفيذ" : "In Progress"}
+                        </Button>
+                        <Button
+                            variant={statusFilter === 'DONE' ? 'default' : 'outline'}
+                            onClick={() => setStatusFilter('DONE')}
+                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'DONE' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600 border-green-100'}`}
+                        >
+                            {isAr ? "مدفوعة" : "Paid"}
+                        </Button>
+                        <Button
+                            variant={statusFilter === 'CANCEL' ? 'default' : 'outline'}
+                            onClick={() => setStatusFilter('CANCEL')}
+                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'CANCEL' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600 border-red-100'}`}
+                        >
+                            {isAr ? "ملغاة" : "Cancelled"}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white shadow-sm border border-gray-100 rounded-3xl overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-start border-collapse">
+                        <thead>
+                            <tr className="bg-gray-50/50">
+                                <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "رقم الفاتورة" : "Invoice #"}</th>
+                                <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "العميل" : "Client"}</th>
+                                <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "التاريخ" : "Date"}</th>
+                                <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "المبلغ" : "Amount"}</th>
+                                <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "الحالة" : "Status"}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {filteredSubscriptions.map((item: SubscriptionDTO) => (
+                                <tr key={item.id} className="hover:bg-gray-50/30 transition-colors">
+                                    <td className="py-5 px-6 text-gray-700 font-medium text-center">INV-{item.id.toString().padStart(4, '0')}</td>
+                                    <td className="py-5 px-6 text-gray-700 text-center">
+                                        <div className="font-medium text-gray-900">{item.fullName}</div>
+                                        <div className="text-sm text-gray-500">{item.email}</div>
+                                    </td>
+                                    <td className="py-5 px-6 text-gray-500 text-center">{new Date(item.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}</td>
+                                    <td className="py-5 px-6 text-gray-700 font-mono text-center">
+                                        {/* Placeholder Amount or Logic based on Package */}
+                                        $0.00
+                                    </td>
+                                    <td className="py-5 px-6 text-center">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-bold inline-block
+                                            ${item.status === 'DRAFT' ? 'bg-blue-100 text-blue-600' :
+                                                item.status === 'PROGRES' ? 'bg-yellow-100 text-yellow-600' :
+                                                    item.status === 'DONE' ? 'bg-green-100 text-green-600' :
+                                                        'bg-red-100 text-red-600'
+                                            }`}>
+                                            {item.status === 'DRAFT' ? (isAr ? 'مسودة' : 'Draft') :
+                                                item.status === 'PROGRES' ? (isAr ? 'تحت التنفيذ' : 'In Progress') :
+                                                    item.status === 'DONE' ? (isAr ? 'مدفوعة' : 'Paid') : (isAr ? 'ملغاة' : 'Cancelled')}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                            {filteredSubscriptions.length === 0 && (
+                                <tr>
+                                    <td colSpan={5} className="py-8 text-center text-gray-400">
+                                        {isAr ? "لا توجد فواتير" : "No invoices found"}
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     );

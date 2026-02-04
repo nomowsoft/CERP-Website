@@ -26,7 +26,7 @@ import Image from "next/image";
 
 export default function UsersManagement() {
     const t = useTranslations('admin.users');
-    const td = useTranslations('dashboard');
+    const td = useTranslations('settings');
     const locale = useLocale();
     const isAr = locale === 'ar';
     const dispatch = useDispatch<AppDispatch>();
@@ -266,10 +266,10 @@ export default function UsersManagement() {
 
                                 <div className="pt-6 flex gap-4">
                                     <Button type="submit" className="flex-1 py-8 rounded-2xl bg-primary text-white font-black shadow-xl shadow-primary/20 hover:opacity-90 transition-all">
-                                        {td("settings.saveChanges")}
+                                        {td("saveChanges")}
                                     </Button>
                                     <Button type="button" variant="outline" onClick={() => setShowEditModal(false)} className="flex-1 py-8 rounded-2xl font-black border-2 border-gray-100">
-                                        {td("settings.cancel")}
+                                        {td("cancel")}
                                     </Button>
                                 </div>
                             </form>

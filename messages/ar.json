@@ -171,6 +171,7 @@
       "email": "البريد الإلكتروني",
       "phone": "رقم الجوال",
       "password": "كلمة المرور",
+      "organization": "اسم المؤسسة",
       "confirmPassword": "تأكيد كلمة المرور",
       "registerButton": "إنشاء حساب",
       "haveAccount": "لديك حساب بالفعل؟",
@@ -389,6 +390,19 @@
       "confirmAction": "تأكيد الإجراء",
       "confirmMessage": "هل أنت متأكد من هذا الإجراء؟",
       "confirm": "تأكيد"
+    },
+    "subscriptionDetails": {
+      "title": "تفاصيل الاشتراك",
+      "subtitle": "معلومات اشتراكك وخطتك الحالية",
+      "activePackage": "الباقة النشطة",
+      "activeStatus": "اشتراك نشط",
+      "startDate": "تاريخ البداية",
+      "renewalDate": "تاريخ التجديد",
+      "monthlyAmount": "المبلغ الشهري",
+      "domain": "النطاق",
+      "packageFeatures": "مميزات الباقة",
+      "invoiceHistory": "سجل الفواتير",
+      "totalPayments": "إجمالي المدفوعات"
     }
   },
   "admin": {

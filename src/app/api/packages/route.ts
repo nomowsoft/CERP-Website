@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    try {
+    // try {
         const userFromToken = verifyToken(request);
         if (!userFromToken) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json(newPackage, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
-    }
+    // } catch (error) {
+    //     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    // }
 }

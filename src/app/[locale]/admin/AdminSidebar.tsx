@@ -71,7 +71,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                     <X className="w-6 h-6" />
                 </button>
             </div>
-            <div className="p-4 text-center bg-info shadow-2xl m-5 rounded-3xl flex items-center">
+            <div className="p-4 text-center bg-info shadow-lg m-5 rounded-3xl flex items-center">
                 <div>
                     <Image src="/admin/user.svg" alt="..." width={80} height={50} />
                 </div>
@@ -91,7 +91,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                         key={item.label}
                         href={`/${locale}${item.href}`}
                         onClick={() => setActiveTab(item.id)}
-                        className={`w-full flex items-center gap-4 px-6 py-5 text-lg font-doto2 rounded-[1.5rem] transition-all duration-500 relative group mb-1 last:mb-0
+                        className={`w-full flex items-center gap-4 px-6 py-5 text-lg rounded-[1.5rem] transition-all duration-500 relative group mb-1 last:mb-0
                             ${activeTab === item.id ? 'text-primary' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'}
                         `}
                     >

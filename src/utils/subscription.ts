@@ -3,16 +3,16 @@ export interface SubscriptionFormData {
   fullName: string;
   email: string;
   phone: string;
-  
+
   // بيانات الجمعية
   charityRegisterNo: string;
   licenseFile?: File;
-  
+
   // اختيار النطاق
   domainType: 'SUBDOMAIN' | 'CUSTOM_DOMAIN';
   subdomain: string;
   customDomain: string;
-  
+
   // الدفع
   paymentMethod: 'ONLINE' | 'BANK';
   cardNumber: string;
@@ -20,6 +20,7 @@ export interface SubscriptionFormData {
   expiryDate: string;
   cvv: string;
   bankReceiptFile?: File;
+  packageId?: number;
 }
 
 export const initialFormData: SubscriptionFormData = {

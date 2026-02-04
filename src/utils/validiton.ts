@@ -58,8 +58,9 @@ export const Schemastep4bank = z.object({
         )
 })
 
-export const DomainTypeEnum = z.enum(['subdomain', 'custom']);
-export const PaymentMethodEnum = z.enum(['electronic', 'bank']);
+
+export const DomainTypeEnum = z.enum(['SUBDOMAIN', 'CUSTOM_DOMAIN']);
+export const PaymentMethodEnum = z.enum(['ONLINE', 'BANK']);
 
 export const SubscriptionSchema = z.object({
     fullName: z.string().min(3, { message: 'الاسم الكامل مطلوب (على الأقل 3 أحرف)' }),
@@ -78,7 +79,7 @@ export const SubscriptionSchema = z.object({
     bankReceiptFile: z.any().optional(),
 })
     .superRefine((data, ctx) => {
-        if (data.domainType === 'subdomain') {
+        if (data.domainType === 'SUBDOMAIN') {
             if (!data.subdomain || data.subdomain.trim() === '') {
                 ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'اسم النطاق الفرعي مطلوب', path: ['subdomain'] });
             }
@@ -88,7 +89,7 @@ export const SubscriptionSchema = z.object({
             }
         }
 
-        if (data.paymentMethod === 'electronic') {
+        if (data.paymentMethod === 'ONLINE') {
             if (!data.cardNumber) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'رقم البطاقة مطلوب', path: ['cardNumber'] });
             if (!data.cardHolder) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'اسم صاحب البطاقة مطلوب', path: ['cardHolder'] });
             if (!data.expiryDate) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'تاريخ الانتهاء مطلوب', path: ['expiryDate'] });

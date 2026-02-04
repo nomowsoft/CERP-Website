@@ -206,7 +206,7 @@ export default function ServicesManagement() {
                 ))}
             </div>
 
-            {/* Modal */}
+            {/* Modal for edit services */}
             <AnimatePresence>
                 {showModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -221,19 +221,19 @@ export default function ServicesManagement() {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-3xl relative z-10 max-h-[90vh] overflow-y-auto"
+                            className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-5xl relative z-10 max-h-[90vh] overflow-y-auto"
                         >
                             <h3 className="text-2xl font-black text-gray-900 mb-6">
                                 {isEditing ? (isAr ? "تعديل الخدمة" : "Edit Service") : (isAr ? "إضافة خدمة جديدة" : "Add New Service")}
                             </h3>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇸🇦 {isAr ? "اسم الخدمة بالعربية" : "Service Name (Arabic)"}</label>
-                                    <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
-                                </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇸🇦 {isAr ? "اسم الخدمة بالعربية" : "Service Name (Arabic)"}</label>
+                                        <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
+                                    </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الاسم بالإنجليزية" : "Name (English)"}</label>
                                         <Input value={formData.name_en} onChange={e => setFormData({ ...formData, name_en: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" />
@@ -282,16 +282,13 @@ export default function ServicesManagement() {
                                         dir="rtl"
                                     />
                                 </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الوصف بالإنجليزية" : "Description (English)"}</label>
-                                        <textarea
-                                            value={formData.description_en}
-                                            onChange={e => setFormData({ ...formData, description_en: e.target.value })}
-                                            className="w-full p-4 rounded-2xl bg-gray-50 border-none font-bold min-h-[80px] outline-none resize-none"
-                                        />
-                                    </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الوصف بالإنجليزية" : "Description (English)"}</label>
+                                    <textarea
+                                        value={formData.description_en}
+                                        onChange={e => setFormData({ ...formData, description_en: e.target.value })}
+                                        className="w-full p-4 rounded-2xl bg-gray-50 border-none font-bold min-h-[80px] outline-none resize-none"
+                                    />
                                 </div>
 
                                 <div className="space-y-4">
@@ -314,7 +311,7 @@ export default function ServicesManagement() {
                                                     value={content.name}
                                                     onChange={e => handleContentChange(index, 'name', e.target.value)}
                                                     className="rounded-xl bg-gray-50 border-none font-bold text-sm"
-                                                    placeholder={isAr ? "النص بالعربية" : "Arabic text"}
+                                                    placeholder={isAr ? "النص بالعربية 🇸🇦" : "Arabic text"}
                                                     dir="rtl"
                                                 />
                                                 <div className="grid grid-cols-1 gap-2">

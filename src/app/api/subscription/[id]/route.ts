@@ -124,7 +124,6 @@ export async function PUT(request: NextRequest, { params }: Props) {
             const UpdateSubscription = await prisma.subscription.update({
                 where: { id: parseInt(id) },
                 data: {
-                    userId: userFromToken.id,
                     fullName: body.fullName,
                     email: body.email,
                     phone: body.phone,

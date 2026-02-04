@@ -76,6 +76,9 @@ model Subscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  packageId Int?
+  package   Package? @relation(fields: [packageId], references: [id])
+
   @@index([userId])
 }
 
@@ -90,6 +93,7 @@ model Package {
   description_en String @default("")
   description_ar String @default("")
   features    PackageFeature[]
+  subscriptions Subscription[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 }

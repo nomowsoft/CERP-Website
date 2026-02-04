@@ -82,12 +82,14 @@ export type CreateSubscriptionDTO = {
     cardExpiryDate?: string;
     cardCVV?: string;
     bankReceipt?: string;
+    packageId?: number;
     status?: State
 };
 
 export type SubscriptionDTO = CreateSubscriptionDTO & {
     id: number;
     userId: number;
+    package?: PackageDTO;
     createdAt: string;
     updatedAt: string;
 };

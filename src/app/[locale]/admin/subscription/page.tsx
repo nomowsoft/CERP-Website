@@ -7,10 +7,21 @@ import { useEffect, useState } from 'react';
 import { getSubscription, deleteSubscription, updateSubscription } from "@/app/store/slices/subscriptionSlice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2, Edit, Eye, Search, X, Check, RotateCcw } from "lucide-react";
+import { Trash2, Edit, Eye, Search, X, Check, RotateCcw, Upload, FileText, Briefcase, Image as ImageIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { useParams } from "next/navigation";
+import { UserSubscriptionView } from "./UserSubscriptionView";
+import FilePreviewModal from "@/components/FilePreviewModal";
+
+const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
+};
 
 export default function Subscription() {
     const t = useTranslations('dashboard');
@@ -23,6 +34,31 @@ export default function Subscription() {
     const [subscriptionToDelete, setSubscriptionToDelete] = useState<number | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('ALL');
+
+
+    console.log(formData)
+
+    // File Preview State
+    const [previewFile, setPreviewFile] = useState<{ url: string, type: 'image' | 'pdf' | 'other', name?: string } | null>(null);
+
+    const handlePreviewFile = (url: string, name?: string) => {
+        if (!url) return;
+
+        let type: 'image' | 'pdf' | 'other' = 'other';
+        const lowerUrl = url.toLowerCase();
+
+        if (lowerUrl.match(/\.(jpeg|jpg|gif|png|svg|webp)($|\?)/) || lowerUrl.startsWith('data:image/')) {
+            type = 'image';
+        } else if (lowerUrl.match(/\.pdf($|\?)/) || lowerUrl.startsWith('data:application/pdf')) {
+            type = 'pdf';
+        }
+
+        setPreviewFile({
+            url,
+            type,
+            name
+        });
+    };
 
     const params = useParams();
     const isAr = params.locale === 'ar';
@@ -78,7 +114,17 @@ export default function Subscription() {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await dispatch(updateSubscription({ id: selectedSubscription?.id as number, data: formData })).unwrap();
+            // Prepare payload (convert Files to Base64 strings)
+            const payload: any = { ...formData };
+            if (payload.licenseFile instanceof File) {
+                payload.licenseFile = await fileToBase64(payload.licenseFile);
+            }
+            // Check if bankReceipt is a File object (new upload) or keep existing string
+            if (payload.bankReceipt instanceof File) {
+                payload.bankReceipt = await fileToBase64(payload.bankReceipt);
+            }
+
+            await dispatch(updateSubscription({ id: selectedSubscription?.id as number, data: payload })).unwrap();
             toast.success("تم تحديث الإشتراك بنجاح");
             handleCloseModal();
         } catch (err: any) {
@@ -113,6 +159,17 @@ export default function Subscription() {
         { id: 'DONE', label: 'مقبول' },
         { id: 'CANCEL', label: 'مرفوض' }
     ];
+
+    const { userInfo } = useSelector((state: any) => state.user);
+    const isAdmin = userInfo?.role === 'ADMIN';
+
+    if (!isAdmin) {
+        return (
+            <section className="container mx-auto p-4 lg:p-8" dir={dir}>
+                <UserSubscriptionView subscription={subscriptions[0]} />
+            </section>
+        );
+    }
 
     return (
 
@@ -258,7 +315,7 @@ export default function Subscription() {
             </div>
 
             {showModal && selectedSubscription && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div className="fixed inset-0  z-[60] flex items-center justify-center p-4">
                     <div
                         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                         onClick={handleCloseModal}
@@ -382,7 +439,7 @@ export default function Subscription() {
                                         <Input
                                             value={formData.fullName}
                                             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                            className="rounded-xl"
+                                            className="rounded-2xl py-8"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -390,7 +447,7 @@ export default function Subscription() {
                                         <Input
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="rounded-xl"
+                                            className="rounded-2xl py-8"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -398,7 +455,7 @@ export default function Subscription() {
                                         <Input
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="rounded-xl"
+                                            className="rounded-2xl py-8"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -406,7 +463,7 @@ export default function Subscription() {
                                         <Input
                                             value={formData.domainName}
                                             onChange={(e) => setFormData({ ...formData, domainName: e.target.value })}
-                                            className="rounded-xl font-mono"
+                                            className="rounded-2xl py-8"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -414,23 +471,59 @@ export default function Subscription() {
                                         <Input
                                             value={formData.charityRegisterNo}
                                             onChange={(e) => setFormData({ ...formData, charityRegisterNo: e.target.value })}
-                                            className="rounded-xl"
+                                            className="rounded-2xl py-8"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold text-gray-600 ms-1">{isAr ? "ملف الترخيص (رابط)" : "License File (Link)"}</label>
-                                        <Input
-                                            value={formData.licenseFile}
-                                            onChange={(e) => setFormData({ ...formData, licenseFile: e.target.value })}
-                                            className="rounded-xl"
-                                        />
+                                        <label className="text-sm font-semibold text-gray-700 ms-1 flex items-center gap-2">
+                                            {isAr ? "ملف الترخيص" : "License File"}
+                                        </label>
+                                        <div className="flex items-stretch gap-4">
+                                            {/* Upload Area */}
+                                            <div className="relative flex-1 group">
+                                                <div className="absolute inset-0 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-200 group-hover:border-blue-400 group-hover:bg-blue-50 transition-all duration-300 pointer-events-none" />
+                                                <div className="relative h-16 flex items-center justify-center px-4 cursor-pointer">
+                                                    <Input
+                                                        type="file"
+                                                        accept=".pdf,.jpg,.jpeg,.png"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                setFormData({ ...formData, licenseFile: file });
+                                                            }
+                                                        }}
+                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                    />
+                                                    <div className="flex items-center gap-3 text-gray-500 group-hover:text-blue-600 transition-colors">
+                                                        <Upload className="w-5 h-5" />
+                                                        <span className="font-medium text-sm">
+                                                            {formData.licenseFile instanceof File
+                                                                ? formData.licenseFile.name
+                                                                : (isAr ? "انقر لرفع ملف الترخيص..." : "Click to upload license file...")}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Preview/Link Area */}
+                                            {(formData.licenseFile && typeof formData.licenseFile === 'string') && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePreviewFile(formData.licenseFile, isAr ? "ملف الترخيص" : "License File")}
+                                                    className="w-16 h-16 shrink-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl border border-amber-200 flex items-center justify-center text-amber-700 hover:shadow-md hover:scale-105 transition-all cursor-pointer"
+                                                    title={isAr ? "عرض الملف الحالي" : "View Current File"}
+                                                >
+                                                    <Briefcase className="w-7 h-7" />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-semibold text-gray-600 ms-1">{isAr ? "نوع الدومين" : "Domain Type"}</label>
                                         <select
                                             value={formData.domainType}
                                             onChange={(e) => setFormData({ ...formData, domainType: e.target.value })}
-                                            className="w-full rounded-xl border border-gray-200 p-2 text-sm focus:ring-primary h-10"
+                                            className="w-full rounded-2xl  border border-gray-200 p-2 text-sm focus:ring-primary h-16"
                                         >
                                             <option value="SUBDOMAIN">{isAr ? "فرعي (Subdomain)" : "Subdomain"}</option>
                                             <option value="CUSTOM_DOMAIN">{isAr ? "مخصص (Custom Domain)" : "Custom Domain"}</option>
@@ -441,26 +534,63 @@ export default function Subscription() {
                                         <select
                                             value={formData.paymentMethod}
                                             onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                                            className="w-full rounded-xl border border-gray-200 p-2 text-sm focus:ring-primary h-10"
+                                            className="w-full rounded-2xl border border-gray-200 p-2 text-sm focus:ring-primary h-16"
                                         >
                                             <option value="ONLINE">{isAr ? "أونلاين" : "Online"}</option>
                                             <option value="BANK">{isAr ? "تحويل بنكي" : "Bank Transfer"}</option>
                                         </select>
                                     </div>
                                     {formData.paymentMethod === 'BANK' && (
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-600 ms-1">{isAr ? "إيصال البنك (رابط)" : "Bank Receipt (Link)"}</label>
-                                            <Input
-                                                value={formData.bankReceipt}
-                                                onChange={(e) => setFormData({ ...formData, bankReceipt: e.target.value })}
-                                                className="rounded-xl"
-                                            />
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-semibold text-gray-700 ms-1 flex items-center gap-2">
+                                                {isAr ? "إيصال البنك" : "Bank Receipt"}
+                                            </label>
+
+                                            <div className="flex items-stretch gap-4">
+                                                {/* Upload Area */}
+                                                <div className="relative flex-1 group">
+                                                    <div className="absolute inset-0 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-200 group-hover:border-blue-400 group-hover:bg-blue-50 transition-all duration-300 pointer-events-none" />
+                                                    <div className="relative h-16 flex items-center justify-center px-4 cursor-pointer">
+                                                        <Input
+                                                            type="file"
+                                                            accept=".pdf,.jpg,.jpeg,.png"
+                                                            onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    setFormData({ ...formData, bankReceipt: file });
+                                                                }
+                                                            }}
+                                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        />
+                                                        <div className="flex items-center gap-3 text-gray-500 group-hover:text-blue-600 transition-colors">
+                                                            <Upload className="w-5 h-5" />
+                                                            <span className="font-medium text-sm">
+                                                                {formData.bankReceipt instanceof File
+                                                                    ? formData.bankReceipt.name
+                                                                    : (isAr ? "انقر لرفع الإيصال..." : "Click to upload receipt...")}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Preview/Link Area */}
+                                                {(formData.bankReceipt && typeof formData.bankReceipt === 'string') && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handlePreviewFile(formData.bankReceipt, isAr ? "إيصال البنك" : "Bank Receipt")}
+                                                        className="w-16 h-16 shrink-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl border border-amber-200 flex items-center justify-center text-amber-700 hover:shadow-md hover:scale-105 transition-all cursor-pointer"
+                                                        title={isAr ? "عرض الإيصال الحالي" : "View Current Receipt"}
+                                                    >
+                                                        <FileText className="w-7 h-7" />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                                 <div className="pt-4 flex gap-3">
-                                    <Button type="submit" className="flex-1 rounded-xl py-6 bg-primary hover:bg-primary/90">{isAr ? "حفظ التغييرات" : "Save Changes"}</Button>
-                                    <Button type="button" variant="outline" onClick={handleCloseModal} className="flex-1 rounded-xl py-6">{isAr ? "إلغاء" : "Cancel"}</Button>
+                                    <Button type="submit" className="flex-1 rounded-xl py-6 bg-primary hover:bg-secondary text-info text-xl">{isAr ? "حفظ التغييرات" : "Save Changes"}</Button>
+                                    <Button type="button" variant="outline" onClick={handleCloseModal} className="flex-1 rounded-xl py-6 bg-info hover:bg-primary hover:text-info text-primary text-xl">{isAr ? "إلغاء" : "Cancel"}</Button>
                                 </div>
                             </form>
                         ) : (
@@ -552,7 +682,13 @@ export default function Subscription() {
                                     <div className="space-y-1.5 border-s-4 border-gray-100 ps-4">
                                         <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">{isAr ? "ملف الترخيص" : "License File"}</span>
                                         {selectedSubscription.licenseFile ? (
-                                            <a href={selectedSubscription.licenseFile} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold text-sm block">{isAr ? "عرض الملف" : "View File"}</a>
+                                            <button
+                                                type="button"
+                                                onClick={() => handlePreviewFile(selectedSubscription.licenseFile, isAr ? "ملف الترخيص" : "License File")}
+                                                className="text-primary hover:underline font-bold text-sm block"
+                                            >
+                                                {isAr ? "عرض الملف" : "View File"}
+                                            </button>
                                         ) : (
                                             <span className="text-gray-400 text-sm block">{isAr ? "لا يوجد ملف" : "No File"}</span>
                                         )}
@@ -573,7 +709,13 @@ export default function Subscription() {
                                         <div className="space-y-1.5 border-s-4 border-gray-100 ps-4">
                                             <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">{isAr ? "إيصال البنك" : "Bank Receipt"}</span>
                                             {selectedSubscription.bankReceipt ? (
-                                                <a href={selectedSubscription.bankReceipt} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold text-sm block">{isAr ? "عرض الإيصال" : "View Receipt"}</a>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePreviewFile(selectedSubscription.bankReceipt, isAr ? "إيصال البنك" : "Bank Receipt")}
+                                                    className="text-primary hover:underline font-bold text-sm block"
+                                                >
+                                                    {isAr ? "عرض الإيصال" : "View Receipt"}
+                                                </button>
                                             ) : (
                                                 <span className="text-gray-400 text-sm block">{isAr ? "لا يوجد إيصال" : "No Receipt"}</span>
                                             )}
@@ -615,6 +757,14 @@ export default function Subscription() {
                     </div>
                 </div>
             )}
+
+            <FilePreviewModal
+                isOpen={!!previewFile}
+                onClose={() => setPreviewFile(null)}
+                fileUrl={previewFile?.url || null}
+                fileType={previewFile?.type}
+                fileName={previewFile?.name}
+            />
         </section>
     );
 }

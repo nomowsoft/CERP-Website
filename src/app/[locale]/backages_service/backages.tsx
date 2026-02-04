@@ -51,7 +51,7 @@ export const Backages = () => {
                             </ul>
                         </div>
                         <div className="px-5 w-full">
-                            <a href={`/${locale}/subscription`} className="bg-info my-5 flex justify-center mx- w-full border border-gray-200 rounded-2xl py-3 hover:text-info  hover:bg-primary text-xl font-doto2">
+                            <a href={`/${locale}/subscription?packageId=${packege.id}`} className="bg-info my-5 flex justify-center mx- w-full border border-gray-200 rounded-2xl py-3 hover:text-info  hover:bg-primary text-xl font-doto2">
                                 <span>{t('subscribeNow')}</span>
                                 <ArrowLeft className={locale === 'ar' ? 'rotate-180' : ''} />
                             </a>
