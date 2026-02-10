@@ -1,3 +1,5 @@
+import { JSX } from "react/jsx-runtime";
+
 export type Program = {
     id: number;
     image: string;
@@ -18,6 +20,19 @@ export type Programs = {
     nameKey: string,
     descKey: string
 }
+
+//token  DTO
+export type JWTUserPayload = {
+    id: string;
+    email: string;
+};
+
+export type JWTPayload = {
+    id: number;
+    email: string | null;
+}
+
+//User  DTO
 export type RegisterUserDTO = {
     email: string,
     password: string,
@@ -35,15 +50,114 @@ export type UpdateUserDTO = {
     password?: string,
     name?: string,
     phone?: string,
-    charityname?: string
+    charityName?: string
 }
 
-export type JWTUserPayload = {
-    id: string;
+export type UserDashbord = {
+    id: number;
     email: string;
+    name: string;
+    phone: string;
+    createdAt: string;
+    charityName: string;
+    role: string;
+}
+
+//Subscription DTO
+type DomainType = 'SUBDOMAIN' | 'CUSTOM_DOMAIN';
+type PaymentMethod = 'ONLINE' | 'BANK';
+type State = 'DRAFT' | 'PROGRES' | 'DONE' | 'CANCEL';
+
+export type CreateSubscriptionDTO = {
+    fullName: string;
+    email: string;
+    phone: string;
+    charityRegisterNo: string;
+    licenseFile: string;
+    domainType: DomainType;
+    domainName?: string;
+    paymentMethod: PaymentMethod;
+    cardNumber?: string;
+    cardHolderName?: string;
+    cardExpiryDate?: string;
+    cardCVV?: string;
+    bankReceipt?: string;
+    packageId?: number;
+    status?: State;
+    approvalDate?: string;
+    expiryDate?: string;
 };
 
-export type JWTPayload = {
+export type SubscriptionDTO = CreateSubscriptionDTO & {
     id: number;
-    email: string | null;
+    userId: number;
+    package?: PackageDTO;
+    approvalDate?: string;
+    expiryDate?: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+//redux DTO
+export type UserState = {
+    userInfo: UserDashbord | any;
+    loading: boolean;
+    error: string | null;
+    isAuthenticated: boolean;
+}
+
+export type subscriptionState = {
+    subscriptionInfo: SubscriptionDTO | any;
+    loading: boolean;
+    error: string | null;
+}
+
+export type PackageFeturesDto = {
+    map(arg0: (feature: PackageFeturesDto) => JSX.Element): import("react").ReactNode;
+    id: number,
+    text: string
+    text_en: string
+    text_ar: string
+    packageId: number
+}
+
+export type PackageDTO = {
+    id: number
+    image: string
+    name: string
+    name_en: string
+    name_ar: string
+    type: string
+    price: number
+    currency: string
+    description: string
+    description_en: string
+    description_ar: string
+    features: PackageFeturesDto
+    createdAt: string
+    updatedAt: string
+}
+
+export type ServiceTypeDto = {
+    id: number,
+    name: string
+    name_en: string
+    name_ar: string
+    serviceId: number
+}
+
+export type ServiceDTO = {
+    id: number
+    image: string
+    name: string
+    name_en: string
+    name_ar: string
+    price: number | string
+    currency: string
+    description: string
+    description_en: string
+    description_ar: string
+    contents: ServiceTypeDto[]
+    createdAt: string
+    updatedAt: string
 }

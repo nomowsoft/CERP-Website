@@ -6,12 +6,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import LanguageSwitcher from "../common/LanguageSwitcher";
+import type { AppDispatch } from '@/app/store/store';
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "@/app/store/slices/userSlice";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("header");
   const local = useLocale();
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  const { userInfo } = useSelector((state: any) => state.user);
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,7 +46,7 @@ export default function Header() {
 
   return (
     <header>
-      <nav className={`top-0 left-0 right-0 z-50 ${['/ar', '/en'].includes(pathname) ? 'fixed bg-info' : 'bg-info'}`}>
+      <nav className={`top-0 left-0 right-0 z-50 ${['/ar', '/en'].includes(pathname) ? 'fixed bg-info' : 'bg-info'} ${pathname.includes('/admin') ? 'hidden' : ''} shadow-md`}>
         <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-2">
           <Link href="/" className="flex items-center px-5 lg:px-0">
             <Image
@@ -51,12 +61,17 @@ export default function Header() {
           </div>
           <div className="hidden lg:flex items-center space-x-6">
             <LanguageSwitcher />
-            <Link
-              href={`/${local}/login`}
-              className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2"
-            >
-              تسجيل الدخول
-            </Link>
+            {userInfo.id && (
+              <Link className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2" href={`/${local}/admin`}>{userInfo.name}</Link>
+            )}
+            {!userInfo.id && (
+              <Link
+                href={`/${local}/login`}
+                className="mx-2 border border-gray-700 py-3 px-6 rounded-2xl text-xl font-doto2"
+              >
+                {t('login')}
+              </Link>
+            )}
             <Link
               href={`/${local}/contact-us`}
               className="mx-2 bg-gradient-to-l from-primary/70 to-primary text-info py-3 px-8 rounded-2xl text-xl font-doto2"

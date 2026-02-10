@@ -17,7 +17,7 @@ const SystemHalaqat = () => {
           <div className="mt-6 md:mt-0 w-full md:ml-10">
             <div className="flex justify-start mt-10">
               <span className="text-primary flex items-center gap-2  border border-primary rounded-3xl px-4 py-2 bg-primary/10">
-                <span>التعليم القراني</span>
+                <span>{t('halaqatTitle')}</span>
               </span>
             </div>
             <h1 className={`text-2xl md:text-3xl font-bold mt-4 font-doto2`}>

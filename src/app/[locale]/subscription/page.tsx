@@ -1,9 +1,21 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import SubscriptionWizard from './SubscriptionWizard';
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { verifyTokenForPage } from "@/utils/verifyToken";
 
 
-export default async function Contact() {
+export default async function SubscriptionPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const cookieStore = await cookies();
+    const jwtToken = cookieStore.get("jwtToken")?.value;
+    const userPayload = jwtToken ? verifyTokenForPage(jwtToken) : null;
+
+    if (!userPayload) {
+        redirect(`/${locale}/login`);
+    }
+
     const messages = await getMessages();
 
     return (

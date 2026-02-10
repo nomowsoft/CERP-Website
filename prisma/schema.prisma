@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -20,14 +14,180 @@ enum Role {
   VIEWER
 }
 
+enum DomainType {
+  SUBDOMAIN
+  CUSTOM_DOMAIN
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentMethod {
+  ONLINE
+  BANK
+}
+
+enum Status {
+  DRAFT
+  PROGRES
+  DONE
+  CANCEL
+}
+
+enum PackageType {
+  STARTER
+  BUSINESS
+  ENTERPRISE
+}
+
+enum RequestType {
+  RENEW
+  UPGRADE
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String?  @unique
-  password    String
-  name        String?
-  charityName String?
-  phone       String?  @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  role        Role     @default(ADMIN)
+  id            Int            @id @default(autoincrement())
+  email         String?        @unique
+  password      String
+  name          String?
+  charityName   String?
+  phone         String?        @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  role          Role           @default(ADMIN)
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName String
+  email    String
+  phone    String
+
+  charityRegisterNo String
+  licenseFile       String
+
+  domainType DomainType
+  domainName String?
+
+  paymentMethod PaymentMethod
+
+  cardNumber     String?
+  cardHolderName String?
+  cardExpiryDate String?
+  cardCVV        String?
+
+  bankReceipt String?
+  status Status
+
+  approvalDate DateTime?
+  expiryDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  packageId Int?
+  package   Package? @relation(fields: [packageId], references: [id])
+  payments  Payment[]
+  requests  SubscriptionRequest[]
+
+  @@index([userId])
+}
+
+model Package {
+  id          Int              @id @default(autoincrement())
+  image       String
+  name        String
+  name_en     String   @default("")
+  name_ar     String   @default("")
+  type        PackageType
+  price       Decimal  @default(0)
+  currency    String   @default("SAR")
+  description String
+  description_en String @default("")
+  description_ar String @default("")
+  features    PackageFeature[]
+  subscriptions Subscription[]
+  requests    SubscriptionRequest[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model SubscriptionRequest {
+  id             Int           @id @default(autoincrement())
+  subscriptionId Int
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  type           RequestType
+  packageId      Int?
+  package        Package?      @relation(fields: [packageId], references: [id])
+  paymentMethod  PaymentMethod
+  licenseFile    String?
+  bankReceipt    String?
+  status         RequestStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model SystemSetting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model Payment {
+  id             Int          @id @default(autoincrement())
+  subscriptionId Int
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  amount         Decimal
+  method         PaymentMethod
+  status         PaymentStatus @default(PENDING)
+  checkoutId     String?       @unique // For HyperPay
+  transactionId  String?       @unique // From HyperPay
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model PackageFeature {
+  id        Int     @id @default(autoincrement())
+  text      String
+  text_en   String  @default("")
+  text_ar   String  @default("")
+  packageId Int
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+}
+
+model Service {
+  id          Int           @id @default(autoincrement())
+  image       String
+  name        String
+  name_en     String   @default("")
+  name_ar     String   @default("")
+  price       Decimal  @default(0)
+  currency    String   @default("SAR")
+  description String
+  description_en String @default("")
+  description_ar String @default("")
+  contents    ServiceType[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model ServiceType {
+  id        Int     @id @default(autoincrement())
+  name      String
+  name_en   String @default("")
+  name_ar   String @default("")
+  serviceId Int
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }

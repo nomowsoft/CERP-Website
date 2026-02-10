@@ -3,7 +3,8 @@
     "contact": "تواصل معنا",
     "openMainMenu": "فتح القائمة الرئيسية",
     "home": "الرئيسية",
-    "subscription": "اشترك الآن"
+    "package_service": "الباقات والخدمات",
+    "login": "تسجيل الدخول"
   },
   "hero": {
     "integratedSystem": "نظام سعودي متكامل",
@@ -58,7 +59,12 @@
     "assistanceDesc": "إدارة طلبات الدعم",
     "procurementSystem": "نظام المشتريات",
     "procurementSystemDesc": "إدارة عمليات الشراء",
-    "governanceAndFinancialSafety": "الحوكمة والسلامة المالية"
+    "governanceAndFinancialSafety": "الحوكمة والسلامة المالية",
+    "packages": "الباقات",
+    "packagesSubtitle": "اختر الباقة التي تناسب حجم مؤسستك واحتياجاتك",
+    "subscribeNow": "اشترك الآن",
+    "additionalServices": "خدمات إضافية",
+    "additionalServicesSubtitle": "خدمات متخصصة لدعم عملياتك وتعزيز كفاءة مؤسستك"
   },
   "news": {
     "tag": "أحدث الأخبار",
@@ -143,6 +149,33 @@
       "messageLabel": "الرسالة",
       "messagePlaceholder": "اكتب رسالتك هنا...",
       "submitButton": "إرسال الرسالة"
+    },
+    "login": {
+      "title": "تسجيل",
+      "subtitle": "الدخول",
+      "welcome": "مرحبًا بك في النظام المتكامل سِرب",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "forgotPassword": "هل نسيت كلمة المرور؟",
+      "loginButton": "دخول",
+      "noAccount": "لا تملك حساب؟",
+      "registerNow": "التسجيل الأن"
+    },
+    "register": {
+      "title": "إنشاء",
+      "subtitle": "حساب جديد",
+      "welcome": "انضم إلينا وابدأ رحلتك الرقمية",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الجوال",
+      "password": "كلمة المرور",
+      "organization": "اسم المؤسسة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "registerButton": "إنشاء حساب",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "loginNow": "تسجيل الدخول"
     }
   },
   "faq": {
@@ -247,15 +280,19 @@
       "next": "التالي",
       "processing": "جاري المعالجة...",
       "completePayment": "إتمام الدفع",
-      "confirmOrder": "تأكيد الطلب"
+      "confirmOrder": "تأكيد الطلب",
+      "returnToDraft": "الرجوع الي المسودة"
     },
     "messages": {
       "successTitle": "تم بنجاح!",
       "paymentSuccessDesc": "تم إتمام الدفع بنجاح. شكراً لاشتراكك!",
       "orderConfirmDesc": "تم تأكيد طلبك بنجاح. سيتم مراجعة الإيصال البنكي.",
       "errorTitle": "حدث خطأ",
-      "errorDesc": "يرجى المحاولة مرة أخرى"
+      "errorDesc": "يرجى المحاولة مرة أخرى",
+      "successReturn": "تم العودة للمسودة بنجاح",
+      "errorReturn": "فشل العودة للمسودة"
     },
+    "currentStatus": "حالة الاشتراك الحالية",
     "personalInfo": {
       "title": "المعلومات الشخصية",
       "fullNameLabel": "الاسم الكامل",
@@ -265,7 +302,7 @@
     },
     "associationData": {
       "title": "بيانات الجمعية",
-      "associationNumberLabel": "رقم سجل الجمعية",
+      "associationNumberLabel": "رقم ترخيص المركز الوطني",
       "associationNumberPlaceholder": "أدخل رقم السجل",
       "licenseLabel": "رخصة الجمعية",
       "licensePlaceholder": "أدخل رقم الرخصة",
@@ -278,7 +315,20 @@
       "subdomainOption": "نطاق فرعي",
       "customDomainOption": "نطاق مخصص",
       "subdomainLabel": "اسم جمعيتك",
-      "customDomainLabel": "النطاق المخصص"
+      "customDomainLabel": "النطاق المخصص",
+      "checkAvailability": "فحص توفر النطاق",
+      "checking": "جاري الفحص...",
+      "domainAvailable": "النطاق متاح ✓",
+      "domainUnavailable": "النطاق غير متاح — فحص مرة أخرى",
+      "availableTitle": "متاح!",
+      "unavailableTitle": "غير متاح",
+      "errorTitle": "خطأ",
+      "availableMessage": "النطاق متاح! يمكنك المتابعة.",
+      "unavailableMessage": "هذا النطاق غير متاح. جرّب اسماً آخر.",
+      "errorMessage": "حدث خطأ أثناء فحص النطاق. حاول مرة أخرى.",
+      "loginRequired": "يرجى تسجيل الدخول أولاً.",
+      "domainReserved": "سيتم حجز النطاق:",
+      "checkHint": "اضغط فحص للتأكد من التوفر"
     },
     "payment": {
       "title": "اختر طريقة الدفع",
@@ -294,5 +344,130 @@
       "uploadBankReceiptTitle": "رفع الإيصال البنكي",
       "uploadReceiptPlaceholder": "اختر ملف الإيصال"
     }
+  },
+  "dashboard": {
+    "title": "لوحة المعلومات",
+    "subtitle": "نظرة عامة على لوحة المعلومات",
+    "hideSidebar": "إخفاء القائمة",
+    "showSidebar": "إظهار القائمة",
+    "logout": "تسجيل الخروج",
+    "loading": "جاري التحميل...",
+    "systemName": "نظام",
+    "systemTitle": "سِرب",
+    "nav": {
+      "dashboard": "لوحة المعلومات",
+      "invoices": "الفواتير",
+      "subscriptions": "الإشتراكات",
+      "settings": "الإعدادات",
+      "users": "المستخدمين",
+      "packages": "الباقات",
+      "services": "الخدمات"
+    },
+    "stats": {
+      "activeSubscriptions": "الأشتراكات النشطة",
+      "basicPlan": "الباقة الأساسية",
+      "activeUntil": "نشط حتى",
+      "totalInvoices": "إجمالي الفواتير",
+      "paidPending": "{paid} مدفوعه ، {pending} في الإنتظار",
+      "nextPayment": "الدفع القادم",
+      "currency": "ر.س"
+    },
+    "invoices": {
+      "latestInvoices": "الفواتير الأخيرة",
+      "viewAll": "عرض جميع الفواتير",
+      "invoiceNumber": "رقم الفاتورة",
+      "date": "التاريخ",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "pending": "انتظار الدفع",
+      "suspended": "معلقة",
+      "paid": "مدفوعه"
+    },
+    "common": {
+      "details": "تفاصيل الإشتراك",
+      "currentInfo": "عرض معلومات الإشتراك الحالي",
+      "allInvoices": "جميع الفواتير",
+      "browseDownload": "استعرض وحمل الفواتير الخاصة بك.",
+      "confirmDelete": "تأكيد الحذف",
+      "deleteWarning": "هل أنت متأكد من رغبتك في حذف هذا الإشتراك؟ لا يمكن التراجع عن هذا الإجراء.",
+      "yesDelete": "نعم، حذف",
+      "cancel": "إلغاء",
+      "editSubscription": "تعديل بيانات الإشتراك",
+      "approval": "موافق",
+      "rejection": "رفض",
+      "draft": "مسودة",
+      "inProgress": "تحت التنفيذ",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "returnToDraft": "إعادة للمسودة",
+      "confirmAction": "تأكيد الإجراء",
+      "confirmMessage": "هل أنت متأكد من هذا الإجراء؟",
+      "confirm": "تأكيد"
+    },
+    "subscriptionDetails": {
+      "title": "تفاصيل الاشتراك",
+      "subtitle": "معلومات اشتراكك وخطتك الحالية",
+      "activePackage": "الباقة النشطة",
+      "activeStatus": "اشتراك نشط",
+      "startDate": "تاريخ البداية",
+      "renewalDate": "تاريخ التجديد",
+      "monthlyAmount": "المبلغ الشهري",
+      "domain": "النطاق",
+      "packageFeatures": "مميزات الباقة",
+      "invoiceHistory": "سجل الفواتير",
+      "totalPayments": "إجمالي المدفوعات"
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "إدارة المستخدمين",
+      "subtitle": "إدارة الصلاحيات والحسابات في النظام",
+      "searchPlaceholder": "البحث بالاسم، البريد أو الهاتف...",
+      "userColumn": "المستخدم",
+      "roleColumn": "الصلاحية",
+      "orgColumn": "المنظمة",
+      "actionsColumn": "الإجراءات",
+      "editTitle": "تعديل بيانات المستخدم",
+      "deleteTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد من حذف حساب {name}؟",
+      "notSet": "غير محدد",
+      "accessDenied": "وصول غير مصرح",
+      "adminOnly": "هذه الصفحة للمدراء فقط",
+      "updateSuccess": "تم تحديث المستخدم بنجاح",
+      "updateError": "فشل التحديث",
+      "deleteSuccess": "تم حذف المستخدم",
+      "deleteError": "فشل الحذف"
+    },
+    "packages": {
+      "title": "إدارة الباقات",
+      "subtitle": "إضافة وتعديل باقات الاشتراك والمميزات"
+    },
+    "services": {
+      "title": "إدارة الخدمات",
+      "subtitle": "إدارة الخدمات المقدمة ومحتوياتها"
+    }
+  },
+  "settings": {
+    "title": "إعدادات الحساب",
+    "subtitle": "إدارة معلوماتك الشخصية وإعدادات مؤسستك",
+    "profile": "الملف الشخصي",
+    "organization": "المؤسسة",
+    "security": "الأمان",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "charityName": "اسم الجمعية",
+    "saveChanges": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "successUpdate": "تم تحديث البيانات بنجاح",
+    "errorUpdate": "فشل تحديث البيانات",
+    "loading": "جاري التحميل...",
+    "changePassword": "تغيير كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "personalInfo": "المعلومات الشخصية",
+    "orgInfo": "معلومات الجمعية",
+    "passwordHint": "حماية حسابك تبدأ من كلمة مرور قوية. ننصح باستخدام مزيج من الحروف الكبيرة والصغيرة والأرقام والرموز الخاصة.",
+    "passwordMismatch": "كلمات المرور غير متطابقة"
   }
 }

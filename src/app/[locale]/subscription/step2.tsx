@@ -9,7 +9,7 @@ interface AssociationDataStepProps {
   onChange: (data: Partial<SubscriptionFormData>) => void;
 }
 
-const AssociationDataStep = ({ data, onChange }: AssociationDataStepProps) => {
+const Step2 = ({ data, onChange }: AssociationDataStepProps) => {
   const t = useTranslations('subscription.associationData');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,14 +27,14 @@ const AssociationDataStep = ({ data, onChange }: AssociationDataStepProps) => {
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="associationNumber" className="flex items-center gap-2 font-doto2">
+          <Label htmlFor="charityRegisterNo" className="flex items-center gap-2 font-doto2">
             <Building2 className="w-5 h-5" />
             {t('associationNumberLabel')}
           </Label>
           <Input
-            id="associationNumber"
-            value={data.associationNumber}
-            onChange={(e) => onChange({ associationNumber: e.target.value })}
+            id="charityRegisterNo"
+            value={data.charityRegisterNo}
+            onChange={(e) => onChange({ charityRegisterNo: e.target.value })}
             placeholder={t('associationNumberPlaceholder')}
             className="text-right border border-gray-300"
           />
@@ -71,4 +71,4 @@ const AssociationDataStep = ({ data, onChange }: AssociationDataStepProps) => {
   );
 };
 
-export default AssociationDataStep;
+export default Step2;

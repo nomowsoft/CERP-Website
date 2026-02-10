@@ -3,38 +3,39 @@ export interface SubscriptionFormData {
   fullName: string;
   email: string;
   phone: string;
-  
+
   // بيانات الجمعية
-  associationNumber: string;
-  license: string;
+  charityRegisterNo: string;
   licenseFile?: File;
-  
+
   // اختيار النطاق
-  domainType: 'subdomain' | 'custom';
+  domainType: 'SUBDOMAIN' | 'CUSTOM_DOMAIN';
   subdomain: string;
   customDomain: string;
-  
+
   // الدفع
-  paymentMethod: 'electronic' | 'bank';
+  paymentMethod: 'ONLINE' | 'BANK';
   cardNumber: string;
   cardHolder: string;
   expiryDate: string;
   cvv: string;
   bankReceiptFile?: File;
+  packageId?: number;
+  selectedServices?: number[]; // IDs of selected services
 }
 
 export const initialFormData: SubscriptionFormData = {
   fullName: '',
   email: '',
   phone: '',
-  associationNumber: '',
-  license: '',
-  domainType: 'subdomain',
+  charityRegisterNo: '',
+  domainType: 'SUBDOMAIN',
   subdomain: '',
   customDomain: '',
-  paymentMethod: 'electronic',
+  paymentMethod: 'ONLINE',
   cardNumber: '',
   cardHolder: '',
   expiryDate: '',
   cvv: '',
+  selectedServices: [],
 };

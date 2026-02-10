@@ -1,0 +1,63 @@
+"use client";
+import Image from 'next/image'
+import type { AppDispatch } from '@/app/store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { getServices } from '@/app/store/slices/servicesSlice';
+import { useEffect } from 'react';
+import { ServiceDTO, ServiceTypeDto } from '@/utils/types';
+import { ArrowLeft } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+
+
+export const Service = () => {
+  const locale = useLocale();
+  const t = useTranslations("programs");
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(getServices());
+  }, [dispatch]);
+
+  const Services = useSelector((state: any) => state.services.services);
+  return (
+    <section className="container mx-auto pt-20" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="text-center my-10">
+        <h1 className="text-4xl font-doto2">{t('additionalServices')}</h1>
+        <p className="text-xl text-gray-500 mt-2">{t('additionalServicesSubtitle')}</p>
+      </div>
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-10 lg:mx-0 mx-10">
+        {Services.map((service: ServiceDTO) => (
+          <div key={service.id} className="shadow-xl rounded-3xl p-5 flex flex-col justify-between transition-all duration-300 hover:scale-105 animate-slide-up">
+            <div>
+              <Image src={service.image} alt={service.name} width={120} height={20} />
+              <h1 className="text-2xl font-doto2">{locale === 'en' ? service.name_en || service.name : service.name_ar || service.name}</h1>
+              <div className="flex justify-start items-baseline gap-1 mt-2 mb-3">
+                <span className="text-3xl font-bold text-primary">{Number(service.price)}</span>
+                <span className="text-base text-gray-500 font-medium">{service.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+              </div>
+              <p className="text-gray-500">{locale === 'en' ? service.description_en || service.description : service.description_ar || service.description}</p>
+              <div className="grid grid-cols-4 gap-10 mt-5">
+                {service.contents?.map((content: ServiceTypeDto) => (
+                  <div key={content.id} className="flex bg-primary/10 p-2 rounded-3xl">
+                    <div className="flex items-center">
+                      <Image src="/backage_service/Vector.svg" alt="" width={20} height={20} />
+                    </div>
+                    <div>
+                      <span className="ms-2 text-gray-700 text-[6px] md:text-[12px]">{locale === 'en' ? content.name_en || content.name : content.name_ar || content.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="w-full">
+              <a href={`/${locale}/subscription`} className="bg-info my-5 flex justify-center mx- w-full border border-gray-200 rounded-2xl py-3 hover:text-info  hover:bg-primary text-xl font-doto2">
+                <span>{t('subscribeNow')}</span>
+                <ArrowLeft className={locale === 'ar' ? 'rotate-180' : ''} />
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </section>
+  )
+}
