@@ -315,7 +315,20 @@
       "subdomainOption": "نطاق فرعي",
       "customDomainOption": "نطاق مخصص",
       "subdomainLabel": "اسم جمعيتك",
-      "customDomainLabel": "النطاق المخصص"
+      "customDomainLabel": "النطاق المخصص",
+      "checkAvailability": "فحص توفر النطاق",
+      "checking": "جاري الفحص...",
+      "domainAvailable": "النطاق متاح ✓",
+      "domainUnavailable": "النطاق غير متاح — فحص مرة أخرى",
+      "availableTitle": "متاح!",
+      "unavailableTitle": "غير متاح",
+      "errorTitle": "خطأ",
+      "availableMessage": "النطاق متاح! يمكنك المتابعة.",
+      "unavailableMessage": "هذا النطاق غير متاح. جرّب اسماً آخر.",
+      "errorMessage": "حدث خطأ أثناء فحص النطاق. حاول مرة أخرى.",
+      "loginRequired": "يرجى تسجيل الدخول أولاً.",
+      "domainReserved": "سيتم حجز النطاق:",
+      "checkHint": "اضغط فحص للتأكد من التوفر"
     },
     "payment": {
       "title": "اختر طريقة الدفع",

@@ -316,7 +316,20 @@
       "subdomainOption": "Subdomain",
       "customDomainOption": "Custom Domain",
       "subdomainLabel": "Your Association Name",
-      "customDomainLabel": "Custom Domain"
+      "customDomainLabel": "Custom Domain",
+      "checkAvailability": "Check Domain Availability",
+      "checking": "Checking...",
+      "domainAvailable": "Domain Available ✓",
+      "domainUnavailable": "Unavailable — Check Again",
+      "availableTitle": "Available!",
+      "unavailableTitle": "Unavailable",
+      "errorTitle": "Error",
+      "availableMessage": "Domain is available! You can proceed.",
+      "unavailableMessage": "This domain is unavailable. Try another name.",
+      "errorMessage": "An error occurred while checking the domain. Please try again.",
+      "loginRequired": "Please log in first.",
+      "domainReserved": "Domain to be reserved:",
+      "checkHint": "Click check to verify availability"
     },
     "payment": {
       "title": "Choose Payment Method",

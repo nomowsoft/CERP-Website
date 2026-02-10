@@ -39,6 +39,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     name: body.name,
                     name_en: body.name_en,
                     name_ar: body.name_ar,
+                    price: body.price || 0,
+                    currency: body.currency || 'SAR',
                     description: body.description,
                     description_en: body.description_en,
                     description_ar: body.description_ar,

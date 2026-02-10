@@ -1,12 +1,12 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import SubscriptionWizard from './SubscriptionWizard';
+import RenewalForm from './RenewalForm';
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { verifyTokenForPage } from "@/utils/verifyToken";
 
 
-export default async function SubscriptionPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function RenewalPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
     const cookieStore = await cookies();
     const jwtToken = cookieStore.get("jwtToken")?.value;
@@ -20,8 +20,8 @@ export default async function SubscriptionPage({ params }: { params: Promise<{ l
 
     return (
         <NextIntlClientProvider messages={messages}>
-            <section className="min-h-screen bg-background py-8 md:py-12 px-4">
-                <SubscriptionWizard />
+            <section className="min-h-screen bg-background py-8 md:py-12">
+                <RenewalForm />
             </section>
         </NextIntlClientProvider>
     );

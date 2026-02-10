@@ -7,11 +7,14 @@ export interface Service {
     name: string;
     name_en: string;
     name_ar: string;
+    price: number | string;
+    currency: string;
     description: string;
     description_en: string;
     description_ar: string;
-    contents: { id: number, name: string, name_en: string, name_ar: string }[];
+    contents: { id: number, name: string, name_en: string, name_ar: string, serviceId: number }[];
     createdAt: string;
+    updatedAt: string;
 }
 
 interface ServicesState {

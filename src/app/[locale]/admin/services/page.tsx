@@ -37,6 +37,8 @@ export default function ServicesManagement() {
     const [formData, setFormData] = useState({
         name: "",
         name_en: "",
+        price: "",
+        currency: "SAR",
         description: "",
         description_en: "",
         image: "",
@@ -51,6 +53,8 @@ export default function ServicesManagement() {
         setFormData({
             name: "",
             name_en: "",
+            price: "",
+            currency: "SAR",
             description: "",
             description_en: "",
             image: "",
@@ -70,6 +74,8 @@ export default function ServicesManagement() {
         setFormData({
             name: svc.name,
             name_en: svc.name_en || "",
+            price: svc.price.toString(),
+            currency: svc.currency || "SAR",
             description: svc.description,
             description_en: svc.description_en || "",
             image: svc.image,
@@ -176,6 +182,10 @@ export default function ServicesManagement() {
                         </div>
                         <div className="p-6">
                             <h3 className="text-xl font-black text-gray-900 mb-2">{svc.name}</h3>
+                            <div className="flex items-baseline gap-1 mb-3">
+                                <span className="text-lg font-bold text-primary">{Number(svc.price)}</span>
+                                <span className="text-sm text-gray-500 font-medium">{svc.currency}</span>
+                            </div>
                             <p className="text-gray-500 text-sm mb-4 line-clamp-2">{svc.description}</p>
 
                             <div className="space-y-2 mb-6">
@@ -237,6 +247,14 @@ export default function ServicesManagement() {
                                     <div className="space-y-2">
                                         <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">🇬🇧 {isAr ? "الاسم بالإنجليزية" : "Name (English)"}</label>
                                         <Input value={formData.name_en} onChange={e => setFormData({ ...formData, name_en: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "السعر" : "Price"}</label>
+                                        <Input type="number" step="0.01" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "العملة" : "Currency"}</label>
+                                        <Input value={formData.currency} onChange={e => setFormData({ ...formData, currency: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
                                     </div>
                                 </div>
 

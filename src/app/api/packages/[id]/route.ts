@@ -46,6 +46,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description_en: body.description_en,
                     description_ar: body.description_ar,
                     image: body.image,
+                    price: body.price,
+                    currency: body.currency,
                 }
             });
 

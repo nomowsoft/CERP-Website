@@ -4,6 +4,7 @@ import { SubscriptionDTO, UpdateUserDTO } from '@/utils/types';
 import { verifyToken } from '@/utils/verifyToken';
 import bcrypt from 'bcryptjs';
 import { UserDashbord } from '@/utils/types';
+import { SubscriptionService, HyperPayService } from '@/utils/payment';
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -117,26 +118,78 @@ export async function PUT(request: NextRequest, { params }: Props) {
         if (!subscription) {
             return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
         }
-        const body = await request.json() as SubscriptionDTO;
+        const body = await request.json() as any;
 
         if ((userFromToken !== null && userFromToken.id === user.id) || user.role === 'ADMIN') {
-            const statusToUse = user.role === 'ADMIN' ? (body.status || subscription.status) : subscription.status;
+            // Determine updates based on action
+            let dataToUpdate: any = {
+                fullName: body.fullName,
+                email: body.email,
+                phone: body.phone,
+                charityRegisterNo: body.charityRegisterNo,
+                licenseFile: body.licenseFile,
+                domainType: body.domainType,
+                domainName: body.domainName,
+                paymentMethod: body.paymentMethod,
+                cardHolderName: body.cardHolderName,
+                cardExpiryDate: body.cardExpiryDate,
+                bankReceipt: body.bankReceipt,
+            };
+
+            const action = body.action; // RENEW or UPGRADE
+            const isOnline = body.paymentMethod === 'ONLINE';
+
+            if (action === 'RENEW' || action === 'UPGRADE') {
+                const pkg = await prisma.package.findUnique({ where: { id: body.packageId || subscription.packageId } });
+                if (!pkg) return NextResponse.json({ message: 'Package not found' }, { status: 404 });
+
+                if (isOnline) {
+                    const req = await prisma.subscriptionRequest.create({
+                        data: {
+                            subscriptionId: subscription.id,
+                            type: action as any,
+                            packageId: body.packageId || subscription.packageId,
+                            paymentMethod: 'ONLINE',
+                            licenseFile: body.licenseFile, // Save the new license file
+                            status: 'APPROVED'
+                        }
+                    });
+                    const updated = await SubscriptionService.applyRequest(req.id);
+                    const { cardCVV, cardNumber, ...other } = updated as any;
+                    return NextResponse.json({ other }, { status: 200 });
+                } else {
+                    await prisma.subscriptionRequest.create({
+                        data: {
+                            subscriptionId: subscription.id,
+                            type: action as any,
+                            packageId: body.packageId || subscription.packageId,
+                            paymentMethod: 'BANK',
+                            licenseFile: body.licenseFile, // Save the new license file
+                            bankReceipt: body.bankReceipt,
+                            status: 'PENDING'
+                        }
+                    });
+                    return NextResponse.json({ message: 'Request submitted for approval' }, { status: 200 });
+                }
+            }
+
+            if (user.role === 'ADMIN') {
+                if (body.expiryDate) dataToUpdate.expiryDate = new Date(body.expiryDate);
+                if (body.approvalDate) dataToUpdate.approvalDate = new Date(body.approvalDate);
+                if (body.status) dataToUpdate.status = body.status;
+                if (body.packageId) dataToUpdate.packageId = body.packageId;
+            } else {
+                // If not admin, they cannot change status. 
+                // Specifically, they cannot set it to DRAFT.
+                if (body.status === 'DRAFT' && subscription.status !== 'DRAFT') {
+                    return NextResponse.json({ message: 'Only admin can revert to DRAFT' }, { status: 403 });
+                }
+                dataToUpdate.status = subscription.status;
+            }
+
             const UpdateSubscription = await prisma.subscription.update({
                 where: { id: parseInt(id) },
-                data: {
-                    fullName: body.fullName,
-                    email: body.email,
-                    phone: body.phone,
-                    charityRegisterNo: body.charityRegisterNo,
-                    licenseFile: body.licenseFile,
-                    domainType: body.domainType,
-                    domainName: body.domainName,
-                    paymentMethod: body.paymentMethod,
-                    cardHolderName: body.cardHolderName,
-                    cardExpiryDate: body.cardExpiryDate,
-                    bankReceipt: body.bankReceipt,
-                    status: statusToUse, // Use the determined status
-                },
+                data: dataToUpdate,
             });
             const { cardCVV, cardNumber, ...other } = UpdateSubscription;
             return NextResponse.json({ other }, { status: 200 });

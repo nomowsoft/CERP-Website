@@ -11,7 +11,39 @@ import {
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 export const UserSubscriptionView = ({ subscription }: { subscription: any }) => {
+    const [nearExpiryDays, setNearExpiryDays] = useState(30);
+    const [showRenew, setShowRenew] = useState(false);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const resp = await axios.get('/api/settings');
+                if (resp.data.nearExpiryDays) {
+                    setNearExpiryDays(parseInt(resp.data.nearExpiryDays));
+                }
+            } catch (err) {
+                console.error("Failed to fetch settings", err);
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    useEffect(() => {
+        if (!subscription || !subscription.expiryDate || subscription.status !== 'DONE') {
+            setShowRenew(false);
+            return;
+        }
+
+        const expiry = new Date(subscription.expiryDate);
+        const threshold = new Date();
+        threshold.setDate(threshold.getDate() + nearExpiryDays);
+
+        setShowRenew(expiry <= threshold);
+    }, [subscription, nearExpiryDays]);
     const t = useTranslations('dashboard.subscriptionDetails');
     const ti = useTranslations('dashboard.invoices');
     const tc = useTranslations('dashboard.common');
@@ -124,7 +156,11 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         </div>
                         <div>
                             <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('renewalDate')}</p>
-                            <p className="font-bold text-gray-700">{new Date(new Date(subscription.createdAt).setFullYear(new Date(subscription.createdAt).getFullYear() + 1)).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}</p>
+                            <p className="font-bold text-gray-700">
+                                {subscription.expiryDate
+                                    ? new Date(subscription.expiryDate).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')
+                                    : new Date(new Date(subscription.createdAt).setFullYear(new Date(subscription.createdAt).getFullYear() + 1)).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -133,7 +169,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         </div>
                         <div>
                             <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('monthlyAmount')}</p>
-                            <p className="font-bold text-gray-700">150.00 ر.س.</p>
+                            <p className="font-bold text-gray-700">{subscription.package?.price || '150.00'} ر.س.</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -145,6 +181,28 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                             <p className="font-bold text-primary truncate">{subscription?.domainName || 'alamal.cerp.com'}</p>
                         </div>
                     </div>
+                </div>
+
+                {/* Subscription Actions */}
+                <div className="flex flex-wrap gap-4 mt-10 pt-8 border-t border-gray-50">
+                    {subscription.status === 'DONE' && (
+                        <>
+                            {showRenew && (
+                                <Link href={`/${locale}/subscription/renew`}>
+                                    <button className="bg-primary text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
+                                        <History className="w-5 h-5" />
+                                        {isAr ? "تجديد الاشتراك" : "Renew Subscription"}
+                                    </button>
+                                </Link>
+                            )}
+                            <Link href={`/${locale}/backages_service`}>
+                                <button className="bg-white text-primary border-2 border-primary/20 px-8 py-3 rounded-2xl font-bold hover:bg-primary/5 transition-all flex items-center gap-2">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    {isAr ? "ترقية الباقة" : "Upgrade Plan"}
+                                </button>
+                            </Link>
+                        </>
+                    )}
                 </div>
             </motion.div>
 

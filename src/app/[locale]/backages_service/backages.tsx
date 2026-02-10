@@ -34,6 +34,10 @@ export const Backages = () => {
                             </div>
                             <h1 className="font-doto2 text-2xl mt-5">{locale === 'en' ? packege.name_en || packege.name : packege.name_ar || packege.name}</h1>
                             <span className="text-lg text-gray-500">{packege.type}</span>
+                            <div className="flex justify-center items-baseline gap-1 mt-4">
+                                <span className="text-4xl font-bold text-primary">{Number(packege.price)}</span>
+                                <span className="text-lg text-gray-500 font-medium">{packege.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+                            </div>
                             <p className="py-4 text-xl text-gray-500">{locale === 'en' ? packege.description_en || packege.description : packege.description_ar || packege.description}</p>
                             <a className="text-primary text-xl" href={`/${locale}/contact-us`}>{tHeader('contact')}</a>
                             <ul className="text-start px-10 mt-10">

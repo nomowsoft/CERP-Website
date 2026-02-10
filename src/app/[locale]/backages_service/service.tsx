@@ -30,6 +30,10 @@ export const Service = () => {
             <div>
               <Image src={service.image} alt={service.name} width={120} height={20} />
               <h1 className="text-2xl font-doto2">{locale === 'en' ? service.name_en || service.name : service.name_ar || service.name}</h1>
+              <div className="flex justify-start items-baseline gap-1 mt-2 mb-3">
+                <span className="text-3xl font-bold text-primary">{Number(service.price)}</span>
+                <span className="text-base text-gray-500 font-medium">{service.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+              </div>
               <p className="text-gray-500">{locale === 'en' ? service.description_en || service.description : service.description_ar || service.description}</p>
               <div className="grid grid-cols-4 gap-10 mt-5">
                 {service.contents?.map((content: ServiceTypeDto) => (

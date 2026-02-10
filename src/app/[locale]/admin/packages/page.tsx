@@ -43,6 +43,8 @@ export default function PackagesManagement() {
         description: "",
         description_en: "",
         image: "",
+        price: "",
+        currency: "SAR",
         features: [{ text: "", text_en: "" }]
     });
 
@@ -58,6 +60,8 @@ export default function PackagesManagement() {
             description: "",
             description_en: "",
             image: "",
+            price: "",
+            currency: "SAR",
             features: [{ text: "", text_en: "" }]
         });
         setIsEditing(false);
@@ -78,6 +82,8 @@ export default function PackagesManagement() {
             description: pkg.description,
             description_en: pkg.description_en || "",
             image: pkg.image,
+            price: pkg.price.toString(),
+            currency: pkg.currency || "SAR",
             features: (pkg.features && pkg.features.length > 0) ? pkg.features.map(f => ({ text: f.text, text_en: f.text_en || "" })) : [{ text: "", text_en: "" }]
         });
         setIsEditing(true);
@@ -179,8 +185,8 @@ export default function PackagesManagement() {
                                     <ImageIcon className="w-12 h-12" />
                                 </div>
                             )}
-                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-black shadow-sm">
-                                {pkg.type}
+                            <div className="absolute bottom-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-black shadow-lg">
+                                {pkg.price} {pkg.currency}
                             </div>
                         </div>
                         <div className="p-6">
@@ -234,7 +240,7 @@ export default function PackagesManagement() {
                             <h3 className="text-2xl font-black text-gray-900 mb-6">
                                 {isEditing ? (isAr ? "تعديل الباقة" : "Edit Package") : (isAr ? "إضافة باقة جديدة" : "Add New Package")}
                             </h3>
- 
+
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
@@ -252,6 +258,14 @@ export default function PackagesManagement() {
                                             <option value="BUSINESS">Business</option>
                                             <option value="ENTERPRISE">Enterprise</option>
                                         </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "السعر" : "Price"}</label>
+                                        <Input type="number" step="0.01" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "العملة" : "Currency"}</label>
+                                        <Input value={formData.currency} onChange={e => setFormData({ ...formData, currency: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
                                     </div>
                                 </div>
 

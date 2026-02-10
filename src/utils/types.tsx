@@ -83,13 +83,17 @@ export type CreateSubscriptionDTO = {
     cardCVV?: string;
     bankReceipt?: string;
     packageId?: number;
-    status?: State
+    status?: State;
+    approvalDate?: string;
+    expiryDate?: string;
 };
 
 export type SubscriptionDTO = CreateSubscriptionDTO & {
     id: number;
     userId: number;
     package?: PackageDTO;
+    approvalDate?: string;
+    expiryDate?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -124,6 +128,8 @@ export type PackageDTO = {
     name_en: string
     name_ar: string
     type: string
+    price: number
+    currency: string
     description: string
     description_en: string
     description_ar: string
@@ -133,7 +139,6 @@ export type PackageDTO = {
 }
 
 export type ServiceTypeDto = {
-    map(arg0: (content: ServiceTypeDto) => JSX.Element): import("react").ReactNode;
     id: number,
     name: string
     name_en: string
@@ -147,10 +152,12 @@ export type ServiceDTO = {
     name: string
     name_en: string
     name_ar: string
+    price: number | string
+    currency: string
     description: string
     description_en: string
     description_ar: string
-    contents: ServiceTypeDto
+    contents: ServiceTypeDto[]
     createdAt: string
     updatedAt: string
 }
