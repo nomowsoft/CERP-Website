@@ -85,7 +85,7 @@ export class SubscriptionService {
     static async applyRequest(requestId: number) {
         const request = await prisma.subscriptionRequest.findUnique({
             where: { id: requestId },
-            include: { subscription: true, package: true }
+            include: { subscription: true, package: true, services: true }
         });
 
         if (!request || request.status !== 'APPROVED') return null;
@@ -109,12 +109,21 @@ export class SubscriptionService {
         const now = new Date();
         const currentExpiry = subscription.expiryDate ? new Date(subscription.expiryDate) : null;
 
-        if (currentExpiry && now < currentExpiry) {
-            // If renewing BEFORE expiry, add 1 year to the existing expiry date
+        if (request.type === 'UPGRADE') {
+            // Upgrade resets expiry to 1 year from NOW (approval date)
+            updateData.expiryDate = this.calculateExpiry(now);
+        } else if (currentExpiry && now < currentExpiry) {
+            // For other types (like RENEW) IF renewing BEFORE expiry, add 1 year to current expiry
             updateData.expiryDate = this.calculateExpiry(currentExpiry);
         } else {
-            // If renewing AFTER expiry (or no expiry date exists), add 1 year from NOW (approval date)
+            // For other types AFTER expiry, add 1 year from NOW
             updateData.expiryDate = this.calculateExpiry(now);
+        }
+
+        if (request.services && request.services.length > 0) {
+            updateData.services = {
+                connect: request.services.map((s: any) => ({ id: s.id }))
+            };
         }
 
         const updatedSubscription = await prisma.subscription.update({

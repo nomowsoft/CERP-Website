@@ -1,14 +1,13 @@
 "use client";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button"; // Assuming Button component exists
-import { Search } from "lucide-react"; // Assuming lucide-react icons are used
+import { Button } from "@/components/ui/button";
+import { Search, Download } from "lucide-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { getSubscription } from "@/app/store/slices/subscriptionSlice";
-import { SubscriptionDTO } from "@/utils/types";
 import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { generateInvoicePDF } from "@/utils/invoicePdf";
 
 export default function Invoice() {
     const dispatch = useDispatch<any>();
@@ -25,17 +24,37 @@ export default function Invoice() {
         dispatch(getSubscription());
     }, [dispatch]);
 
-    const filteredSubscriptions = subscriptions.filter((item: SubscriptionDTO) => {
-        const matchesSearch =
-            item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (item.domainName && item.domainName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (item.id && item.id.toString().includes(searchTerm));
+    // Flatten payments into invoices
+    const allInvoices = (subscriptions || []).flatMap((sub: any) =>
+        (sub.payments || []).map((p: any) => ({
+            ...p,
+            subscription: sub,
+            invoiceId: `INV-${p.id.toString().padStart(4, '0')}`,
+            formattedDate: new Date(p.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')
+        }))
+    ).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-        const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
+    const filteredInvoices = allInvoices.filter((inv: any) => {
+        const matchesSearch =
+            inv.subscription.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            inv.subscription.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            inv.invoiceId.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesStatus = statusFilter === 'ALL' ||
+            (statusFilter === 'DONE' && inv.status === 'SUCCESS') ||
+            (statusFilter === 'PROGRES' && inv.status === 'PENDING') ||
+            (statusFilter === 'CANCEL' && inv.status === 'FAILED');
 
         return matchesSearch && matchesStatus;
     });
+
+    const handleDownload = async (invoice: any) => {
+        await generateInvoicePDF(
+            { id: invoice.invoiceId, date: invoice.formattedDate, amount: invoice.amount },
+            invoice.subscription,
+            params.locale as string
+        );
+    };
 
     return (
         <section className="container mx-auto p-4 lg:p-8" dir={dir}>
@@ -81,25 +100,18 @@ export default function Invoice() {
                             {isAr ? "الكل" : "All"}
                         </Button>
                         <Button
-                            variant={statusFilter === 'DRAFT' ? 'default' : 'outline'}
-                            onClick={() => setStatusFilter('DRAFT')}
-                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'DRAFT' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 border-blue-100'}`}
+                            variant={statusFilter === 'DONE' ? 'default' : 'outline'}
+                            onClick={() => setStatusFilter('DONE')}
+                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'DONE' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600 border-green-100'}`}
                         >
-                            {isAr ? "مسودة" : "Draft"}
+                            {isAr ? "مدفوعة" : "Paid"}
                         </Button>
                         <Button
                             variant={statusFilter === 'PROGRES' ? 'default' : 'outline'}
                             onClick={() => setStatusFilter('PROGRES')}
                             className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'PROGRES' ? 'bg-yellow-600 text-white' : 'bg-yellow-50 text-yellow-600 border-yellow-100'}`}
                         >
-                            {isAr ? "تحت التنفيذ" : "In Progress"}
-                        </Button>
-                        <Button
-                            variant={statusFilter === 'DONE' ? 'default' : 'outline'}
-                            onClick={() => setStatusFilter('DONE')}
-                            className={`rounded-xl px-6 py-2 whitespace-nowrap ${statusFilter === 'DONE' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600 border-green-100'}`}
-                        >
-                            {isAr ? "مدفوعة" : "Paid"}
+                            {isAr ? "قيد الانتظار" : "Pending"}
                         </Button>
                         <Button
                             variant={statusFilter === 'CANCEL' ? 'default' : 'outline'}
@@ -122,38 +134,45 @@ export default function Invoice() {
                                 <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "التاريخ" : "Date"}</th>
                                 <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "المبلغ" : "Amount"}</th>
                                 <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "الحالة" : "Status"}</th>
+                                <th className="py-5 px-6 font-semibold text-gray-600 border-b text-center">{isAr ? "تحميل" : "Download"}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {filteredSubscriptions.map((item: SubscriptionDTO) => (
-                                <tr key={item.id} className="hover:bg-gray-50/30 transition-colors">
-                                    <td className="py-5 px-6 text-gray-700 font-medium text-center">INV-{item.id.toString().padStart(4, '0')}</td>
+                            {filteredInvoices.map((inv: any) => (
+                                <tr key={inv.id} className="hover:bg-gray-50/30 transition-colors">
+                                    <td className="py-5 px-6 text-gray-700 font-medium text-center">{inv.invoiceId}</td>
                                     <td className="py-5 px-6 text-gray-700 text-center">
-                                        <div className="font-medium text-gray-900">{item.fullName}</div>
-                                        <div className="text-sm text-gray-500">{item.email}</div>
+                                        <div className="font-medium text-gray-900">{inv.subscription.fullName}</div>
+                                        <div className="text-sm text-gray-500">{inv.subscription.email}</div>
                                     </td>
-                                    <td className="py-5 px-6 text-gray-500 text-center">{new Date(item.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}</td>
+                                    <td className="py-5 px-6 text-gray-500 text-center">{inv.formattedDate}</td>
                                     <td className="py-5 px-6 text-gray-700 font-mono text-center">
-                                        {/* Placeholder Amount or Logic based on Package */}
-                                        $0.00
+                                        {Number(inv.amount).toFixed(2)} ر.س.
                                     </td>
                                     <td className="py-5 px-6 text-center">
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold inline-block
-                                            ${item.status === 'DRAFT' ? 'bg-blue-100 text-blue-600' :
-                                                item.status === 'PROGRES' ? 'bg-yellow-100 text-yellow-600' :
-                                                    item.status === 'DONE' ? 'bg-green-100 text-green-600' :
-                                                        'bg-red-100 text-red-600'
+                                            ${inv.status === 'SUCCESS' ? 'bg-green-100 text-green-600' :
+                                                inv.status === 'PENDING' ? 'bg-yellow-100 text-yellow-600' :
+                                                    'bg-red-100 text-red-600'
                                             }`}>
-                                            {item.status === 'DRAFT' ? (isAr ? 'مسودة' : 'Draft') :
-                                                item.status === 'PROGRES' ? (isAr ? 'تحت التنفيذ' : 'In Progress') :
-                                                    item.status === 'DONE' ? (isAr ? 'مدفوعة' : 'Paid') : (isAr ? 'ملغاة' : 'Cancelled')}
+                                            {inv.status === 'SUCCESS' ? (isAr ? 'مدفوعة' : 'Paid') :
+                                                inv.status === 'PENDING' ? (isAr ? 'قيد الانتظار' : 'Pending') : (isAr ? 'ملغاة' : 'Cancelled')}
                                         </span>
+                                    </td>
+                                    <td className="py-5 px-6 text-center">
+                                        {/* <button
+                                            onClick={() => handleDownload(inv)}
+                                            className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                            title={isAr ? "تحميل PDF" : "Download PDF"}
+                                        >
+                                            <Download className="w-5 h-5" />
+                                        </button> */}
                                     </td>
                                 </tr>
                             ))}
-                            {filteredSubscriptions.length === 0 && (
+                            {filteredInvoices.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="py-8 text-center text-gray-400">
+                                    <td colSpan={6} className="py-8 text-center text-gray-400">
                                         {isAr ? "لا توجد فواتير" : "No invoices found"}
                                     </td>
                                 </tr>

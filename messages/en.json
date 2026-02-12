@@ -1,4 +1,11 @@
 {
+  "seo": {
+    "title": "CERP - Integrated System for Associations and Non-Profit Organizations",
+    "description": "CERP integrated Enterprise Resource Planning (ERP) system for non-profit organizations and charities in Saudi Arabia. Advanced digital transformation and governance solutions.",
+    "keywords": "CERP system, charity management, non-profit organizations, Saudi Arabia, association governance, digital transformation, ERP for charities",
+    "ogTitle": "CERP | The Ultimate Solution for Non-Profit Management",
+    "ogDescription": "Discover how CERP system helps associations achieve digital transformation and compliance with governance standards."
+  },
   "header": {
     "contact": "Contact us",
     "openMainMenu": "Open main menu",
@@ -271,6 +278,8 @@
     "title": "Subscribe to <highlight>Basic Plan</highlight>",
     "subtitle": "Start your digital journey with the integrated CERP system",
     "steps": {
+      "packageSelection": "Package Selection",
+      "servicesSelection": "Additional Services",
       "personalInfo": "Personal Info",
       "associationData": "Association Data",
       "domainSelection": "Domain Selection",

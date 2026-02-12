@@ -90,10 +90,8 @@ export const SubscriptionSchema = z.object({
         }
 
         if (data.paymentMethod === 'ONLINE') {
-            if (!data.cardNumber) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'رقم البطاقة مطلوب', path: ['cardNumber'] });
-            if (!data.cardHolder) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'اسم صاحب البطاقة مطلوب', path: ['cardHolder'] });
-            if (!data.expiryDate) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'تاريخ الانتهاء مطلوب', path: ['expiryDate'] });
-            if (!data.cvv) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'رمز التحقق مطلوب', path: ['cvv'] });
+            // Optional for external gateway redirection
+            // if (!data.cardNumber) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'رقم البطاقة مطلوب', path: ['cardNumber'] });
         } else {
             if (!data.bankReceiptFile) {
                 ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'إيصال التحويل البنكي مطلوب', path: ['bankReceiptFile'] });

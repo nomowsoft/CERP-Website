@@ -26,12 +26,12 @@ const nextConfig: NextConfig = {
                         key: "Content-Security-Policy",
                         value: `
                             default-src 'self';
-                            script-src 'self' 'unsafe-inline' 'unsafe-eval';
-                            style-src 'self' 'unsafe-inline';
+                            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://eu-test.oppwa.com https://test.oppwa.com;
+                            style-src 'self' 'unsafe-inline' https://eu-test.oppwa.com https://test.oppwa.com;
                             img-src 'self' https: data: blob:;
                             font-src 'self' https: data:;
-                            connect-src 'self' https:;
-                            frame-src 'self' https: data: blob:;
+                            connect-src 'self' https: https://eu-test.oppwa.com https://test.oppwa.com;
+                            frame-src 'self' https: data: blob: https://eu-test.oppwa.com https://test.oppwa.com;
                             frame-ancestors 'self';
                             object-src 'self' data:;
                             base-uri 'self';

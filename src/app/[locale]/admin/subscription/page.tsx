@@ -337,6 +337,7 @@ export default function Subscription() {
                                 <thead>
                                     <tr className="bg-gray-50/50">
                                         <th className="py-5 px-6 font-semibold text-gray-600 border-b">{isAr ? "الأسم" : "Name"}</th>
+                                        <th className="py-5 px-6 font-semibold text-gray-600 border-b">{isAr ? "الباقة" : "Package"}</th>
                                         <th className="py-5 px-6 font-semibold text-gray-600 border-b">{isAr ? "البريد الإلكتروني" : "Email"}</th>
                                         <th className="py-5 px-6 font-semibold text-gray-600 border-b">{isAr ? "تاريخ الإنشاء" : "Created At"}</th>
                                         <th className="py-5 px-6 font-semibold text-gray-600 border-b">{isAr ? "اسم الدومين" : "Domain"}</th>
@@ -348,11 +349,12 @@ export default function Subscription() {
                                     {filteredSubscriptions.map((item: SubscriptionDTO) => (
                                         <tr key={item.id} className="hover:bg-gray-50/30 transition-colors">
                                             <td className="py-5 px-6 text-gray-700 font-medium">{item.fullName}</td>
+                                            <td className="py-5 px-6 text-primary font-bold">{isAr ? item.package?.name_ar : item.package?.name_en}</td>
                                             <td className="py-5 px-6 text-gray-500">{item.email}</td>
                                             <td className="py-5 px-6 text-gray-400 text-sm">{new Date(item.createdAt as any).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}</td>
                                             <td className="py-5 px-6">
                                                 <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-sm font-mono">
-                                                    {item.domainName}
+                                                    {item.domainType === 'SUBDOMAIN' && !item.domainName?.includes('.') ? `${item.domainName}.cerp.sa` : item.domainName}
                                                 </span>
                                             </td>
                                             <td className="py-5 px-6">
@@ -555,7 +557,7 @@ export default function Subscription() {
                                         {isEditing ? (isAr ? 'تعديل بيانات الإشتراك' : 'Edit Subscription Details') : (isAr ? 'تفاصيل الإشتراك' : 'Subscription Details')}
                                     </h3>
                                     <p className="text-sm text-gray-400 mt-1">
-                                        {selectedSubscription.fullName} - {selectedSubscription.domainName}
+                                        {selectedSubscription.fullName} - {selectedSubscription.domainType === 'SUBDOMAIN' && !selectedSubscription.domainName?.includes('.') ? `${selectedSubscription.domainName}.cerp.sa` : selectedSubscription.domainName}
                                     </p>
                                 </div>
                                 <button
@@ -811,6 +813,10 @@ export default function Subscription() {
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-16 px-4">
+                                            <div className="space-y-2 border-s-4 border-primary ps-5 group hover:border-primary transition-all bg-primary/5 py-4 rounded-e-2xl">
+                                                <span className="text-xs text-primary font-black uppercase tracking-widest">{isAr ? "الباقة المختارة" : "Selected Package"}</span>
+                                                <span className="font-black text-gray-900 text-2xl block leading-tight">{isAr ? selectedSubscription.package?.name_ar : selectedSubscription.package?.name_en}</span>
+                                            </div>
                                             <div className="space-y-2 border-s-4 border-primary/20 ps-5 group hover:border-primary transition-all">
                                                 <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{isAr ? "الاسم الكامل" : "Full Name"}</span>
                                                 <span className="font-extrabold text-gray-800 text-xl block leading-tight">{selectedSubscription.fullName}</span>
@@ -825,7 +831,7 @@ export default function Subscription() {
                                             </div>
                                             <div className="space-y-2 border-s-4 border-primary/20 ps-5 group hover:border-primary transition-all">
                                                 <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{isAr ? "اسم الدومين" : "Domain Name"}</span>
-                                                <span className="font-black text-primary font-mono text-xl block leading-tight">{selectedSubscription.domainName}</span>
+                                                <span className="font-black text-primary font-mono text-xl block leading-tight">{selectedSubscription.domainType === 'SUBDOMAIN' && !selectedSubscription.domainName?.includes('.') ? `${selectedSubscription.domainName}.cerp.sa` : selectedSubscription.domainName}</span>
                                             </div>
                                             <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
                                                 <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{isAr ? "نوع الدومين" : "Domain Type"}</span>

@@ -6,13 +6,16 @@ import {
     Globe,
     CreditCard,
     History,
-    Check
+    Check,
+    TrendingUp,
+    Download
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { generateInvoicePDF } from '@/utils/invoicePdf';
 
 export const UserSubscriptionView = ({ subscription }: { subscription: any }) => {
     const [nearExpiryDays, setNearExpiryDays] = useState(30);
@@ -76,13 +79,19 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
         isAr ? (f.text_ar || f.text) : (f.text_en || f.text)
     ) || [];
 
-    // Mock invoices
-    const invoices = [
-        { id: "INV-2024-001", date: "2024-01-15", amount: "150.00", status: "PAID" },
-        { id: "INV-2024-002", date: "2024-02-15", amount: "150.00", status: "PAID" },
-        { id: "INV-2024-003", date: "2024-03-15", amount: "150.00", status: "PAID" },
-        { id: "INV-2024-004", date: "2024-04-15", amount: "150.00", status: "PAID" },
-    ];
+    const handleDownloadPDF = async (invoice: any) => {
+        await generateInvoicePDF(invoice, subscription, locale);
+    };
+
+    // Use real payments from subscription
+    const invoices = subscription.payments?.map((p: any) => ({
+        id: `INV-${p.id.toString().padStart(4, '0')}`,
+        date: new Date(p.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US'),
+        amount: Number(p.amount).toFixed(2),
+        status: p.status === 'SUCCESS' ? 'PAID' : p.status,
+    })) || [];
+
+    const totalPaid = (subscription.payments || []).reduce((sum: number, p: any) => sum + Number(p.amount), 0);
 
     const getStatusText = (status: string) => {
         if (status === 'DONE') return t('activeStatus');
@@ -103,7 +112,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
         <div className="max-w-6xl mx-auto space-y-8 pb-12 px-4 lg:px-0" dir={isAr ? 'rtl' : 'ltr'}>
             {/* Header */}
             <div className={`flex flex-col ${isAr ? 'md:flex-row' : 'md:flex-row'} items-center justify-between gap-6 mb-12`}>
-                <div className={`flex flex-col ${isAr ? 'items-start' : 'items-end'} space-y-1`}>
+                <div className="flex flex-col space-y-1">
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-white shadow-sm rounded-xl">
                             <CreditCard className="w-8 h-8 text-primary" />
@@ -112,7 +121,14 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                             {t('title')}
                         </h1>
                     </div>
-                    <p className="text-gray-500 font-medium px-2">{t('subtitle')}</p>
+                    <div className="flex items-center gap-2 px-2">
+                        <p className="text-gray-500 font-medium">{t('subtitle')}</p>
+                        {subscription.domainName && (
+                            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-black dir-ltr">
+                                {subscription.domainType === 'SUBDOMAIN' && !subscription.domainName.includes('.') ? `${subscription.domainName}.cerp.sa` : subscription.domainName}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -178,7 +194,9 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         </div>
                         <div className="overflow-hidden">
                             <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('domain')}</p>
-                            <p className="font-bold text-primary truncate">{subscription?.domainName || 'alamal.cerp.com'}</p>
+                            <p className="font-bold text-primary truncate">
+                                {subscription?.domainName ? (subscription.domainType === 'SUBDOMAIN' && !subscription.domainName.includes('.') ? `${subscription.domainName}.cerp.sa` : subscription.domainName) : 'alamal.cerp.sa'}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -195,10 +213,10 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                     </button>
                                 </Link>
                             )}
-                            <Link href={`/${locale}/backages_service`}>
+                            <Link href={`/${locale}/subscription/upgrade`}>
                                 <button className="bg-white text-primary border-2 border-primary/20 px-8 py-3 rounded-2xl font-bold hover:bg-primary/5 transition-all flex items-center gap-2">
-                                    <CheckCircle2 className="w-5 h-5" />
-                                    {isAr ? "ترقية الباقة" : "Upgrade Plan"}
+                                    <TrendingUp className="w-5 h-5" />
+                                    {isAr ? "ترقية العضوية" : "Upgrade Membership"}
                                 </button>
                             </Link>
                         </>
@@ -206,16 +224,62 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                 </div>
             </motion.div>
 
+            {/* Active Services Section */}
+            {subscription.services && subscription.services.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-100 border border-gray-100"
+                >
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="p-2 bg-purple-50 rounded-xl">
+                            <TrendingUp className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-800">{isAr ? "الخدمات الإضافية النشطة" : "Active Additional Services"}</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {subscription.services.map((service: any) => (
+                            <div key={service.id} className="p-6 bg-purple-50/30 rounded-3xl border border-purple-100 flex flex-col gap-4">
+                                <div className="flex justify-between items-center">
+                                    <h4 className="font-black text-gray-800 text-lg">
+                                        {isAr ? (service.name_ar || service.name) : (service.name_en || service.name)}
+                                    </h4>
+                                    <span className="bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                                        {isAr ? "نشط" : "Active"}
+                                    </span>
+                                </div>
+
+                                {service.contents && service.contents.length > 0 && (
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-bold text-purple-600 uppercase tracking-wider">{isAr ? "المميزات المضمنة:" : "Included Features:"}</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {service.contents.map((content: any, idx: number) => (
+                                                <span key={idx} className="bg-white px-3 py-1 rounded-lg text-xs font-bold text-gray-600 border border-purple-100/50 flex items-center gap-1.5 shadow-sm">
+                                                    <CheckCircle2 className="w-3 h-3 text-purple-500" />
+                                                    {isAr ? (content.name_ar || content.name) : (content.name_en || content.name)}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
+
             {/* Package Features Section */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+                transition={{ delay: 0.15 }}
                 className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-100 border border-gray-100"
             >
                 <div className="flex items-center gap-3 mb-8">
                     <div className="p-2 bg-primary/10 rounded-xl">
-                        <Check className="w-5 h-5 text-primary" />
+                        <CheckCircle2 className="w-5 h-5 text-primary" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-800">{t('packageFeatures')}</h3>
                 </div>
@@ -247,7 +311,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         <h3 className="text-xl font-bold text-gray-800">{t('invoiceHistory')}</h3>
                     </div>
                     <div className="text-gray-500 font-bold text-sm bg-gray-50 px-4 py-2 rounded-xl">
-                        {t('totalPayments')}: <span className="text-primary text-lg">600.00 ر.س.</span>
+                        {t('totalPayments')}: <span className="text-primary text-lg">{totalPaid.toFixed(2)} ر.س.</span>
                     </div>
                 </div>
 
@@ -259,10 +323,11 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                 <th className="py-4 text-start px-2 whitespace-nowrap">{ti('date')}</th>
                                 <th className="py-4 text-start px-2 whitespace-nowrap">{ti('amount')}</th>
                                 <th className="py-4 text-start px-2 whitespace-nowrap">{ti('status')}</th>
+                                <th className="py-4 text-center px-2 whitespace-nowrap">{isAr ? "تحميل" : "Download"}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {invoices.map((invoice, idx) => (
+                            {invoices.map((invoice: any, idx: number) => (
                                 <tr key={idx} className="group hover:bg-gray-50/5 transition-colors">
                                     <td className="py-6 px-2 font-bold text-gray-700">{invoice.id}</td>
                                     <td className="py-6 px-2 font-medium text-gray-500">{invoice.date}</td>
@@ -272,6 +337,15 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                             <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                                             {ti('paid')}
                                         </span>
+                                    </td>
+                                    <td className="py-6 px-2 text-center">
+                                        <button
+                                            onClick={() => handleDownloadPDF(invoice)}
+                                            className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                            title={isAr ? "تحميل PDF" : "Download PDF"}
+                                        >
+                                            <Download className="w-5 h-5" />
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

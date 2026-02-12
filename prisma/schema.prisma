@@ -8,6 +8,140 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String?        @unique
+  name          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  password      String
+  phone         String?        @unique
+  role          Role           @default(ADMIN)
+  charityName   String?
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                Int                   @id @default(autoincrement())
+  userId            Int
+  fullName          String
+  email             String
+  phone             String
+  charityRegisterNo String
+  licenseFile       String
+  domainType        DomainType
+  domainName        String?
+  paymentMethod     PaymentMethod
+  cardNumber        String?
+  cardHolderName    String?
+  cardExpiryDate    String?
+  cardCVV           String?
+  bankReceipt       String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  status            Status
+  packageId         Int?
+  approvalDate      DateTime?
+  expiryDate        DateTime?
+  payments          Payment[]
+  package           Package?              @relation(fields: [packageId], references: [id])
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests          SubscriptionRequest[]
+  services          Service[]             @relation("ServiceToSubscription")
+
+  @@index([userId])
+}
+
+model Package {
+  id             Int                   @id @default(autoincrement())
+  image          String
+  name           String
+  type           PackageType
+  description    String
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  description_ar String                @default("")
+  description_en String                @default("")
+  name_ar        String                @default("")
+  name_en        String                @default("")
+  price          Decimal               @default(0)
+  currency       String                @default("SAR")
+  features       PackageFeature[]
+  subscriptions  Subscription[]
+  requests       SubscriptionRequest[]
+}
+
+model SubscriptionRequest {
+  id             Int           @id @default(autoincrement())
+  subscriptionId Int
+  type           RequestType
+  packageId      Int?
+  paymentMethod  PaymentMethod
+  bankReceipt    String?
+  status         RequestStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  licenseFile    String?
+  package        Package?      @relation(fields: [packageId], references: [id])
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  services       Service[]     @relation("ServiceToSubscriptionRequest")
+}
+
+model SystemSetting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  subscriptionId Int
+  amount         Decimal
+  method         PaymentMethod
+  status         PaymentStatus @default(PENDING)
+  checkoutId     String?       @unique
+  transactionId  String?       @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+}
+
+model PackageFeature {
+  id        Int     @id @default(autoincrement())
+  text      String
+  packageId Int
+  text_ar   String  @default("")
+  text_en   String  @default("")
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+}
+
+model Service {
+  id             Int                   @id @default(autoincrement())
+  image          String
+  name           String
+  description    String
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  description_ar String                @default("")
+  description_en String                @default("")
+  name_ar        String                @default("")
+  name_en        String                @default("")
+  currency       String                @default("SAR")
+  price          Decimal               @default(0)
+  contents       ServiceType[]
+  subscriptions  Subscription[]        @relation("ServiceToSubscription")
+  requests       SubscriptionRequest[] @relation("ServiceToSubscriptionRequest")
+}
+
+model ServiceType {
+  id        Int     @id @default(autoincrement())
+  name      String
+  serviceId Int
+  name_ar   String  @default("")
+  name_en   String  @default("")
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
 enum Role {
   ADMIN
   EDITOR
@@ -52,142 +186,4 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
-}
-
-model User {
-  id            Int            @id @default(autoincrement())
-  email         String?        @unique
-  password      String
-  name          String?
-  charityName   String?
-  phone         String?        @unique
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  role          Role           @default(ADMIN)
-  subscriptions Subscription[]
-}
-
-model Subscription {
-  id       Int    @id @default(autoincrement())
-  userId   Int
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fullName String
-  email    String
-  phone    String
-
-  charityRegisterNo String
-  licenseFile       String
-
-  domainType DomainType
-  domainName String?
-
-  paymentMethod PaymentMethod
-
-  cardNumber     String?
-  cardHolderName String?
-  cardExpiryDate String?
-  cardCVV        String?
-
-  bankReceipt String?
-  status Status
-
-  approvalDate DateTime?
-  expiryDate   DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  packageId Int?
-  package   Package? @relation(fields: [packageId], references: [id])
-  payments  Payment[]
-  requests  SubscriptionRequest[]
-
-  @@index([userId])
-}
-
-model Package {
-  id          Int              @id @default(autoincrement())
-  image       String
-  name        String
-  name_en     String   @default("")
-  name_ar     String   @default("")
-  type        PackageType
-  price       Decimal  @default(0)
-  currency    String   @default("SAR")
-  description String
-  description_en String @default("")
-  description_ar String @default("")
-  features    PackageFeature[]
-  subscriptions Subscription[]
-  requests    SubscriptionRequest[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-}
-
-model SubscriptionRequest {
-  id             Int           @id @default(autoincrement())
-  subscriptionId Int
-  subscription   Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  type           RequestType
-  packageId      Int?
-  package        Package?      @relation(fields: [packageId], references: [id])
-  paymentMethod  PaymentMethod
-  licenseFile    String?
-  bankReceipt    String?
-  status         RequestStatus @default(PENDING)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-}
-
-model SystemSetting {
-  id    Int    @id @default(autoincrement())
-  key   String @unique
-  value String
-}
-
-model Payment {
-  id             Int          @id @default(autoincrement())
-  subscriptionId Int
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
-  amount         Decimal
-  method         PaymentMethod
-  status         PaymentStatus @default(PENDING)
-  checkoutId     String?       @unique // For HyperPay
-  transactionId  String?       @unique // From HyperPay
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-}
-
-model PackageFeature {
-  id        Int     @id @default(autoincrement())
-  text      String
-  text_en   String  @default("")
-  text_ar   String  @default("")
-  packageId Int
-  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
-}
-
-model Service {
-  id          Int           @id @default(autoincrement())
-  image       String
-  name        String
-  name_en     String   @default("")
-  name_ar     String   @default("")
-  price       Decimal  @default(0)
-  currency    String   @default("SAR")
-  description String
-  description_en String @default("")
-  description_ar String @default("")
-  contents    ServiceType[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-}
-
-model ServiceType {
-  id        Int     @id @default(autoincrement())
-  name      String
-  name_en   String @default("")
-  name_ar   String @default("")
-  serviceId Int
-  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }

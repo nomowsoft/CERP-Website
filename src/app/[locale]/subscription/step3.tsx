@@ -24,7 +24,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
 
   const getDomainToCheck = (): string => {
     if (data.domainType === "SUBDOMAIN") {
-      return data.subdomain ? `${data.subdomain}.cerp.com` : "";
+      return data.subdomain ? `${data.subdomain}.cerp.sa` : "";
     }
     return data.customDomain || "";
   };
@@ -143,7 +143,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
             </div>
             <h3 className="font-doto">{t('subdomainOption')}</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              yourname.cerp.com
+              yourname.cerp.sa
             </p>
           </div>
         </div>
@@ -178,7 +178,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
           <div className="space-y-2">
             <Label htmlFor="subdomain" className="font-doto2">{t('subdomainLabel')}</Label>
             <div className="flex items-center gap-2" dir="ltr">
-              <span className="text-muted-foreground text-sm shrink-0">.cerp.com</span>
+              <span className="text-muted-foreground text-sm shrink-0">.cerp.sa</span>
               <div className="relative flex-1">
                 <Input
                   id="subdomain"
@@ -216,49 +216,51 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
           </div>
         )}
 
-        {/* Check Domain Button */}
-        <Button
-          type="button"
-          onClick={handleCheckDomain}
-          disabled={!canCheck() || checkStatus === "checking"}
-          className={`w-full py-6 rounded-xl font-bold text-base transition-all duration-300 ${checkStatus === "available"
+        {/* Check Domain Button (Only for Subdomains) */}
+        {data.domainType === 'SUBDOMAIN' && (
+          <Button
+            type="button"
+            onClick={handleCheckDomain}
+            disabled={!canCheck() || checkStatus === "checking"}
+            className={`w-full py-6 rounded-xl font-bold text-base transition-all duration-300 ${checkStatus === "available"
               ? "bg-green-500 hover:bg-green-600 text-white"
               : checkStatus === "unavailable"
                 ? "bg-red-500 hover:bg-red-600 text-white"
                 : "bg-gradient-to-r from-primary to-primary/80 text-white hover:opacity-90"
-            }`}
-        >
-          {checkStatus === "checking" ? (
-            <span className="flex items-center gap-2 justify-center">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              {t('checking')}
-            </span>
-          ) : checkStatus === "available" ? (
-            <span className="flex items-center gap-2 justify-center">
-              <CheckCircle2 className="w-5 h-5" />
-              {t('domainAvailable')}
-            </span>
-          ) : checkStatus === "unavailable" ? (
-            <span className="flex items-center gap-2 justify-center">
-              <RefreshCw className="w-5 h-5" />
-              {t('domainUnavailable')}
-            </span>
-          ) : (
-            <span className="flex items-center gap-2 justify-center">
-              <Search className="w-5 h-5" />
-              {t('checkAvailability')}
-            </span>
-          )}
-        </Button>
+              }`}
+          >
+            {checkStatus === "checking" ? (
+              <span className="flex items-center gap-2 justify-center">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {t('checking')}
+              </span>
+            ) : checkStatus === "available" ? (
+              <span className="flex items-center gap-2 justify-center">
+                <CheckCircle2 className="w-5 h-5" />
+                {t('domainAvailable')}
+              </span>
+            ) : checkStatus === "unavailable" ? (
+              <span className="flex items-center gap-2 justify-center">
+                <RefreshCw className="w-5 h-5" />
+                {t('domainUnavailable')}
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 justify-center">
+                <Search className="w-5 h-5" />
+                {t('checkAvailability')}
+              </span>
+            )}
+          </Button>
+        )}
 
         {/* Status Message Card */}
         {checkMessage && (
           <div
             className={`flex items-start gap-3 p-4 rounded-2xl border-2 transition-all duration-500 animate-fade-in ${checkStatus === "available"
-                ? "border-green-300 bg-green-50 text-green-800"
-                : checkStatus === "unavailable"
-                  ? "border-red-300 bg-red-50 text-red-800"
-                  : "border-yellow-300 bg-yellow-50 text-yellow-800"
+              ? "border-green-300 bg-green-50 text-green-800"
+              : checkStatus === "unavailable"
+                ? "border-red-300 bg-red-50 text-red-800"
+                : "border-yellow-300 bg-yellow-50 text-yellow-800"
               }`}
           >
             <div className="shrink-0 mt-0.5">

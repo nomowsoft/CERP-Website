@@ -45,9 +45,9 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         { id: "profile", label: t('nav.dashboard'), href: '/admin', icon: LayoutDashboard },
         { id: "invoice", label: t('nav.invoices'), href: '/admin/invoice', icon: Globe },
         { id: "subscription", label: t('nav.subscriptions'), href: '/admin/subscription', icon: FileText },
-        { id: "users", label: t('nav.users' as any), href: '/admin/users', icon: Users, adminOnly: true },
         { id: "packages", label: t('nav.packages' as any), href: '/admin/packages', icon: Package, adminOnly: true },
         { id: "services", label: t('nav.services' as any), href: '/admin/services', icon: Layers, adminOnly: true },
+        { id: "users", label: t('nav.users' as any), href: '/admin/users', icon: Users, adminOnly: true },
         { id: "settings", label: t('nav.settings'), href: '/admin/settings', icon: Settings },
     ];
 

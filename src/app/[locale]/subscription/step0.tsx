@@ -10,9 +10,10 @@ interface ServicesSelectionStepProps {
     onChange: (data: Partial<SubscriptionFormData>) => void;
     services: ServiceDTO[];
     onSkip: () => void;
+    selectedPackage?: any;
 }
 
-const Step0 = ({ data, onChange, services, onSkip }: ServicesSelectionStepProps) => {
+const Step0 = ({ data, onChange, services, onSkip, selectedPackage }: ServicesSelectionStepProps) => {
     const t = useTranslations('subscription.servicesSelection');
     const locale = useLocale();
     const isAr = locale === 'ar';
@@ -38,9 +39,25 @@ const Step0 = ({ data, onChange, services, onSkip }: ServicesSelectionStepProps)
                 <h2 className="text-2xl font-bold font-doto2 mb-2">
                     {isAr ? "الخدمات الإضافية" : "Additional Services"}
                 </h2>
-                <p className="text-gray-500">
+                <p className="text-gray-500 mb-6">
                     {isAr ? "اختر الخدمات الإضافية التي تحتاجها (اختياري)" : "Select additional services you need (optional)"}
                 </p>
+
+                {selectedPackage && (
+                    <div className="mb-8 inline-flex items-center gap-6 bg-primary/5 border border-primary/20 px-8 py-4 rounded-[2rem] shadow-sm">
+                        <div className="flex flex-col items-center border-e border-primary/20 pe-6">
+                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "الباقة المختارة" : "Selected Package"}</span>
+                            <span className="text-xl font-black text-gray-800">{isAr ? selectedPackage.name_ar : selectedPackage.name_en}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "السعر" : "Price"}</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-xl font-black text-secondary">{Number(selectedPackage.price)}</span>
+                                <span className="text-xs font-bold text-gray-500">{selectedPackage.currency || (isAr ? 'ر.س' : 'SAR')}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -52,8 +69,8 @@ const Step0 = ({ data, onChange, services, onSkip }: ServicesSelectionStepProps)
                             key={service.id}
                             onClick={() => toggleService(service.id)}
                             className={`relative p-6 rounded-3xl border-2 cursor-pointer transition-all duration-300 hover:shadow-xl ${isSelected
-                                    ? 'border-secondary bg-secondary/5 shadow-lg'
-                                    : 'border-gray-200 hover:border-primary/50'
+                                ? 'border-secondary bg-secondary/5 shadow-lg'
+                                : 'border-gray-200 hover:border-primary/50'
                                 }`}
                         >
                             {/* Checkmark */}
