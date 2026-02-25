@@ -70,7 +70,11 @@ export default function SettingsPage() {
             await dispatch(updateUser({ id: userInfo.id, data: formData })).unwrap();
             toast.success(t('successUpdate'));
         } catch (error: any) {
-            toast.error(error || t('errorUpdate'));
+            if (error === 'emailUsed' || error === 'phoneUsed' || error === 'emailOrPhoneUsed') {
+                toast.error(t(error as any));
+            } else {
+                toast.error(error || t('errorUpdate'));
+            }
         }
     };
 

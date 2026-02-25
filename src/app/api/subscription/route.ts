@@ -124,6 +124,23 @@ export async function POST(request: NextRequest) {
         // If it's HyperPay (no cardNumber here), it's DRAFT.
         const initialStatus: any = (isOnline && transactionId) ? 'DONE' : 'DRAFT';
 
+        // Update user if fields are different
+        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } }) as any;
+        if (user && (
+            (body.fullName && body.fullName !== user.name) ||
+            (body.email && body.email !== user.email) ||
+            (body.phone && body.phone !== user.phone)
+        )) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    name: body.fullName || user.name,
+                    email: body.email || user.email,
+                    phone: body.phone || user.phone,
+                }
+            });
+        }
+
         const newSubscription = await prisma.subscription.create({
             data: {
                 userId: userFromToken.id,

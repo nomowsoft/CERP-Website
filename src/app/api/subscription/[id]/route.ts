@@ -119,6 +119,22 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     }
 
                     if (action === 'NEW') {
+                        // Only update user if fields are different
+                        if (
+                            (body.fullName && body.fullName !== user.name) ||
+                            (body.email && body.email !== user.email) ||
+                            (body.phone && body.phone !== user.phone)
+                        ) {
+                            await prisma.user.update({
+                                where: { id: user.id },
+                                data: {
+                                    name: body.fullName || user.name,
+                                    email: body.email || user.email,
+                                    phone: body.phone || user.phone,
+                                }
+                            });
+                        }
+
                         const approvalDate = new Date();
                         const updated = await prisma.subscription.update({
                             where: { id: subId },
@@ -139,6 +155,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                         const req = await prisma.subscriptionRequest.create({
                             data: {
                                 subscriptionId: subId, type: action as any, packageId: pkgId,
+
                                 paymentMethod: 'ONLINE', licenseFile: body.licenseFile, status: 'APPROVED',
                                 services: { connect: newServiceIds.map((sid: number) => ({ id: sid })) }
                             }
@@ -160,6 +177,21 @@ export async function PUT(request: NextRequest, { params }: Props) {
                         }
                     });
                     if (action === 'NEW') {
+                        // Only update user if fields are different
+                        if (
+                            (body.fullName && body.fullName !== user.name) ||
+                            (body.email && body.email !== user.email) ||
+                            (body.phone && body.phone !== user.phone)
+                        ) {
+                            await prisma.user.update({
+                                where: { id: user.id },
+                                data: {
+                                    name: body.fullName || user.name,
+                                    email: body.email || user.email,
+                                    phone: body.phone || user.phone,
+                                }
+                            });
+                        }
                         await prisma.subscription.update({ where: { id: subId }, data: { ...dataToUpdate, status: 'DRAFT' } });
                     }
                     return NextResponse.json({ message: 'Request submitted for approval' }, { status: 200 });

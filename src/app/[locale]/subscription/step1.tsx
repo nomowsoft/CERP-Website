@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { User, Mail, Phone } from "lucide-react";
 import { SubscriptionFormData } from "@/utils/subscription";
 import { useTranslations } from "next-intl";
+import { useSelector } from "react-redux";
 
 interface PersonalInfoStepProps {
   data: SubscriptionFormData;
@@ -11,6 +12,8 @@ interface PersonalInfoStepProps {
 
 const Step1 = ({ data, onChange }: PersonalInfoStepProps) => {
   const t = useTranslations('subscription.personalInfo');
+  const { userInfo } = useSelector((state: any) => state.user);
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold font-doto mb-6">
@@ -28,7 +31,8 @@ const Step1 = ({ data, onChange }: PersonalInfoStepProps) => {
             value={data.fullName}
             onChange={(e) => onChange({ fullName: e.target.value })}
             placeholder={t('fullNamePlaceholder')}
-            className="text-right border border-gray-300"
+            className={`text-right border border-gray-300 ${userInfo?.name ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
+            readOnly={!!userInfo?.name}
           />
         </div>
 
@@ -43,8 +47,9 @@ const Step1 = ({ data, onChange }: PersonalInfoStepProps) => {
             value={data.email}
             onChange={(e) => onChange({ email: e.target.value })}
             placeholder="example@email.com"
-            className="text-left border border-gray-300"
+            className={`text-left border border-gray-300 ${userInfo?.email ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
             dir="ltr"
+            readOnly={!!userInfo?.email}
           />
         </div>
 
@@ -59,13 +64,15 @@ const Step1 = ({ data, onChange }: PersonalInfoStepProps) => {
             value={data.phone}
             onChange={(e) => onChange({ phone: e.target.value })}
             placeholder="+966 5XX XXX XXXX"
-            className="text-left border border-gray-300"
+            className={`text-left border border-gray-300 ${userInfo?.phone ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
             dir="ltr"
+            readOnly={!!userInfo?.phone}
           />
         </div>
       </div>
     </div>
   );
 };
+
 
 export default Step1;

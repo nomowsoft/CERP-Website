@@ -74,6 +74,30 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     }
   }, [mySubscription, dataLoaded]);
 
+  useEffect(() => {
+    if (userInfo && Object.keys(userInfo).length > 0) {
+      setFormData((prev) => {
+        const next = { ...prev };
+        let changed = false;
+
+        if (!next.fullName && userInfo.name) {
+          next.fullName = userInfo.name;
+          changed = true;
+        }
+        if (!next.email && userInfo.email) {
+          next.email = userInfo.email;
+          changed = true;
+        }
+        if (!next.phone && userInfo.phone) {
+          next.phone = userInfo.phone;
+          changed = true;
+        }
+
+        return changed ? next : prev;
+      });
+    }
+  }, [userInfo]);
+
   const steps = [
     { id: 1, label: t('steps.servicesSelection') },
     { id: 2, label: t('steps.personalInfo') },

@@ -98,12 +98,36 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         if (userFromToken.id === targetUser.id || adminUser?.role === 'ADMIN') {
             const body = await request.json() as UpdateUserDTO & { role?: string };
-            const dataToUpdate: any = {
-                name: body.name,
-                email: body.email,
-                phone: body.phone,
-                charityName: body.charityName,
-            };
+            const dataToUpdate: any = {};
+
+            const newName = body.name?.trim();
+            const newEmail = body.email?.trim();
+            const newPhone = body.phone?.trim();
+            const newCharityName = body.charityName?.trim();
+
+            if (newEmail && newEmail.toLowerCase() !== targetUser.email?.trim().toLowerCase()) {
+                const existing = await prisma.user.findFirst({ where: { email: newEmail } });
+                if (existing && existing.id !== targetUser.id) {
+                    return NextResponse.json({ message: 'emailUsed' }, { status: 400 });
+                }
+                dataToUpdate.email = newEmail;
+            }
+
+            if (newPhone && newPhone !== targetUser.phone?.trim()) {
+                const existing = await prisma.user.findFirst({ where: { phone: newPhone } });
+                if (existing && existing.id !== targetUser.id) {
+                    return NextResponse.json({ message: 'phoneUsed' }, { status: 400 });
+                }
+                dataToUpdate.phone = newPhone;
+            }
+
+            if (newName && newName !== targetUser.name?.trim()) dataToUpdate.name = newName;
+            if (newCharityName && newCharityName !== targetUser.charityName?.trim()) dataToUpdate.charityName = newCharityName;
+
+            if (Object.keys(dataToUpdate).length === 0 && !body.password && !(body.role && adminUser?.role === 'ADMIN')) {
+                const { password, ...other } = targetUser;
+                return NextResponse.json(other, { status: 200 });
+            }
 
             if (body.password) {
                 const salt = await bcrypt.genSalt(10);
@@ -126,7 +150,11 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
 
-    } catch (error) {
+    } catch (error: any) {
+        console.error("Profile update error:", error);
+        if (error.code === 'P2002') {
+            return NextResponse.json({ message: 'emailOrPhoneUsed' }, { status: 400 });
+        }
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

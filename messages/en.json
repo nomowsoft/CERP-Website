@@ -455,6 +455,9 @@
     "personalInfo": "Personal Information",
     "orgInfo": "Organization Information",
     "passwordHint": "Securing your account starts with a strong password. We recommend using a mix of uppercase, lowercase, numbers, and special symbols.",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "emailUsed": "Email is already in use by another account.",
+    "phoneUsed": "Phone number is already in use by another account.",
+    "emailOrPhoneUsed": "Email or phone number is already in use by another account."
   }
 }
