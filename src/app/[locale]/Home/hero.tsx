@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useTranslations, useLocale } from "use-intl";
 import Image from "next/image";
+import { HeroDashboardAnimation } from "./HeroDashboardAnimation";
 
 type dataType = {
     id: number;
@@ -40,7 +41,7 @@ export const Hero = () => {
     const locale = useLocale();
     return (
         <section className="bg-gray-100 flex items-center py-24 lg:py-40 relative">
-            <video
+            {/* <video
                 className="absolute inset-0 w-full h-full object-cover opacity-5"
                 autoPlay
                 loop
@@ -49,12 +50,12 @@ export const Hero = () => {
             >
                 <source src="/hero/video1.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
-            </video>
+            </video> */}
             <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* Right side: Text & Buttons */}
                     <div className="w-full lg:w-1/2">
-                        <div className="text-primary flex items-center gap-2 w-60 mb-4 justify-center  border border-primary rounded-3xl px-2 py-2 bg-gradient-to-l from-primary/20 font-bold from-5% via-primary/50 via-50% to-primary/20 to-90%">
+                        <div className="text-primary flex items-center gap-2 w-fit mb-4 justify-center  border border-primary rounded-3xl px-2 py-2 bg-gradient-to-l from-primary/20 font-bold from-5% via-primary/50 via-50% to-primary/20 to-90%">
                             <Image src="/hero/Vector.svg" height={40} width={20} alt="..." />
                             <div>{t('integratedSystem')}</div>
                         </div>
@@ -71,7 +72,7 @@ export const Hero = () => {
                             {/* Primary Button */}
                             <Button
                                 size="lg"
-                                className={`w-full sm:w-auto ${locale === 'ar' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-secondary font-bold from-5% via-primary via-50% to-primary to-90% rounded-xl text-info glow-primary  text-xl px-6 py-7 text-center`}
+                                className={`w-full sm:w-auto  ${locale === 'ar' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-secondary font-bold from-5% via-primary via-50% to-primary to-90% rounded-xl text-info glow-primary  text-xl px-6 py-7 text-center`}
                             >
                                 {t('startNow')}
                                 <ArrowLeft className={`me-2 h-7 w-7 group-hover:translate-x-1 transition-transform ${locale === 'ar' ? 'block' : 'hidden'}`} />
@@ -84,11 +85,11 @@ export const Hero = () => {
                                 variant="outline"
                                 className="w-full font-bold sm:w-auto bg-white border border-white  rounded-xl hover:bg-primary/10 hover:text-primary text-base sm:text-lg py-7"
                             >
-                                <Image src="/hero/buttonshow.svg" height={24} width={40} alt="Play" className="ms-2" />
+                                {/* <Image src="/hero/buttonshow.svg" height={24} width={40} alt="Play" className="ms-2" /> */}
                                 {t('watchDemo')}
                             </Button>
                         </div>
-                        <div className="mt-6">
+                        {/* <div className="mt-6">
                             <p className="text-sm text-gray-500">
                                 {t('trustedBy')}
                             </p>
@@ -107,12 +108,12 @@ export const Hero = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     {/* Left side: Demo */}
-                    <div className="w-full lg:w-1/2 mb-8 lg:mb-0 flex justify-center">
+                    <div className="w-full lg:w-1/2 mb-8 lg:mb-0 flex justify-center items-center">
                         <div className="w-full">
-                            <Image src="/hero/heroimage.svg" height={500} width={700} alt="..." />
+                            <HeroDashboardAnimation />
                         </div>
                     </div>
                 </div>

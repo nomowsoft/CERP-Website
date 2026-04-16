@@ -8,7 +8,7 @@ const System = () => {
   return (
     <section>
       <section>
-        <div className="px-4">
+        <div className="px-4 mt-20">
           <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
             <h1 className="text-4xl md:text-5xl font-doto2 font-bold mb-6">
               {t.rich('specializedSystemsHeading', {

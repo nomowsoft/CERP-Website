@@ -12,6 +12,8 @@ import { News } from './Home/news';
 import { Feature } from './Home/feature';
 import { ContactUs } from './Home/contact_us';
 import { FAQAccordion } from './Home/FAQAccordion';
+import { OperatingSteps } from './Home/operating_steps';
+import { WhyCerp } from './Home/why_cerp';
 import { useLocale } from 'next-intl';
 
 
@@ -26,12 +28,14 @@ export default function Home() {
   return (
     <div dir={`${locale === "ar" ? 'rtl' : 'ltr'}`}>
       <Hero />
-      <News />
-      <Feature />
-      <Program />
-      <System />
+      <OperatingSteps />
+      <WhyCerp />
+      {/* <Feature /> */}
+      {/* <Program /> */}
+      {/* <System /> */}
       <CustomerPartner />
-      <ContactUs />
+      {/* <ContactUs /> */}
+      {/* <News /> */}
       <FAQAccordion />
     </div>
   );

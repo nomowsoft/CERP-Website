@@ -63,8 +63,8 @@ const blogPosts = [
 export const Feature = () => {
     const t = useTranslations('features');
     return (
-        <section className="mt-40 relative container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
-            <div className="absolute -top-30 right-10 w-40 h-40 sm:w-60 sm:h-60 md:w-72 md:h-72 bg-primary/15 rounded-full blur-3xl animate-float" />
+        <section className="mt-20 relative mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
+            <div className="absolute -top-30 right-10 w-40 h-40 sm:w-60 sm:h-60 md:w-72 md:h-72 bg-primary/20 rounded-full blur-3xl animate-float" />
             <section>
                 <div className="flex justify-center">
                     <span className="text-primary flex items-center gap-2 mb-4 border border-primary rounded-3xl px-4 py-2 bg-primary/10">
@@ -83,7 +83,7 @@ export const Feature = () => {
                 </div>
             </section>
             {/* Blogs Posts Grid */}
-            <section className="bg-background">
+            <section className="bg-background container mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-15">
                     {blogPosts.map((post) => (
                         <Card
