@@ -14,11 +14,11 @@
     "login": "Login"
   },
   "hero": {
-    "integratedSystem": "Integrated Saudi System",
-    "erpSystemTitle": "<highlight>CERP</highlight> System for Resource Management",
-    "erpDescription": "Advanced technical solutions specifically designed for associations and non-profit organizations in Saudi Arabia. A comprehensive system that supports digital transformation and meets governance and cybersecurity requirements.",
-    "startNow": "Start Now",
-    "watchDemo": "Watch Demo",
+    "integratedSystem": "System Compliant with Saudi Labor Regulations",
+    "erpSystemTitle": "Integrated platform to manage and operate associations",
+    "erpDescription": "Transform your operations into an interconnected ecosystem... combining governance, operations, and reporting in one platform",
+    "startNow": "Choose Your Package",
+    "watchDemo": "Free Consultation",
     "trustedBy": "Trusted by",
     "statAssociation": "Association",
     "statSystem": "System",
@@ -28,6 +28,27 @@
     "learnMore": "Learn More",
     "watchVideo": "Watch Video",
     "videoAlt": "Introductory video about the CERP Charity Management System"
+  },
+  "steps": {
+    "title": "Start operating your association with clear steps",
+    "step1Title": "Choose the appropriate package",
+    "step1Desc": "Determine what suits your association's needs",
+    "step2Title": "Register association details",
+    "step2Desc": "Setup the account according to entity requirements",
+    "step3Title": "Start operating",
+    "step3Desc": "Activate the system and launch operations management"
+  },
+  "whyCerp": {
+    "title": "Why CERP?",
+    "description": "An integrated platform designed according to the requirements of the non-profit sector in the Kingdom, enabling associations to manage their operations efficiently within a reliable environment that combines governance, security, and operational continuity.",
+    "feature1Title": "Hosting inside the Kingdom",
+    "feature1Desc": "Local infrastructure ensuring compliance and high reliability",
+    "feature2Title": "Integrated Process Governance",
+    "feature2Desc": "Organizing procedures and linking them within clear, controlled workflows",
+    "feature3Title": "Cybersecurity Compliance",
+    "feature3Desc": "Applying approved cybersecurity controls and standards to ensure data protection",
+    "feature4Title": "Stable Operation & Continuous Support",
+    "feature4Desc": "High system availability with specialized technical support and continuous updates"
   },
   "programs": {
     "systemsTag": "Systems",
@@ -223,7 +244,7 @@
     "title": "Our Clients",
     "tag": "Our Partners",
     "heading": "<highlight>Our Partners</highlight> in Success",
-    "subHeading": "Association and non-profit organization in Saudi Arabia"
+    "subHeading": "<highlight>+50</highlight> associations trust CERP"
   },
   "footer": {
     "tagline": "Integrated Enterprise Resource Management System for Associations and Non-Profit Organizations",

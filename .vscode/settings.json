@@ -1,3 +1,15 @@
 {
-    "snyk.advanced.autoSelectOrganization": true
+    "snyk.advanced.autoSelectOrganization": true,
+    "[html]": {
+      "prettier.printWidth": 180
+    },
+    "[typescript]": {
+      "prettier.printWidth": 120,
+      "prettier.tabWidth": 4,
+      "prettier.semi": false
+    },
+    "[json]": {
+      "prettier.printWidth": 80,
+      "prettier.tabWidth": 2
+    }
 }
