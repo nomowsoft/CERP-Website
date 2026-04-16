@@ -15,8 +15,8 @@ export default function Footer() {
                     <div className="">
                         <div className="relative">
                             <div className="absolute -top-30 right-10 w-40 h-40 sm:w-60 sm:h-60 md:w-60 md:h-50 bg-primary/20 rounded-full blur-3xl animate-float" />
-                            <Link href="/" className="flex">
-                                <Image height={20} width={250} src="/footer/CERP.svg" alt="Flowbite Logo" />
+                            <Link href="/" className="flex justify-center md:justify-start">
+                                <Image height={50} width={180} src="/cerp-logo.png" alt="CERP Logo" className="object-contain" />
                             </Link>
                         </div>
                         <p className="text-center text-gray-500">{t('tagline')}</p>

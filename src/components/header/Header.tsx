@@ -50,10 +50,11 @@ export default function Header() {
         <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-2">
           <Link href="/" className="flex items-center px-5 lg:px-0">
             <Image
-              height={20}
-              width={150}
-              src="/header/CERP.svg"
-              alt="Logo"
+              height={40}
+              width={140}
+              src="/cerp-logo.png"
+              alt="CERP Logo"
+              className="object-contain"
             />
           </Link>
           <div className="hidden lg:block">
