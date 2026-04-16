@@ -18,8 +18,8 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
-  --color-primary: #0A8B8B;
-  --color-secondary: #C9A24D;
+  --color-primary: #1B1464; /* New Deep Navy Blue from logo */
+  --color-secondary: #FF4500; /* New Vibrant Orange from logo */
   --color-info: #FFFFFF;
   --color-color1: #F5F5F5;
   /* font */
