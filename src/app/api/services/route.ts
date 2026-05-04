@@ -2,13 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
 
+// Helper to format image for frontend
+const formatImage = (image: any) => {
+    if (!image) return null;
+    const buf = Buffer.from(image);
+    const imageStr = buf.toString('utf8');
+    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
+        return imageStr;
+    }
+    return `data:image/png;base64,${buf.toString('base64')}`;
+};
+
 export async function GET(request: NextRequest) {
     try {
         const services = await prisma.service.findMany({
             include: { contents: true },
             orderBy: { createdAt: 'desc' }
         });
-        return NextResponse.json(services, { status: 200 });
+
+        // Convert Buffer images to Base64 strings
+        const formattedServices = services.map(service => ({
+            ...service,
+            image: formatImage(service.image)
+        }));
+
+        return NextResponse.json(formattedServices, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
@@ -27,6 +45,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
 
+        // Handle image as Bytes if it's a base64 string
+        let imageBuffer = null;
+        if (body.image && body.image.startsWith('data:image')) {
+            const base64Data = body.image.split(',')[1];
+            imageBuffer = Buffer.from(base64Data, 'base64');
+        }
+
         const newService = await prisma.service.create({
             data: {
                 name: body.name,
@@ -37,7 +62,7 @@ export async function POST(request: NextRequest) {
                 description: body.description,
                 description_en: body.description_en,
                 description_ar: body.description_ar,
-                image: body.image,
+                image: imageBuffer as any,
                 contents: {
                     create: body.contents?.map((c: any) => ({
                         name: typeof c === 'string' ? c : c.name,
@@ -49,7 +74,13 @@ export async function POST(request: NextRequest) {
             include: { contents: true }
         });
 
-        return NextResponse.json(newService, { status: 201 });
+        // Convert back for response
+        const responseService = {
+            ...newService,
+            image: formatImage(newService.image)
+        };
+
+        return NextResponse.json(responseService, { status: 201 });
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }

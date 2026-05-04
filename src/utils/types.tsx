@@ -134,6 +134,7 @@ export type PackageDTO = {
     description_en: string
     description_ar: string
     features: PackageFeturesDto
+    systems?: any[]
     createdAt: string
     updatedAt: string
 }

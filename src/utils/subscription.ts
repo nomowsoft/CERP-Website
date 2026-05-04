@@ -22,6 +22,7 @@ export interface SubscriptionFormData {
   bankReceiptFile?: File;
   packageId?: number;
   selectedServices?: number[]; // IDs of selected services
+  selectedSystems?: number[]; // IDs of selected systems
 }
 
 export const initialFormData: SubscriptionFormData = {
@@ -38,4 +39,5 @@ export const initialFormData: SubscriptionFormData = {
   expiryDate: '',
   cvv: '',
   selectedServices: [],
+  selectedSystems: [],
 };

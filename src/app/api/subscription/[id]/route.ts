@@ -3,10 +3,51 @@ import prisma from '@/utils/db';
 import { verifyToken } from '@/utils/verifyToken';
 import { SubscriptionService } from '@/utils/payment';
 import { PaymentGateway } from '@/utils/paymentGateway';
+import { ServerManager } from '@/utils/serverManager';
+
+const formatImage = (image: any) => {
+    if (!image) return null;
+    const buf = Buffer.from(image);
+    const imageStr = buf.toString('utf8');
+    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
+        return imageStr;
+    }
+    return `data:image/png;base64,${buf.toString('base64')}`;
+};
 
 type Props = {
     params: Promise<{ id: string }>;
 };
+
+// Strongly type the expected request body
+interface UpdateSubscriptionBody {
+    domainName?: string;
+    domainType?: 'SUBDOMAIN' | 'CUSTOM';
+    subdomain?: string;
+    customDomain?: string;
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    charityRegisterNo?: string;
+    licenseFile?: string;
+    paymentMethod?: 'ONLINE' | 'BANK' | string;
+    cardHolderName?: string;
+    cardHolder?: string;
+    cardExpiryDate?: string;
+    expiryDate?: string | Date;
+    bankReceipt?: string;
+    bankReceiptFile?: string;
+    action?: 'RENEW' | 'UPGRADE' | 'NEW' | string;
+    paymentId?: string;
+    packageId?: number;
+    cardNumber?: string;
+    cardCVV?: string;
+    selectedServices?: number[];
+    selectedSystems?: number[];
+    approvalDate?: string | Date;
+    status?: 'DRAFT' | 'PROGRES' | 'DONE' | 'CANCEL';
+    provision?: boolean;
+}
 
 export async function DELETE(request: NextRequest, { params }: Props) {
     try {
@@ -17,8 +58,11 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         const sub = await prisma.subscription.findUnique({ where: { id: parseInt(id) } });
         if (!sub) return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
 
-        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } }) as any;
-        if (userFromToken.id === user?.id || user?.role === 'ADMIN') {
+        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        const isOwner = sub.userId === user?.id;
+        const isAdmin = user?.role === 'ADMIN';
+
+        if (isOwner || isAdmin) {
             await prisma.subscription.delete({ where: { id: parseInt(id) } });
             return NextResponse.json({ message: 'Deleted successfully' }, { status: 200 });
         }
@@ -36,14 +80,36 @@ export async function GET(request: NextRequest, { params }: Props) {
 
         const sub = await prisma.subscription.findUnique({
             where: { id: parseInt(id) },
-            include: { package: true, services: true, payments: true }
+            include: { package: { include: { systems: true } }, services: true, payments: true, systems: true }
         });
         if (!sub) return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
 
-        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } }) as any;
-        if (userFromToken.id === user?.id || user?.role === 'ADMIN') {
+        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        const isOwner = sub.userId === user?.id;
+        const isAdmin = user?.role === 'ADMIN';
+
+        if (isOwner || isAdmin) {
+            // Remove sensitive info using destructuring correctly
             const { cardCVV, cardNumber, ...other } = sub as any;
-            return NextResponse.json(other, { status: 200 });
+            
+            // Format images
+            const formatted = {
+                ...other,
+                package: other.package ? {
+                    ...other.package,
+                    image: formatImage(other.package.image),
+                    systems: other.package.systems?.map((sys: any) => ({
+                        ...sys,
+                        icon: formatImage(sys.icon)
+                    }))
+                } : null,
+                systems: other.systems?.map((sys: any) => ({
+                    ...sys,
+                    icon: formatImage(sys.icon)
+                }))
+            };
+
+            return NextResponse.json(formatted, { status: 200 });
         }
         return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
     } catch (error) {
@@ -59,20 +125,61 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         if (!userFromToken) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } }) as any;
-        const subscription = await prisma.subscription.findUnique({ where: { id: subId } });
+        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
+        const subscription = await prisma.subscription.findUnique({ where: { id: subId } });
         if (!subscription) return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
 
-        const body = await request.json() as any;
+        const body = (await request.json()) as UpdateSubscriptionBody;
 
-        if (userFromToken.id === user.id || user.role === 'ADMIN') {
+        const isOwner = subscription.userId === user.id;
+        const isAdmin = user.role === 'ADMIN';
+
+        if (isOwner || isAdmin) {
+            // New logic for approving requests (Management View)
+            if (isAdmin && body.requestId) {
+                const requestToProcess = await prisma.subscriptionRequest.findUnique({
+                    where: { id: body.requestId }
+                });
+
+                if (!requestToProcess) return NextResponse.json({ message: "Request not found" }, { status: 404 });
+
+                if (body.status === 'DONE') {
+                    // Approve the request
+                    await prisma.subscriptionRequest.update({
+                        where: { id: body.requestId },
+                        data: { status: 'APPROVED' }
+                    });
+
+                    // applyRequest handles updates and provisioning
+                    const result = await SubscriptionService.applyRequest(body.requestId);
+                    
+                    return NextResponse.json({ 
+                        message: "Request approved and applied successfully",
+                        message_ar: "تمت الموافقة على الطلب وتطبيقه بنجاح",
+                        result 
+                    }, { status: 200 });
+                } else if (body.status === 'CANCEL') {
+                    // Reject the request
+                    await prisma.subscriptionRequest.update({
+                        where: { id: body.requestId },
+                        data: { status: 'REJECTED' }
+                    });
+                    return NextResponse.json({ 
+                        message: "Request rejected",
+                        message_ar: "تم رفض الطلب" 
+                    }, { status: 200 });
+                }
+            }
+
             let domainName = body.domainName;
+            let provisioningResult = null;
             if (!domainName) {
                 domainName = body.domainType === 'SUBDOMAIN' ? body.subdomain : body.customDomain;
             }
 
-            let dataToUpdate: any = {
+            const dataToUpdate: Record<string, any> = {
                 fullName: body.fullName,
                 email: body.email,
                 phone: body.phone,
@@ -86,13 +193,15 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 bankReceipt: body.bankReceipt || body.bankReceiptFile,
             };
 
-            const action = body.action; // RENEW, UPGRADE, or NEW
+            const action = body.action; // RENEW, UPGRADE, ADD_SYSTEM or NEW
             const isOnline = body.paymentMethod === 'ONLINE';
             const paymentId = body.paymentId;
 
-            if (action === 'RENEW' || action === 'UPGRADE' || action === 'NEW') {
+            if (action === 'RENEW' || action === 'UPGRADE' || action === 'NEW' || action === 'ADD_SYSTEM') {
                 const pkgId = body.packageId || subscription.packageId;
-                const pkg = await prisma.package.findUnique({ where: { id: pkgId } });
+                if (!pkgId) return NextResponse.json({ message: 'Package not found' }, { status: 404 });
+                
+                const pkg = await prisma.package.findUnique({ where: { id: pkgId as number } });
                 if (!pkg) return NextResponse.json({ message: 'Package not found' }, { status: 404 });
 
                 let servicesTotal = 0;
@@ -103,15 +212,26 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     });
                     servicesTotal = dbServices.reduce((sum, s) => sum + Number(s.price), 0);
                 }
-                const totalPrice = Number(pkg.price) + servicesTotal;
+                const totalPrice = (pkg ? Number(pkg.price) : 0) + servicesTotal;
+                
+                let finalPrice = totalPrice;
+                const newSystemIds = body.selectedSystems || [];
+                if (action === 'ADD_SYSTEM') {
+                    if (newSystemIds.length === 0) return NextResponse.json({ message: 'No systems selected' }, { status: 400 });
+                    const dbSystems = await prisma.system.findMany({
+                        where: { id: { in: newSystemIds } }
+                    });
+                    const systemsTotal = dbSystems.reduce((sum, s) => sum + Number(s.price), 0);
+                    finalPrice = systemsTotal + servicesTotal;
+                }
 
                 if (isOnline) {
                     if (!paymentId) {
                         // Attempt legacy payment if no paymentId (backward compatibility)
                         if (body.cardNumber && body.cardCVV) {
                             const paymentResult = await PaymentGateway.processPayment({
-                                cardNumber: body.cardNumber, cvv: body.cardCVV, amount: totalPrice,
-                                currency: pkg.currency || 'SAR', cardHolderName: body.cardHolderName || body.fullName,
+                                cardNumber: body.cardNumber, cvv: body.cardCVV, amount: finalPrice,
+                                currency: pkg.currency || 'SAR', cardHolderName: body.cardHolderName || body.fullName || 'Unknown',
                                 expiryDate: body.cardExpiryDate || ''
                             });
                             if (!paymentResult.success) return NextResponse.json({ message: paymentResult.message || "Payment failed" }, { status: 400 });
@@ -136,7 +256,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                         }
 
                         const approvalDate = new Date();
-                        const updated = await prisma.subscription.update({
+                        await prisma.subscription.update({
                             where: { id: subId },
                             data: {
                                 ...dataToUpdate,
@@ -148,21 +268,41 @@ export async function PUT(request: NextRequest, { params }: Props) {
                             }
                         });
                         await prisma.payment.create({
-                            data: { subscriptionId: subId, amount: totalPrice, method: 'ONLINE', status: 'SUCCESS', transactionId: paymentId || 'MANUAL' }
+                            data: { subscriptionId: subId, amount: finalPrice, method: 'ONLINE', status: 'SUCCESS', transactionId: paymentId || 'MANUAL' }
                         });
-                        return NextResponse.json(updated, { status: 200 });
+                        
+                        // Provision server
+                        provisioningResult = await ServerManager.provisionServer(subId);
+
+                        // Refetch to get the latest data including instanceUrl
+                        const finalUpdated = await prisma.subscription.findUnique({
+                            where: { id: subId },
+                            include: { package: true, services: true }
+                        });
+
+                        return NextResponse.json({ 
+                            message: provisioningResult && !provisioningResult.success 
+                                ? `Subscription created but provisioning failed: ${provisioningResult.message}` 
+                                : "Success: System provisioned successfully.",
+                            message_ar: provisioningResult && !provisioningResult.success 
+                                ? `تم إنشاء الاشتراك ولكن فشل تجهيز النظام: ${provisioningResult.message}` 
+                                : "تم تجهيز النظام بنجاح.",
+                            provisioning: provisioningResult,
+                            domain: finalUpdated?.instanceUrl || "Pending",
+                            subscription: finalUpdated 
+                        }, { status: 200 });
                     } else {
                         const req = await prisma.subscriptionRequest.create({
                             data: {
                                 subscriptionId: subId, type: action as any, packageId: pkgId,
-
                                 paymentMethod: 'ONLINE', licenseFile: body.licenseFile, status: 'APPROVED',
-                                services: { connect: newServiceIds.map((sid: number) => ({ id: sid })) }
+                                services: { connect: newServiceIds.map((sid: number) => ({ id: sid })) },
+                                systems: { connect: newSystemIds.map((sid: number) => ({ id: sid })) }
                             }
                         });
                         const updated = await SubscriptionService.applyRequest(req.id);
                         await prisma.payment.create({
-                            data: { subscriptionId: subId, amount: totalPrice, method: 'ONLINE', status: 'SUCCESS', transactionId: paymentId || 'MANUAL' }
+                            data: { subscriptionId: subId, amount: finalPrice, method: 'ONLINE', status: 'SUCCESS', transactionId: paymentId || 'MANUAL' }
                         });
                         return NextResponse.json(updated, { status: 200 });
                     }
@@ -173,7 +313,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
                             subscriptionId: subId, type: (action === 'NEW' ? 'RENEW' : action) as any,
                             packageId: pkgId, paymentMethod: 'BANK', licenseFile: body.licenseFile,
                             bankReceipt: body.bankReceipt || body.bankReceiptFile, status: 'PENDING',
-                            services: { connect: newServiceIds.map((sid: number) => ({ id: sid })) }
+                            services: { connect: newServiceIds.map((sid: number) => ({ id: sid })) },
+                            systems: { connect: newSystemIds.map((sid: number) => ({ id: sid })) }
                         }
                     });
                     if (action === 'NEW') {
@@ -204,12 +345,61 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 if (body.approvalDate) dataToUpdate.approvalDate = new Date(body.approvalDate);
                 if (body.status) dataToUpdate.status = body.status;
                 if (body.packageId) dataToUpdate.packageId = body.packageId;
+
+                // Auto-calculate dates if status becomes DONE and they aren't provided
+                if (dataToUpdate.status === 'DONE') {
+                    if (!dataToUpdate.approvalDate && !subscription.approvalDate) {
+                        dataToUpdate.approvalDate = new Date();
+                    }
+                    if (!dataToUpdate.expiryDate && !subscription.expiryDate) {
+                        const refDate = dataToUpdate.approvalDate || subscription.approvalDate || new Date();
+                        dataToUpdate.expiryDate = SubscriptionService.calculateExpiry(new Date(refDate));
+                    }
+                }
             } else {
                 dataToUpdate.status = subscription.status;
             }
 
-            const updatedSub = await prisma.subscription.update({ where: { id: subId }, data: dataToUpdate });
-            return NextResponse.json(updatedSub, { status: 200 });
+            // Trigger provisioning ONLY if the provision flag is explicitly true
+            const shouldProvision = body.provision === true && body.status === 'DONE' && subscription.status !== 'DONE';
+            
+            if (shouldProvision) {
+                provisioningResult = await ServerManager.provisionServer(subId);
+                
+                if (!provisioningResult.success) {
+                    // STOP HERE. Don't update the DB status to DONE if provisioning failed.
+                    return NextResponse.json({ 
+                        message: provisioningResult.message,
+                        message_ar: provisioningResult.message,
+                        provisioning: provisioningResult,
+                        success: false
+                    }, { status: 400 });
+                }
+            }
+
+            const updatedSub = await prisma.subscription.update({ 
+                where: { id: subId }, 
+                data: dataToUpdate,
+                include: { package: true, services: true, payments: true } 
+            });
+
+            // Refetch to get the latest data including instanceUrl from provisioning
+            const finalSub = await prisma.subscription.findUnique({ 
+                where: { id: subId }, 
+                include: { package: true, services: true, payments: true } 
+            });
+
+            return NextResponse.json({ 
+                message: provisioningResult && !provisioningResult.success 
+                    ? provisioningResult.message 
+                    : "Subscription approved and system provisioned successfully.",
+                message_ar: provisioningResult && !provisioningResult.success 
+                    ? provisioningResult.message 
+                    : "تمت الموافقة على الاشتراك وتجهيز النظام بنجاح.",
+                provisioning: provisioningResult,
+                domain: finalSub?.instanceUrl || "Not applicable",
+                subscription: finalSub 
+            }, { status: 200 });
         }
         return NextResponse.json({ message: 'Unauthorized action' }, { status: 403 });
     } catch (error: any) {

@@ -30,7 +30,9 @@ export async function GET(request: NextRequest) {
                 subscription: {
                     include: { user: { select: { name: true, charityName: true } } }
                 },
-                package: true
+                package: true,
+                systems: true,
+                services: true
             },
             orderBy: { createdAt: 'desc' }
         });

@@ -15,6 +15,7 @@ export interface Package {
     price: number | string;
     currency: string;
     features: { id: number, text: string, text_en: string, text_ar: string }[];
+    systems: { id: number, name: string, name_en: string, name_ar: string }[];
     createdAt: string;
 }
 

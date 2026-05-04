@@ -6,6 +6,17 @@ type Props = {
     params: Promise<{ id: string }>;
 };
 
+// Helper to format image for frontend
+const formatImage = (image: any) => {
+    if (!image) return null;
+    const buf = Buffer.from(image);
+    const imageStr = buf.toString('utf8');
+    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
+        return imageStr;
+    }
+    return `data:image/png;base64,${buf.toString('base64')}`;
+};
+
 export async function GET(request: NextRequest, { params }: Props) {
     try {
         const { id } = await params;
@@ -14,7 +25,14 @@ export async function GET(request: NextRequest, { params }: Props) {
             include: { contents: true }
         });
         if (!service) return NextResponse.json({ message: "Service not found" }, { status: 404 });
-        return NextResponse.json(service, { status: 200 });
+
+        // Convert Buffer image to Base64 string
+        const formattedService = {
+            ...service,
+            image: formatImage(service.image)
+        };
+
+        return NextResponse.json(formattedService, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
@@ -31,6 +49,17 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         const body = await request.json();
 
+        // Handle image as Bytes if it's a base64 string
+        let imageUpdateData: any = undefined;
+        if (body.image !== undefined) {
+            if (body.image && body.image.startsWith('data:image')) {
+                const base64Data = body.image.split(',')[1];
+                imageUpdateData = Buffer.from(base64Data, 'base64');
+            } else if (body.image === null) {
+                imageUpdateData = null;
+            }
+        }
+
         const updatedService = await prisma.$transaction(async (tx) => {
             // 1. Update basic fields
             await tx.service.update({
@@ -44,7 +73,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description: body.description,
                     description_en: body.description_en,
                     description_ar: body.description_ar,
-                    image: body.image,
+                    ...(imageUpdateData !== undefined && { image: imageUpdateData }),
                 }
             });
 
@@ -69,7 +98,13 @@ export async function PUT(request: NextRequest, { params }: Props) {
             });
         });
 
-        return NextResponse.json(updatedService, { status: 200 });
+        // Convert back for response
+        const responseService = {
+            ...updatedService,
+            image: updatedService ? formatImage(updatedService.image) : null
+        };
+
+        return NextResponse.json(responseService, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }

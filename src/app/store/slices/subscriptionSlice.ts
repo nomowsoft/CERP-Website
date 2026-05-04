@@ -43,7 +43,7 @@ export const updateSubscription = createAsyncThunk<any, { id: number, data: any 
     async ({ id, data }, { rejectWithValue }) => {
         try {
             const response = await axios.put(`/api/subscription/${id}`, data);
-            return response.data.other;
+            return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.message || 'Failed to update subscription');
         }
@@ -73,8 +73,9 @@ const SubscriptionSlice = createSlice({
                 state.subscriptionInfo = state.subscriptionInfo.filter((item: any) => item.id !== action.payload);
             })
             .addCase(updateSubscription.fulfilled, (state, action) => {
+                const updatedSub = action.payload.subscription || action.payload;
                 state.subscriptionInfo = state.subscriptionInfo.map((item: any) =>
-                    item.id === action.payload.id ? action.payload : item
+                    item.id === updatedSub.id ? updatedSub : item
                 );
             });
     },

@@ -51,10 +51,19 @@ export async function PUT(request: NextRequest, { params }: Props) {
         });
 
         // Apply changes to the subscription
-        const updatedSubscription = await SubscriptionService.applyRequest(parseInt(id));
+        const result = await SubscriptionService.applyRequest(parseInt(id));
+        const updatedSubscription = result?.subscription;
+        const provisioningResult = result?.provisioning;
 
         return NextResponse.json({
-            message: "Request approved and subscription updated",
+            message: provisioningResult && !provisioningResult.success 
+                ? `Request approved but provisioning failed: ${provisioningResult.message}` 
+                : "Success: Request approved and system provisioned successfully.",
+            message_ar: provisioningResult && !provisioningResult.success 
+                ? `تمت الموافقة على الطلب ولكن فشل تجهيز النظام: ${provisioningResult.message}` 
+                : "تمت الموافقة على الطلب وتجهيز النظام بنجاح.",
+            provisioning: provisioningResult,
+            domain: updatedSubscription?.instanceUrl || "Pending assignment",
             subscription: updatedSubscription
         }, { status: 200 });
 

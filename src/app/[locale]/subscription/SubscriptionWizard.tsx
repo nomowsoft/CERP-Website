@@ -39,10 +39,12 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const { userInfo } = useSelector((state: any) => state.user);
   const { packages } = useSelector((state: RootState) => state.packages);
   const { services } = useSelector((state: RootState) => state.services);
+  const { systems: allSystems } = useSelector((state: RootState) => state.systems);
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const searchParams = useSearchParams();
   const packageId = searchParams.get('packageId');
+  const systemId = searchParams.get('systemId');
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<SubscriptionFormData>(initialFormData);
@@ -62,7 +64,14 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     if (packageId) {
       setFormData((prev) => ({ ...prev, packageId: Number(packageId) }));
     }
-  }, [packageId]);
+    if (systemId) {
+      const sId = Number(systemId);
+      setFormData((prev) => ({ 
+        ...prev, 
+        selectedSystems: prev.selectedSystems?.includes(sId) ? prev.selectedSystems : [...(prev.selectedSystems || []), sId] 
+      }));
+    }
+  }, [packageId, systemId]);
 
   const mySubscription = subscriptionInfo?.find((s: any) => s.userId === userInfo?.id);
 
@@ -146,12 +155,17 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const getPriceBreakdown = () => {
     let packagePrice = 0;
     let servicesTotal = 0;
+    let systemsTotal = 0;
     if (selectedPkg) packagePrice = Number(selectedPkg.price) || 0;
     (formData.selectedServices || []).forEach(id => {
       const s = services.find((sv: any) => sv.id === id);
       if (s) servicesTotal += Number(s.price) || 0;
     });
-    return { packagePrice, servicesTotal, grandTotal: packagePrice + servicesTotal };
+    (formData.selectedSystems || []).forEach(id => {
+      const s = allSystems.find((sys: any) => sys.id === id);
+      if (s) systemsTotal += Number(s.price) || 0;
+    });
+    return { packagePrice, servicesTotal, systemsTotal, grandTotal: packagePrice + servicesTotal + systemsTotal };
   };
 
   const initiateOnlinePayment = async (subscriptionId: number, totalAmount: number) => {
@@ -243,7 +257,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
       );
     }
     switch (currentStep) {
-      case 1: return <Step0 data={formData} onChange={handleDataChange} services={services} onSkip={() => setCurrentStep(2)} selectedPackage={selectedPkg} />;
+      case 1: return <Step0 data={formData} onChange={handleDataChange} services={services} onSkip={() => setCurrentStep(2)} selectedPackage={selectedPkg} allSystems={allSystems} />;
       case 2: return <Step1 data={formData} onChange={handleDataChange} />;
       case 3: return <Step2 data={formData} onChange={handleDataChange} />;
       case 4: return <Step3 data={formData} onChange={handleDataChange} />;
@@ -264,9 +278,31 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
       <div className="text-center mb-10">
         <h1 className="text-3xl md:text-5xl font-black font-doto2 mb-4">
           {isAr ? (
-            <>اشترك في <span className="text-primary">{selectedPkg ? selectedPkg.name : "..."}</span></>
+            <>
+              {selectedPkg ? (
+                <>اشترك في <span className="text-primary">{selectedPkg.name_ar}</span></>
+              ) : formData.selectedSystems && formData.selectedSystems.length > 0 ? (
+                <>اشترك في <span className="text-primary">
+                  {allSystems.find(s => s.id === formData.selectedSystems![0])?.name_ar || 
+                   allSystems.find(s => s.id === formData.selectedSystems![0])?.name}
+                </span></>
+              ) : (
+                <>اشترك في <span className="text-primary">CERP</span></>
+              )}
+            </>
           ) : (
-            <>Subscribe to <span className="text-primary">{selectedPkg ? selectedPkg.name_en : "..."}</span></>
+            <>
+              {selectedPkg ? (
+                <>Subscribe to <span className="text-primary">{selectedPkg.name_en}</span></>
+              ) : formData.selectedSystems && formData.selectedSystems.length > 0 ? (
+                <>Subscribe to <span className="text-primary">
+                  {allSystems.find(s => s.id === formData.selectedSystems![0])?.name_en || 
+                   allSystems.find(s => s.id === formData.selectedSystems![0])?.name}
+                </span></>
+              ) : (
+                <>Subscribe to <span className="text-primary">CERP</span></>
+              )}
+            </>
           )}
         </h1>
         <p className="text-gray-500 text-lg">
@@ -336,6 +372,23 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
                     return (
                       <div key={id} className="flex justify-between text-sm">
                         <span className="text-gray-600">• {isAr ? s.name_ar : s.name_en}</span>
+                        <span className="font-medium">{Number(s.price)} {currency}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Systems Summary */}
+              {formData.selectedSystems && formData.selectedSystems.length > 0 && (
+                <div className="space-y-2 pt-4 border-t border-dashed">
+                  <p className="text-sm text-gray-500">{isAr ? "الأنظمة الإضافية:" : "Additional Systems:"}</p>
+                  {formData.selectedSystems.map(id => {
+                    const s = allSystems.find((sys: any) => sys.id === id);
+                    if (!s) return null;
+                    return (
+                      <div key={id} className="flex justify-between text-sm">
+                        <span className="text-gray-600">• {isAr ? s.name_ar || s.name : s.name_en || s.name}</span>
                         <span className="font-medium">{Number(s.price)} {currency}</span>
                       </div>
                     );

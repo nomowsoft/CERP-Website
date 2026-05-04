@@ -77,6 +77,9 @@ export const SubscriptionSchema = z.object({
     expiryDate: z.string().optional(),
     cvv: z.string().optional(),
     bankReceiptFile: z.any().optional(),
+    packageId: z.number().optional(),
+    selectedServices: z.array(z.number()).optional(),
+    selectedSystems: z.array(z.number()).optional(),
 })
     .superRefine((data, ctx) => {
         if (data.domainType === 'SUBDOMAIN') {

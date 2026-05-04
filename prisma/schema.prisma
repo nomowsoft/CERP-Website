@@ -40,35 +40,38 @@ model Subscription {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   status            Status
-  packageId         Int?
   approvalDate      DateTime?
   expiryDate        DateTime?
+  packageId         Int?
   payments          Payment[]
   package           Package?              @relation(fields: [packageId], references: [id])
   user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  requests          SubscriptionRequest[]
+  instanceUrl       String?
   services          Service[]             @relation("ServiceToSubscription")
+  systems           System[]              @relation("SystemToSubscription")
+  requests          SubscriptionRequest[]
 
   @@index([userId])
 }
 
 model Package {
   id             Int                   @id @default(autoincrement())
-  image          String
+  image          Bytes?
   name           String
   type           PackageType
   description    String
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
+  currency       String                @default("SAR")
   description_ar String                @default("")
   description_en String                @default("")
   name_ar        String                @default("")
   name_en        String                @default("")
   price          Decimal               @default(0)
-  currency       String                @default("SAR")
   features       PackageFeature[]
   subscriptions  Subscription[]
   requests       SubscriptionRequest[]
+  systems        System[]              @relation("PackageToSystem")
 }
 
 model SubscriptionRequest {
@@ -85,6 +88,7 @@ model SubscriptionRequest {
   package        Package?      @relation(fields: [packageId], references: [id])
   subscription   Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
   services       Service[]     @relation("ServiceToSubscriptionRequest")
+  systems        System[]      @relation("SystemToSubscriptionRequest")
 }
 
 model SystemSetting {
@@ -103,7 +107,7 @@ model Payment {
   transactionId  String?       @unique
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 }
 
 model PackageFeature {
@@ -117,16 +121,16 @@ model PackageFeature {
 
 model Service {
   id             Int                   @id @default(autoincrement())
-  image          String
+  image          Bytes?
   name           String
   description    String
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
+  currency       String                @default("SAR")
   description_ar String                @default("")
   description_en String                @default("")
   name_ar        String                @default("")
   name_en        String                @default("")
-  currency       String                @default("SAR")
   price          Decimal               @default(0)
   contents       ServiceType[]
   subscriptions  Subscription[]        @relation("ServiceToSubscription")
@@ -140,6 +144,23 @@ model ServiceType {
   name_ar   String  @default("")
   name_en   String  @default("")
   service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model System {
+  id             Int       @id @default(autoincrement())
+  name           String
+  name_ar        String    @default("")
+  name_en        String    @default("")
+  description    String    @default("")
+  description_ar String    @default("")
+  description_en String    @default("")
+  icon           Bytes?
+  price          Decimal   @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  packages       Package[]             @relation("PackageToSystem")
+  subscriptions  Subscription[]        @relation("SystemToSubscription")
+  requests       SubscriptionRequest[] @relation("SystemToSubscriptionRequest")
 }
 
 enum Role {
@@ -180,6 +201,7 @@ enum PackageType {
 enum RequestType {
   RENEW
   UPGRADE
+  ADD_SYSTEM
 }
 
 enum RequestStatus {

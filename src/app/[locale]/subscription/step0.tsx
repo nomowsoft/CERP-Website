@@ -11,9 +11,10 @@ interface ServicesSelectionStepProps {
     services: ServiceDTO[];
     onSkip: () => void;
     selectedPackage?: any;
+    allSystems: any[];
 }
 
-const Step0 = ({ data, onChange, services, onSkip, selectedPackage }: ServicesSelectionStepProps) => {
+const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems }: ServicesSelectionStepProps) => {
     const t = useTranslations('subscription.servicesSelection');
     const locale = useLocale();
     const isAr = locale === 'ar';
@@ -29,8 +30,23 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage }: ServicesSe
         onChange({ selectedServices: newServices });
     };
 
+    const toggleSystem = (systemId: number) => {
+        const currentSystems = data.selectedSystems || [];
+        const isSelected = currentSystems.includes(systemId);
+
+        const newSystems = isSelected
+            ? currentSystems.filter(id => id !== systemId)
+            : [...currentSystems, systemId];
+
+        onChange({ selectedSystems: newSystems });
+    };
+
     const isServiceSelected = (serviceId: number) => {
         return (data.selectedServices || []).includes(serviceId);
+    };
+
+    const isSystemSelected = (systemId: number) => {
+        return (data.selectedSystems || []).includes(systemId);
     };
 
     return (
@@ -114,6 +130,75 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage }: ServicesSe
                     );
                 })}
             </div>
+
+            {/* Systems Selection */}
+            {allSystems && allSystems.length > 0 && (
+                <div className="pt-10 border-t border-gray-100">
+                    <div className="text-center mb-6">
+                        <h2 className="text-2xl font-bold font-doto2 mb-2">
+                            {isAr ? "الأنظمة التقنية" : "Technical Systems"}
+                        </h2>
+                        <p className="text-gray-500">
+                            {isAr ? "اختر الأنظمة التقنية الإضافية (اختياري)" : "Select additional technical systems (optional)"}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {allSystems.map((system) => {
+                            const isSelected = isSystemSelected(system.id);
+
+                            return (
+                                <div
+                                    key={system.id}
+                                    onClick={() => toggleSystem(system.id)}
+                                    className={`relative p-6 rounded-3xl border-2 cursor-pointer transition-all duration-300 hover:shadow-xl ${isSelected
+                                        ? 'border-primary bg-primary/5 shadow-lg'
+                                        : 'border-gray-200 hover:border-primary/50'
+                                        }`}
+                                >
+                                    {/* Checkmark */}
+                                    {isSelected && (
+                                        <div className="absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                            <Check className="w-5 h-5 text-white" />
+                                        </div>
+                                    )}
+
+                                    {/* System Icon */}
+                                    <div className="mb-4">
+                                        {system.icon && system.icon.startsWith('http') ? (
+                                            <Image src={system.icon} alt={system.name} width={48} height={48} className="w-12 h-12 object-contain" />
+                                        ) : (
+                                            <div className="w-12 h-12 flex items-center justify-center text-primary font-bold text-lg bg-white rounded-xl shadow-sm">
+                                                {system.name ? system.name.substring(0, 2).toUpperCase() : 'SY'}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* System Name */}
+                                    <h3 className="text-lg font-bold font-doto2 mb-2">
+                                        {isAr ? system.name_ar || system.name : system.name_en || system.name}
+                                    </h3>
+
+                                    {/* System Price */}
+                                    <div className="flex items-baseline gap-1 mb-3">
+                                        <span className="text-xl font-bold text-secondary">
+                                            {Number(system.price || 0)}
+                                        </span>
+                                        <span className="text-xs text-gray-500 font-medium">
+                                            {isAr ? 'ر.س' : 'SAR'}
+                                        </span>
+                                    </div>
+
+                                    {/* System Description */}
+                                    <p className="text-xs text-gray-400 line-clamp-2">
+                                        {isAr ? system.description_ar || system.description : system.description_en || system.description}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* Skip Button */}
             <div className="flex justify-center pt-4">

@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations, useLocale } from 'next-intl';
+import Image from 'next/image';
 import {
     CheckCircle2,
     Calendar,
@@ -264,6 +265,45 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
+
+            {/* Active Systems Section */}
+            {subscription.systems && subscription.systems.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.12 }}
+                    className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-100 border border-gray-100"
+                >
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="p-2 bg-blue-50 rounded-xl">
+                            <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-800">{isAr ? "الأنظمة التقنية النشطة" : "Active Technical Systems"}</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {subscription.systems.map((system: any) => (
+                            <div key={system.id} className="p-5 bg-blue-50/30 rounded-3xl border border-blue-100 flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all">
+                                <div className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl border border-blue-100 shadow-sm shrink-0">
+                                    {system.icon && typeof system.icon === 'string' && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
+                                        <Image src={system.icon} alt={system.name} width={32} height={32} className="object-contain" />
+                                    ) : (
+                                        <Check className="w-6 h-6 text-blue-500" />
+                                    )}
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="font-bold text-gray-800">
+                                        {isAr ? (system.name_ar || system.name) : (system.name_en || system.name)}
+                                    </h4>
+                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                                        {isAr ? "نشط" : "Active"}
+                                    </span>
+                                </div>
                             </div>
                         ))}
                     </div>

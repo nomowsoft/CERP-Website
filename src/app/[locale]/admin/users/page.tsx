@@ -27,6 +27,7 @@ import Image from "next/image";
 export default function UsersManagement() {
     const t = useTranslations('admin.users');
     const td = useTranslations('settings');
+    const tc = useTranslations('dashboard.common');
     const locale = useLocale();
     const isAr = locale === 'ar';
     const dispatch = useDispatch<AppDispatch>();
@@ -228,7 +229,7 @@ export default function UsersManagement() {
 
                             <form onSubmit={handleUpdate} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("settings.fullName")}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("fullName")}</label>
                                     <Input
                                         value={editData.name}
                                         onChange={e => setEditData({ ...editData, name: e.target.value })}
@@ -236,7 +237,7 @@ export default function UsersManagement() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("settings.email")}</label>
+                                    <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("email")}</label>
                                     <Input
                                         value={editData.email}
                                         onChange={e => setEditData({ ...editData, email: e.target.value })}
@@ -255,7 +256,7 @@ export default function UsersManagement() {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("settings.phone")}</label>
+                                        <label className="text-sm font-black text-gray-400 uppercase tracking-widest px-2">{td("phone")}</label>
                                         <Input
                                             value={editData.phone}
                                             onChange={e => setEditData({ ...editData, phone: e.target.value })}
@@ -304,10 +305,10 @@ export default function UsersManagement() {
                             </p>
                             <div className="flex gap-4">
                                 <Button onClick={confirmDelete} className="flex-1 py-6 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700">
-                                    {td("common.yesDelete")}
+                                    {tc("yesDelete")}
                                 </Button>
                                 <Button variant="outline" onClick={() => setShowDeleteModal(false)} className="flex-1 py-6 rounded-2xl font-black border-2 border-gray-100">
-                                    {td("common.cancel")}
+                                    {tc("cancel")}
                                 </Button>
                             </div>
                         </motion.div>

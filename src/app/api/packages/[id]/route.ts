@@ -7,15 +7,40 @@ type Props = {
     params: Promise<{ id: string }>;
 };
 
+// Helper to format image for frontend
+const formatImage = (image: any) => {
+    if (!image) return null;
+    const buf = Buffer.from(image);
+    const imageStr = buf.toString('utf8');
+    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
+        return imageStr;
+    }
+    return `data:image/png;base64,${buf.toString('base64')}`;
+};
+
 export async function GET(request: NextRequest, { params }: Props) {
     try {
         const { id } = await params;
         const pkg = await prisma.package.findUnique({
             where: { id: parseInt(id) },
-            include: { features: true }
+            include: { 
+                features: true,
+                systems: true
+            }
         });
         if (!pkg) return NextResponse.json({ message: "Package not found" }, { status: 404 });
-        return NextResponse.json(pkg, { status: 200 });
+        
+        // Convert Buffer image to Base64 string
+        const formattedPackage = {
+            ...pkg,
+            image: formatImage(pkg.image),
+            systems: pkg.systems?.map(system => ({
+                ...system,
+                icon: formatImage(system.icon)
+            })) || []
+        };
+        
+        return NextResponse.json(formattedPackage, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
@@ -32,6 +57,17 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         const body = await request.json();
 
+        // Handle image as Bytes if it's a base64 string
+        let imageBuffer = undefined;
+        if (body.image !== undefined) {
+            if (body.image && body.image.startsWith('data:image')) {
+                const base64Data = body.image.split(',')[1];
+                imageBuffer = Buffer.from(base64Data, 'base64');
+            } else if (body.image === null || body.image === "") {
+                imageBuffer = null as any;
+            }
+        }
+
         // Transaction to update package and replace features
         const updatedPackage = await prisma.$transaction(async (tx) => {
             // 1. Update basic fields
@@ -45,7 +81,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description: body.description,
                     description_en: body.description_en,
                     description_ar: body.description_ar,
-                    image: body.image,
+                    image: imageBuffer,
                     price: body.price,
                     currency: body.currency,
                 }
@@ -67,14 +103,40 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 }
             }
 
+            // 3. Handle Systems (m2m)
+            if (body.systemIds) {
+                await tx.package.update({
+                    where: { id: parseInt(id) },
+                    data: {
+                        systems: {
+                            set: body.systemIds.map((sid: number) => ({ id: sid }))
+                        }
+                    }
+                });
+            }
+
             return tx.package.findUnique({
                 where: { id: parseInt(id) },
-                include: { features: true }
+                include: { 
+                    features: true,
+                    systems: true
+                }
             });
         });
 
-        return NextResponse.json(updatedPackage, { status: 200 });
+        // Convert back for response
+        const responsePackage = {
+            ...updatedPackage,
+            image: updatedPackage ? formatImage(updatedPackage.image) : null,
+            systems: updatedPackage?.systems?.map(system => ({
+                ...system,
+                icon: formatImage(system.icon)
+            })) || []
+        };
+
+        return NextResponse.json(responsePackage, { status: 200 });
     } catch (error) {
+        console.error("Error updating package:", error);
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
 }

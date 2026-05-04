@@ -9,8 +9,10 @@ import {
     Settings,
     Users,
     Package,
-    Layers
-
+    Layers,
+    Settings2,
+    ShoppingBag,
+    ClipboardList
 } from 'lucide-react';
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from 'next-intl';
@@ -47,6 +49,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         { id: "subscription", label: t('nav.subscriptions'), href: '/admin/subscription', icon: FileText },
         { id: "packages", label: t('nav.packages' as any), href: '/admin/packages', icon: Package, adminOnly: true },
         { id: "services", label: t('nav.services' as any), href: '/admin/services', icon: Layers, adminOnly: true },
+        { id: "systems", label: t('nav.systems' as any), href: '/admin/systems', icon: Settings2, adminOnly: true },
         { id: "users", label: t('nav.users' as any), href: '/admin/users', icon: Users, adminOnly: true },
         { id: "settings", label: t('nav.settings'), href: '/admin/settings', icon: Settings },
     ];

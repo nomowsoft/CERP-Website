@@ -1,5 +1,6 @@
 import prisma from './db';
 import { Decimal } from '@prisma/client/runtime/library';
+import { ServerManager } from './serverManager';
 
 /**
  * HyperPay API Helper
@@ -85,7 +86,7 @@ export class SubscriptionService {
     static async applyRequest(requestId: number) {
         const request = await prisma.subscriptionRequest.findUnique({
             where: { id: requestId },
-            include: { subscription: true, package: true, services: true }
+            include: { subscription: true, package: true, services: true, systems: true }
         });
 
         if (!request || request.status !== 'APPROVED') return null;
@@ -112,6 +113,9 @@ export class SubscriptionService {
         if (request.type === 'UPGRADE') {
             // Upgrade resets expiry to 1 year from NOW (approval date)
             updateData.expiryDate = this.calculateExpiry(now);
+        } else if (request.type === 'ADD_SYSTEM') {
+            // Adding a system doesn't change the expiry date
+            // It just adds the system to the existing subscription
         } else if (currentExpiry && now < currentExpiry) {
             // For other types (like RENEW) IF renewing BEFORE expiry, add 1 year to current expiry
             updateData.expiryDate = this.calculateExpiry(currentExpiry);
@@ -126,23 +130,44 @@ export class SubscriptionService {
             };
         }
 
+        if (request.systems && request.systems.length > 0) {
+            updateData.systems = {
+                connect: request.systems.map((s: any) => ({ id: s.id }))
+            };
+        }
+
         const updatedSubscription = await prisma.subscription.update({
             where: { id: subscription.id },
             data: updateData
         });
 
+        // Trigger server provisioning/update
+        const provisioningResult = await ServerManager.provisionServer(subscription.id);
+
         // Also create a payment record
-        if (pkg) {
+        if (pkg || (request.systems && request.systems.length > 0)) {
+            const systemsPrice = request.systems?.reduce((sum, s) => sum + Number(s.price), 0) || 0;
+            const amount = pkg ? pkg.price : systemsPrice;
+            
             await prisma.payment.create({
                 data: {
                     subscriptionId: subscription.id,
-                    amount: pkg.price,
+                    amount: amount,
                     method: request.paymentMethod,
                     status: 'SUCCESS',
                 }
             });
         }
 
-        return updatedSubscription;
+        // Refetch the subscription to get the most up-to-date data (including instanceUrl from provisioning)
+        const finalSubscription = await prisma.subscription.findUnique({
+            where: { id: subscription.id },
+            include: { package: true, services: true }
+        });
+
+        return { 
+            subscription: finalSubscription,
+            provisioning: provisioningResult
+        };
     }
 }

@@ -14,6 +14,16 @@ import { PaymentGateway } from '@/utils/paymentGateway';
  * @access private for user to add Subscription
  */
 
+const formatImage = (image: any) => {
+    if (!image) return null;
+    const buf = Buffer.from(image);
+    const imageStr = buf.toString('utf8');
+    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
+        return imageStr;
+    }
+    return `data:image/png;base64,${buf.toString('base64')}`;
+};
+
 export async function POST(request: NextRequest) {
     try {
         const userFromToken = verifyToken(request);
@@ -44,9 +54,15 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: validation.error.message }, { status: 400 });
         }
 
-        const pkg = await prisma.package.findUnique({ where: { id: body.packageId } });
-        if (!pkg) {
-            return NextResponse.json({ message: "Package not found" }, { status: 404 });
+        let packagePrice = 0;
+        let currency = 'SAR';
+        if (body.packageId) {
+            const pkg = await prisma.package.findUnique({ where: { id: body.packageId } });
+            if (!pkg) {
+                return NextResponse.json({ message: "Package not found" }, { status: 404 });
+            }
+            packagePrice = Number(pkg.price);
+            currency = pkg.currency || 'SAR';
         }
 
         let servicesTotal = 0;
@@ -58,7 +74,16 @@ export async function POST(request: NextRequest) {
             servicesTotal = dbServices.reduce((sum, s) => sum + Number(s.price), 0);
         }
 
-        const totalPrice = Number(pkg.price) + servicesTotal;
+        let systemsTotal = 0;
+        const selectedSystemIds = body.selectedSystems || [];
+        if (selectedSystemIds.length > 0) {
+            const dbSystems = await prisma.system.findMany({
+                where: { id: { in: selectedSystemIds } }
+            });
+            systemsTotal = dbSystems.reduce((sum, s) => sum + Number(s.price || 0), 0);
+        }
+
+        const totalPrice = packagePrice + servicesTotal + systemsTotal;
         const salt = await bcrypt.genSalt(10);
 
         let hashedCardNumber: string | null = null;
@@ -73,7 +98,7 @@ export async function POST(request: NextRequest) {
                 cardNumber,
                 cvv: cardCVV,
                 amount: totalPrice,
-                currency: pkg.currency || 'SAR',
+                currency: currency,
                 cardHolderName: body.cardHolder || body.cardHolderName || body.fullName,
                 expiryDate: body.expiryDate || body.cardExpiryDate || ''
             });
@@ -161,6 +186,9 @@ export async function POST(request: NextRequest) {
                 status: initialStatus,
                 services: {
                     connect: selectedServiceIds.map((id: number) => ({ id }))
+                },
+                systems: {
+                    connect: selectedSystemIds.map((id: number) => ({ id }))
                 }
             }
         });
@@ -197,9 +225,10 @@ export async function GET(request: NextRequest) {
         if (user.role === 'ADMIN') {
             subscriptions = await prisma.subscription.findMany({
                 include: {
-                    user: { select: { name: true, email: true } },
-                    package: true,
+                    user: { select: { name: true, email: true, charityName: true } },
+                    package: { include: { systems: true } },
                     services: true,
+                    systems: true,
                     payments: true
                 }
             });
@@ -207,14 +236,31 @@ export async function GET(request: NextRequest) {
             subscriptions = await prisma.subscription.findMany({
                 where: { userId: user.id },
                 include: {
-                    package: true,
+                    package: { include: { systems: true } },
                     services: true,
+                    systems: true,
                     payments: true
                 }
             });
         }
 
-        return NextResponse.json(subscriptions, { status: 200 });
+        const formattedSubscriptions = subscriptions.map((sub: any) => ({
+            ...sub,
+            package: sub.package ? {
+                ...sub.package,
+                image: formatImage(sub.package.image),
+                systems: sub.package.systems?.map((sys: any) => ({
+                    ...sys,
+                    icon: formatImage(sys.icon)
+                }))
+            } : null,
+            systems: sub.systems?.map((sys: any) => ({
+                ...sys,
+                icon: formatImage(sys.icon)
+            }))
+        }));
+
+        return NextResponse.json(formattedSubscriptions, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
