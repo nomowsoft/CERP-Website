@@ -16,6 +16,7 @@ import Step2 from "./step2";
 import Step3 from "./step3";
 import Step4 from "./step4";
 import { getServices } from "@/app/store/slices/servicesSlice";
+import { getSystems } from "@/app/store/slices/systemsSlice";
 import { SubscriptionFormData, initialFormData } from "@/utils/subscription";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -55,6 +56,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     dispatch(getSubscription());
     dispatch(getPackages());
     dispatch(getServices());
+    dispatch(getSystems());
   }, [dispatch]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,12 +66,13 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     if (packageId) {
       setFormData((prev) => ({ ...prev, packageId: Number(packageId) }));
     }
-    if (systemId) {
-      const sId = Number(systemId);
-      setFormData((prev) => ({ 
-        ...prev, 
-        selectedSystems: prev.selectedSystems?.includes(sId) ? prev.selectedSystems : [...(prev.selectedSystems || []), sId] 
-      }));
+    const systemIds = searchParams.getAll('systemId');
+    if (systemIds.length > 0) {
+      const sIds = systemIds.map(id => Number(id)).filter(id => !isNaN(id));
+      setFormData((prev) => {
+        const uniqueIds = Array.from(new Set([...(prev.selectedSystems || []), ...sIds]));
+        return { ...prev, selectedSystems: uniqueIds };
+      });
     }
   }, [packageId, systemId]);
 
@@ -106,6 +109,35 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
       });
     }
   }, [userInfo]);
+
+  // Clean up selected systems if they are already in the selected package or current subscription
+  useEffect(() => {
+    if (selectedPkg || mySubscription) {
+      setFormData(prev => {
+        if (!prev.selectedSystems || prev.selectedSystems.length === 0) return prev;
+        
+        const hiddenSystemIds = new Set<number>();
+        if (selectedPkg?.systems) {
+          selectedPkg.systems.forEach((s: any) => hiddenSystemIds.add(s.id));
+        }
+        if (mySubscription) {
+          if (mySubscription.package?.systems) {
+            mySubscription.package.systems.forEach((s: any) => hiddenSystemIds.add(s.id));
+          }
+          if (mySubscription.systems) {
+            mySubscription.systems.forEach((s: any) => hiddenSystemIds.add(s.id));
+          }
+        }
+
+        const newSystems = prev.selectedSystems.filter(id => !hiddenSystemIds.has(id));
+        
+        if (newSystems.length !== prev.selectedSystems.length) {
+          return { ...prev, selectedSystems: newSystems };
+        }
+        return prev;
+      });
+    }
+  }, [selectedPkg, mySubscription]);
 
   const steps = [
     { id: 1, label: t('steps.servicesSelection') },
@@ -257,7 +289,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
       );
     }
     switch (currentStep) {
-      case 1: return <Step0 data={formData} onChange={handleDataChange} services={services} onSkip={() => setCurrentStep(2)} selectedPackage={selectedPkg} allSystems={allSystems} />;
+      case 1: return <Step0 data={formData} onChange={handleDataChange} services={services} onSkip={() => setCurrentStep(2)} selectedPackage={selectedPkg} allSystems={allSystems} mySubscription={mySubscription} />;
       case 2: return <Step1 data={formData} onChange={handleDataChange} />;
       case 3: return <Step2 data={formData} onChange={handleDataChange} />;
       case 4: return <Step3 data={formData} onChange={handleDataChange} />;

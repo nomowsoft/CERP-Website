@@ -171,6 +171,28 @@ export async function PUT(request: NextRequest, { params }: Props) {
                         message_ar: "تم رفض الطلب" 
                     }, { status: 200 });
                 }
+            } else if (body.status === 'DONE' && subscription.status === 'DRAFT') {
+                // Handling manual approval of a NEW subscription (DRAFT)
+                const approvalDate = new Date();
+                const updatedSub = await prisma.subscription.update({
+                    where: { id: subId },
+                    data: {
+                        status: 'DONE',
+                        approvalDate,
+                        expiryDate: SubscriptionService.calculateExpiry(approvalDate),
+                        // Connect any systems that were in the systems relation
+                    }
+                });
+
+                // Provision server for the new subscription
+                const provisioningResult = await ServerManager.provisionServer(subId);
+
+                return NextResponse.json({
+                    message: "Subscription approved and system provisioning started",
+                    message_ar: "تمت الموافقة على الاشتراك وبدأ تجهيز النظام",
+                    provisioning: provisioningResult,
+                    subscription: updatedSub
+                }, { status: 200 });
             }
 
             let domainName = body.domainName;

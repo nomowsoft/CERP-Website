@@ -15,13 +15,36 @@ import { PaymentGateway } from '@/utils/paymentGateway';
  */
 
 const formatImage = (image: any) => {
-    if (!image) return null;
-    const buf = Buffer.from(image);
-    const imageStr = buf.toString('utf8');
-    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
-        return imageStr;
+    try {
+        if (!image) return null;
+        
+        // If it's already a string, check if it's a URL or base64
+        if (typeof image === 'string') {
+            if (image.startsWith('http') || image.startsWith('data:image')) {
+                return image;
+            }
+            return `data:image/png;base64,${image}`;
+        }
+
+        // Handle Buffer/Uint8Array
+        const buf = Buffer.from(image);
+        if (buf.length === 0) return null;
+
+        // Try to see if it's a string stored in the buffer
+        try {
+            const imageStr = buf.toString('utf8');
+            if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
+                return imageStr;
+            }
+        } catch (e) {
+            // Not a UTF-8 string, proceed to base64
+        }
+
+        return `data:image/png;base64,${buf.toString('base64')}`;
+    } catch (error) {
+        console.error("Error in formatImage:", error);
+        return null;
     }
-    return `data:image/png;base64,${buf.toString('base64')}`;
 };
 
 export async function POST(request: NextRequest) {
@@ -244,24 +267,57 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        const formattedSubscriptions = subscriptions.map((sub: any) => ({
-            ...sub,
-            package: sub.package ? {
-                ...sub.package,
-                image: formatImage(sub.package.image),
-                systems: sub.package.systems?.map((sys: any) => ({
-                    ...sys,
-                    icon: formatImage(sys.icon)
-                }))
-            } : null,
-            systems: sub.systems?.map((sys: any) => ({
-                ...sys,
-                icon: formatImage(sys.icon)
-            }))
-        }));
+        const formattedSubscriptions = subscriptions.map((sub: any) => {
+            try {
+                // Ensure all Decimal fields are converted to strings for safe JSON serialization
+                const serializeDecimal = (obj: any) => {
+                    if (!obj) return obj;
+                    const newObj = { ...obj };
+                    for (const key in newObj) {
+                        if (newObj[key] && typeof newObj[key] === 'object' && newObj[key].constructor?.name === 'Decimal') {
+                            newObj[key] = newObj[key].toString();
+                        }
+                    }
+                    return newObj;
+                };
+
+                const formattedSub = {
+                    ...sub,
+                    package: sub.package ? {
+                        ...sub.package,
+                        price: sub.package.price?.toString(),
+                        image: formatImage(sub.package.image),
+                        systems: sub.package.systems?.map((sys: any) => ({
+                            ...sys,
+                            price: sys.price?.toString(),
+                            icon: formatImage(sys.icon)
+                        }))
+                    } : null,
+                    services: sub.services?.map((s: any) => ({
+                        ...s,
+                        price: s.price?.toString()
+                    })),
+                    systems: sub.systems?.map((sys: any) => ({
+                        ...sys,
+                        price: sys.price?.toString(),
+                        icon: formatImage(sys.icon)
+                    })),
+                    payments: sub.payments?.map((p: any) => ({
+                        ...p,
+                        amount: p.amount?.toString()
+                    }))
+                };
+
+                return formattedSub;
+            } catch (mapError: any) {
+                console.error("Error mapping subscription:", sub?.id, mapError);
+                return sub; // Return unformatted as fallback instead of throwing
+            }
+        });
 
         return NextResponse.json(formattedSubscriptions, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
+        console.error("Error in GET /api/subscription:", error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

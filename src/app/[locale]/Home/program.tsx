@@ -2,110 +2,49 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Programs } from "@/utils/types";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Layers, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const data: Programs[] = [
-  {
-    id: 1,
-    img: "/programs/1.svg",
-    nameKey: "coreSystems",
-    descKey: "coreSystemsDesc"
-  },
-  {
-    id: 2,
-    img: "/programs/16.svg",
-    nameKey: "financialAssets",
-    descKey: "financialAssetsDesc"
-  },
-  {
-    id: 3,
-    img: "/programs/2.svg",
-    nameKey: "financialResources",
-    descKey: "financialResourcesDesc"
-  },
-  {
-    id: 4,
-    img: "/programs/3.svg",
-    nameKey: "plansBudgets",
-    descKey: "plansBudgetsDesc"
-  },
-  {
-    id: 5,
-    img: "/programs/4.svg",
-    nameKey: "strategicPlan",
-    descKey: "strategicPlanDesc"
-  },
-  {
-    id: 6,
-    img: "/programs/5.svg",
-    nameKey: "volunteerManagement1",
-    descKey: "volunteerManagementDesc1"
-  },
-  {
-    id: 7,
-    img: "/programs/6.svg",
-    nameKey: "volunteerManagement",
-    descKey: "volunteerManagementDesc"
-  },
-  {
-    id: 8,
-    img: "/programs/7.svg",
-    nameKey: "assetsManagement",
-    descKey: "assetsManagementDesc"
-  },
-  {
-    id: 9,
-    img: "/programs/8.svg",
-    nameKey: "investmentPortfolioSystem",
-    descKey: "investmentPortfolioSystemDesc"
-  },
-  {
-    id: 10,
-    img: "/programs/9.svg",
-    nameKey: "inventorySystem",
-    descKey: "inventorySystemDesc"
-  },
-  {
-    id: 11,
-    img: "/programs/10.svg",
-    nameKey: "hrSaudiCompliant",
-    descKey: "hrSaudiCompliantDesc"
-  },
-  {
-    id: 12,
-    img: "/programs/11.svg",
-    nameKey: "selfServiceApp",
-    descKey: "selfServiceAppDesc"
-  },
-  {
-    id: 13,
-    img: "/programs/12.svg",
-    nameKey: "membershipSystem",
-    descKey: "membershipSystemDesc"
-  },
-  {
-    id: 14,
-    img: "/programs/13.svg",
-    nameKey: "fleetManagement",
-    descKey: "fleetManagementDesc"
-  },
-  {
-    id: 15,
-    img: "/programs/14.svg",
-    nameKey: "assistanceAndRequestsSystem",
-    descKey: "assistanceDesc"
-  },
-  {
-    id: 16,
-    img: "/programs/15.svg",
-    nameKey: "procurementSystem",
-    descKey: "procurementSystemDesc"
-  },
-]
+// Data is now fetched from the database
 
 export const Program = () => {
     const t = useTranslations('programs');
+    const locale = useLocale();
+    const [systems, setSystems] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchSystems = async () => {
+            try {
+                const response = await axios.get('/api/systems');
+                // The API returns them in descending order (newest first). 
+                // We reverse it to match the original order if needed, or just keep as is.
+                setSystems(response.data.reverse());
+            } catch (error) {
+                console.error("Error fetching systems:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSystems();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="py-20 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            </div>
+        );
+    }
+
+    if (systems.length === 0) return null;
+
+    const data = systems;
+    const getName = (item: any) => locale === 'ar' ? (item.name_ar || item.name) : (item.name_en || item.name);
+    const getDesc = (item: any) => locale === 'ar' ? item.description_ar : item.description_en;
+
     return (
         <section className="py-16 lg:py-20 relative overflow-hidden bg-white z-0">
             {/* Ambient Background Glows */}
@@ -138,15 +77,17 @@ export const Program = () => {
                             
                             <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
                                 <div className="bg-primary/5 p-6 rounded-3xl flex-shrink-0 border border-primary/10 shadow-inner group">
-                                    <Image src={data[0].img} alt="" width={100} height={100} className="drop-shadow-xl group-hover:scale-110 transition-transform duration-500" />
+                                    {data[0].icon && (
+                                        <Image src={data[0].icon} alt="" width={100} height={100} className="drop-shadow-xl group-hover:scale-110 transition-transform duration-500" />
+                                    )}
                                 </div>
                                 <div className="flex-1 text-center md:text-start">
                                     <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary font-bold text-sm mb-4 border border-secondary/20">
                                         <CheckCircle className="w-4 h-4" /> 
-                                        <span>نواة النظام الأساسية</span>
+                                        <span>{t('coreSystems')}</span>
                                     </div>
-                                    <h3 className="font-doto2 text-3xl md:text-4xl font-bold mb-4 text-gray-900">{t(data[0].nameKey)}</h3>
-                                    <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl">{t(data[0].descKey)}</p>
+                                    <h3 className="font-doto2 text-3xl md:text-4xl font-bold mb-4 text-gray-900">{getName(data[0])}</h3>
+                                    <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl">{getDesc(data[0])}</p>
                                 </div>
                             </div>
                         </div>
@@ -167,20 +108,22 @@ export const Program = () => {
                                 
                                 <div className="flex flex-col items-start gap-5 relative z-10 flex-1">
                                     <div className="bg-gray-50/80 group-hover:bg-white group-hover:shadow-md border border-gray-100 p-4 rounded-[1.5rem] flex-shrink-0 transition-all duration-300">
-                                        <Image
-                                            src={post.img}
-                                            alt={t(post.nameKey)}
-                                            width={56}
-                                            height={56}
-                                            className="group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 drop-shadow-sm"
-                                        />
+                                        {post.icon && (
+                                            <Image
+                                                src={post.icon}
+                                                alt={getName(post)}
+                                                width={56}
+                                                height={56}
+                                                className="group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 drop-shadow-sm"
+                                            />
+                                        )}
                                     </div>
                                     <div className="flex-1 w-full text-start">
                                         <h4 className="font-doto2 font-bold text-xl text-gray-900 leading-snug mb-2 group-hover:text-primary transition-colors">
-                                            {t(post.nameKey)}
+                                            {getName(post)}
                                         </h4>
                                         <p className="text-[15px] text-gray-500 leading-relaxed">
-                                            {t(post.descKey)}
+                                            {getDesc(post)}
                                         </p>
                                     </div>
                                 </div>

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import axios from 'axios';
 import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { UserSubscriptionView } from "./UserSubscriptionView";
 import FilePreviewModal from "@/components/FilePreviewModal";
 
@@ -34,10 +34,7 @@ export default function Subscription() {
     const initialTab = (searchParams.get('tab') as any) || 'SUBSCRIPTIONS';
     
     const dispatch = useDispatch<AppDispatch>();
-    const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionDTO | null>(null);
-    const [viewMode, setViewMode] = useState<'LIST' | 'FORM'>('LIST');
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<any>({});
+    const router = useRouter();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [subscriptionToDelete, setSubscriptionToDelete] = useState<number | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -88,30 +85,6 @@ export default function Subscription() {
     };
 
 
-    console.log(formData)
-
-    // File Preview State
-    const [previewFile, setPreviewFile] = useState<{ url: string, type: 'image' | 'pdf' | 'other', name?: string } | null>(null);
-
-    const handlePreviewFile = (url: string, name?: string) => {
-        if (!url) return;
-
-        let type: 'image' | 'pdf' | 'other' = 'other';
-        const lowerUrl = url.toLowerCase();
-
-        if (lowerUrl.match(/\.(jpeg|jpg|gif|png|svg|webp)($|\?)/) || lowerUrl.startsWith('data:image/')) {
-            type = 'image';
-        } else if (lowerUrl.match(/\.pdf($|\?)/) || lowerUrl.startsWith('data:application/pdf')) {
-            type = 'pdf';
-        }
-
-        setPreviewFile({
-            url,
-            type,
-            name
-        });
-    };
-
     const params = useParams();
     const isAr = params.locale === 'ar';
     const dir = isAr ? 'rtl' : 'ltr';
@@ -134,36 +107,11 @@ export default function Subscription() {
     });
 
     const handleShowDetails = (item: SubscriptionDTO) => {
-        setSelectedSubscription(item);
-        setIsEditing(false);
-        setViewMode('FORM');
+        router.push(`/${params.locale}/admin/subscription/${item.id}`);
     };
 
     const handleEdit = (item: SubscriptionDTO) => {
-        setSelectedSubscription(item);
-        setFormData(item);
-        setIsEditing(true);
-        setViewMode('FORM');
-    };
-
-    const currentIndex = selectedSubscription ? filteredSubscriptions.findIndex((s: any) => s.id === selectedSubscription.id) : -1;
-    const hasPrev = currentIndex > 0;
-    const hasNext = currentIndex !== -1 && currentIndex < filteredSubscriptions.length - 1;
-
-    const handlePrev = () => {
-        if (hasPrev) {
-            const prev = filteredSubscriptions[currentIndex - 1];
-            setSelectedSubscription(prev);
-            setFormData(prev);
-        }
-    };
-
-    const handleNext = () => {
-        if (hasNext) {
-            const next = filteredSubscriptions[currentIndex + 1];
-            setSelectedSubscription(next);
-            setFormData(next);
-        }
+        router.push(`/${params.locale}/admin/subscription/${item.id}`);
     };
 
     const handleDeleteClick = (id: any) => {
@@ -183,48 +131,9 @@ export default function Subscription() {
         }
     };
 
-    const [isUpdating, setIsUpdating] = useState(false);
-
-    const performUpdate = async (data: any) => {
-        setIsUpdating(true);
-        try {
-            // Prepare payload (convert Files to Base64 strings)
-            const payload: any = { ...data };
-            if (payload.licenseFile instanceof File) {
-                payload.licenseFile = await fileToBase64(payload.licenseFile);
-            }
-            // Check if bankReceipt is a File object (new upload) or keep existing string
-            if (payload.bankReceipt instanceof File) {
-                payload.bankReceipt = await fileToBase64(payload.bankReceipt);
-            }
-
-            const result = await dispatch(updateSubscription({ id: selectedSubscription?.id as number, data: payload })).unwrap();
-            
-            if (result.provisioning) {
-                setProvisioningResult(result.provisioning);
-                setShowProvisioningModal(true);
-            }
-            
-            toast.success(isAr ? result.message_ar : result.message);
-            handleCloseModal();
-        } catch (err: any) {
-            toast.error(err || tc('updateError'));
-        } finally {
-            setIsUpdating(false);
-        }
-    };
-
-    const handleUpdate = async (e: React.FormEvent) => {
-        e.preventDefault();
-        await performUpdate(formData);
-    };
-
     const handleCloseModal = () => {
-        setViewMode('LIST');
         setShowDeleteModal(false);
-        setSelectedSubscription(null);
         setSubscriptionToDelete(null);
-        setIsEditing(false);
     };
 
     const stages = [
@@ -438,13 +347,13 @@ export default function Subscription() {
                         <table className="w-full text-start border-collapse">
                             <thead>
                                 <tr className="bg-gray-50/50">
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{t('table.user')}</th>
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{t('table.type')}</th>
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{t('table.package')}</th>
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{t('table.paymentMethod')}</th>
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{t('table.date')}</th>
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{t('table.status')}</th>
-                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-center">{t('table.actions')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{t('table.user')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{t('table.type')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{t('table.package')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{t('table.paymentMethod')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{t('table.date')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{t('table.status')}</th>
+                                    <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-center px-6">{t('table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -562,426 +471,7 @@ export default function Subscription() {
                         </table>
                     </div>
                 </div>
-            )
-            }
-
-            </>
-            ) : viewMode === 'FORM' && selectedSubscription ? (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    {/* Form Header with Breadcrumbs & Pagination */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                        <div className="flex items-center gap-2">
-                            <button 
-                                onClick={handleCloseModal} 
-                                className="text-gray-500 hover:text-primary font-bold transition-colors text-lg"
-                            >
-                                {t('title')}
-                            </button>
-                            <span className="text-gray-300 mx-2">/</span>
-                            <span className="text-gray-900 font-black tracking-tight text-lg">#{selectedSubscription.id} - {(selectedSubscription as any).user?.charityName || selectedSubscription.fullName}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2 bg-white rounded-2xl border border-gray-100 p-1.5 shadow-sm">
-                            <button 
-                                onClick={handlePrev} 
-                                disabled={!hasPrev} 
-                                className="p-2 text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl disabled:opacity-30 disabled:hover:bg-transparent transition-all"
-                            >
-                                {isAr ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-                            </button>
-                            <span className="px-4 text-sm font-bold text-gray-600 border-x border-gray-100">
-                                {currentIndex + 1} / {filteredSubscriptions.length}
-                            </span>
-                            <button 
-                                onClick={handleNext} 
-                                disabled={!hasNext} 
-                                className="p-2 text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl disabled:opacity-30 disabled:hover:bg-transparent transition-all"
-                            >
-                                {isAr ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 w-full relative z-10 overflow-hidden flex flex-col">
-                        <div className="flex items-center justify-between p-8 border-b border-gray-50 bg-white shrink-0 z-20">
-                                <div>
-                                    <h3 className="text-2xl font-bold text-gray-800">
-                                        {isEditing ? t('editSubscription') : t('detailsTitle')}
-                                    </h3>
-                                    <p className="text-sm text-gray-400 mt-1">
-                                        {(selectedSubscription as any).user?.charityName || selectedSubscription.fullName} - {selectedSubscription.domainType === 'SUBDOMAIN' && !selectedSubscription.domainName?.includes('.') ? `${selectedSubscription.domainName}.cerp.sa` : selectedSubscription.domainName}
-                                    </p>
-                                </div>
-                                <button
-                                    className="p-3 hover:bg-gray-100 rounded-2xl transition-all text-gray-400 hover:text-gray-600 active:scale-95"
-                                    onClick={handleCloseModal}
-                                >
-                                    <X className="h-6 w-6" />
-                                </button>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                                {isEditing ? (
-                                    <form id="edit-subscription-form" onSubmit={handleUpdate} className="space-y-8">
-                                        <div className="space-y-4 bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100">
-                                            <label className="text-sm font-bold text-gray-700 block mb-4">{t('updateStatus')}</label>
-
-                                            <div className="flex flex-col lg:flex-row items-stretch gap-4">
-                                                <div className="flex gap-2 shrink-0">
-                                                    {(formData.status === 'DONE' || formData.status === 'CANCEL') ? (
-                                                        <button
-                                                            type="button"
-                                                            disabled={isUpdating}
-                                                            onClick={() => {
-                                                                const nextStatus = 'DRAFT';
-                                                                setFormData({ ...formData, status: nextStatus });
-                                                                performUpdate({ ...formData, status: nextStatus });
-                                                            }}
-                                                            className="px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 text-sm disabled:opacity-50"
-                                                        >
-                                                            {isUpdating ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <RotateCcw className="w-5 h-5" />}
-                                                            <span>{tc('returnToDraft')}</span>
-                                                        </button>
-                                                    ) : (
-                                                        <>
-                                                            <button
-                                                                type="button"
-                                                                disabled={isUpdating}
-                                                                onClick={() => {
-                                                                    const statusOrder = ['DRAFT', 'PROGRES', 'DONE'];
-                                                                    const currentIndex = statusOrder.indexOf(formData.status || 'DRAFT');
-                                                                    if (currentIndex < statusOrder.length - 1) {
-                                                                        const nextStatus = statusOrder[currentIndex + 1];
-                                                                        setFormData({ ...formData, status: nextStatus });
-                                                                        performUpdate({ ...formData, status: nextStatus, provision: nextStatus === 'DONE' });
-                                                                    }
-                                                                }}
-                                                                className="px-8 py-3 bg-[#22C55E] hover:bg-[#16A34A] text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50"
-                                                            >
-                                                                {isUpdating ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
-                                                                <span>{tc('approve')}</span>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                disabled={isUpdating}
-                                                                onClick={() => {
-                                                                    const nextStatus = 'CANCEL';
-                                                                    setFormData({ ...formData, status: nextStatus });
-                                                                    performUpdate({ ...formData, status: nextStatus });
-                                                                }}
-                                                                className="px-8 py-3 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50"
-                                                            >
-                                                                {isUpdating ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <X className="w-5 h-5" />}
-                                                                <span>{tc('reject')}</span>
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-2">
-                                            <div className="space-y-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('fullName')}</label>
-                                                    <Input
-                                                        value={formData.fullName}
-                                                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('email')}</label>
-                                                    <Input
-                                                        value={formData.email}
-                                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('phone')}</label>
-                                                    <Input
-                                                        value={formData.phone}
-                                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('domainName')}</label>
-                                                    <Input
-                                                        value={formData.domainName}
-                                                        onChange={(e) => setFormData({ ...formData, domainName: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('domainType')}</label>
-                                                    <select
-                                                        value={formData.domainType}
-                                                        onChange={(e) => setFormData({ ...formData, domainType: e.target.value })}
-                                                        className="w-full rounded-2xl border border-gray-100 p-2 text-sm focus:ring-primary h-14 bg-gray-50/30 focus:bg-white transition-all"
-                                                    >
-                                                        <option value="SUBDOMAIN">{tc('subdomain')}</option>
-                                                        <option value="CUSTOM_DOMAIN">{tc('customDomain')}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('approvalDate')}</label>
-                                                    <Input
-                                                        type="date"
-                                                        value={formData.approvalDate ? new Date(formData.approvalDate).toISOString().split('T')[0] : ''}
-                                                        onChange={(e) => setFormData({ ...formData, approvalDate: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all px-4"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('expiryDate')}</label>
-                                                    <Input
-                                                        type="date"
-                                                        value={formData.expiryDate ? new Date(formData.expiryDate).toISOString().split('T')[0] : ''}
-                                                        onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all px-4"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('charityRegisterNo')}</label>
-                                                    <Input
-                                                        value={formData.charityRegisterNo}
-                                                        onChange={(e) => setFormData({ ...formData, charityRegisterNo: e.target.value })}
-                                                        className="rounded-2xl py-7 bg-gray-50/30 border-gray-100 focus:bg-white transition-all"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-700 ms-1">{tc('paymentMethod')}</label>
-                                                    <select
-                                                        value={formData.paymentMethod}
-                                                        onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                                                        className="w-full rounded-2xl border border-gray-100 p-2 text-sm focus:ring-primary h-14 bg-gray-50/30 focus:bg-white transition-all"
-                                                    >
-                                                        <option value="ONLINE">{tc('online')}</option>
-                                                        <option value="BANK">{tc('bank')}</option>
-                                                    </select>
-                                                </div>
-                                                {formData.paymentMethod === 'BANK' && (
-                                                    <div className="space-y-2">
-                                                        <label className="text-sm font-bold text-gray-700 ms-1">{tc('bankReceipt')}</label>
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="relative flex-1 group">
-                                                                <div className="absolute inset-0 bg-blue-50/30 rounded-2xl border border-dashed border-blue-200 group-hover:border-blue-400 group-hover:bg-blue-50 transition-all pointer-events-none" />
-                                                                <div className="relative h-14 flex items-center justify-center px-4 cursor-pointer">
-                                                                    <Input
-                                                                        type="file"
-                                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                                        onChange={(e) => {
-                                                                            const file = e.target.files?.[0];
-                                                                            if (file) setFormData({ ...formData, bankReceipt: file });
-                                                                        }}
-                                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                                                    />
-                                                                    <div className="flex items-center gap-3 text-gray-500 group-hover:text-blue-600 transition-colors">
-                                                                        <Upload className="w-5 h-5" />
-                                                                        <span className="font-medium text-xs truncate">
-                                                                            {formData.bankReceipt instanceof File ? formData.bankReceipt.name : tc('changeReceipt')}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <div className="space-y-12">
-                                        {/* View Mode Content */}
-                                        <div className="bg-gray-50/50 p-6 rounded-[2.5rem] border border-gray-100">
-                                            <div className="flex w-full h-14 overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm">
-                                                {stages.slice(0, 3).map((step, index) => {
-                                                    const statusOrder = ['DRAFT', 'PROGRES', 'DONE'];
-                                                    const currentIndex = statusOrder.indexOf(selectedSubscription.status || 'DRAFT');
-                                                    const isPast = index < currentIndex;
-                                                    const isActive = selectedSubscription.status === step.id;
-
-                                                        const stepLabels: Record<string, string> = {
-                                                            'DRAFT': tc('draft'),
-                                                            'PROGRES': tc('inProgress'),
-                                                            'DONE': tc('accepted')
-                                                        };
-
-                                                        return (
-                                                            <div
-                                                                key={step.id}
-                                                                className={`
-                                                                    relative flex-1 flex items-center justify-center font-bold text-xs md:text-sm transition-all px-4
-                                                                    ${isActive ? 'bg-[#EEF2FF] text-[#4F46E5]' :
-                                                                        isPast && selectedSubscription.status !== 'CANCEL' ? 'bg-[#F0FDFA] text-[#0D9488]' : 'bg-[#F3F4F6] text-[#9CA3AF]'}
-                                                                `}
-                                                                style={{
-                                                                    clipPath: index === 0
-                                                                        ? 'polygon(100% 0, 10% 0, 0 50%, 10% 100%, 100% 100%)'
-                                                                        : index === 2
-                                                                            ? 'polygon(100% 0, 92% 50%, 100% 100%, 0 100%, 0 0)'
-                                                                            : 'polygon(100% 0, 92% 50%, 100% 100%, 8% 100%, 0 50%, 8% 0)',
-                                                                    marginRight: index === 0 ? '0' : '-12px',
-                                                                    zIndex: 3 - index
-                                                                }}
-                                                            >
-                                                                <span className="relative z-10">{stepLabels[step.id] || step.label}</span>
-                                                            </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-16 px-4">
-                                            <div className="space-y-2 border-s-4 border-primary ps-5 group hover:border-primary transition-all bg-primary/5 py-4 rounded-e-2xl">
-                                                <span className="text-xs text-primary font-black uppercase tracking-widest">{t('selectedPackage')}</span>
-                                                <span className="font-black text-gray-900 text-2xl block leading-tight">{isAr ? selectedSubscription.package?.name_ar : selectedSubscription.package?.name_en}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-primary/20 ps-5 group hover:border-primary transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('fullName')}</span>
-                                                <span className="font-extrabold text-gray-800 text-xl block leading-tight">{selectedSubscription.fullName}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('email')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block break-all leading-tight">{selectedSubscription.email}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('phone')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block leading-tight">{selectedSubscription.phone}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-primary/20 ps-5 group hover:border-primary transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('domainName')}</span>
-                                                <span className="font-black text-primary font-mono text-xl block leading-tight">{selectedSubscription.domainType === 'SUBDOMAIN' && !selectedSubscription.domainName?.includes('.') ? `${selectedSubscription.domainName}.cerp.sa` : selectedSubscription.domainName}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('domainType')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block leading-tight">{selectedSubscription.domainType === 'SUBDOMAIN' ? tc('subdomain') : tc('customDomain')}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('createdAt')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block leading-tight">{new Date(selectedSubscription.createdAt as any).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('charityRegisterNo')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block leading-tight">{selectedSubscription.charityRegisterNo || tc('noResults')}</span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('expiryDate')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block leading-tight">
-                                                    {selectedSubscription.expiryDate ? new Date(selectedSubscription.expiryDate as any).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') : tc('draft')}
-                                                </span>
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('licenseFile')}</span>
-                                                {selectedSubscription.licenseFile ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handlePreviewFile(selectedSubscription.licenseFile, tc('licenseFile'))}
-                                                        className="bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-1.5 rounded-xl font-bold text-sm transition-all"
-                                                    >
-                                                        {tc('viewFile')}
-                                                    </button>
-                                                ) : (
-                                                    <span className="text-gray-400 text-sm font-bold block">{tc('noFile')}</span>
-                                                )}
-                                            </div>
-                                            <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('paymentMethod')}</span>
-                                                <span className="font-bold text-gray-700 text-lg block leading-tight">{selectedSubscription.paymentMethod === 'BANK' ? tc('bank') : tc('online')}</span>
-                                            </div>
-                                            {selectedSubscription.paymentMethod === 'BANK' && (
-                                                <div className="space-y-2 border-s-4 border-gray-100 ps-5 group hover:border-primary/40 transition-all">
-                                                    <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">{tc('bankReceipt')}</span>
-                                                    {selectedSubscription.bankReceipt ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handlePreviewFile(selectedSubscription.bankReceipt as string, tc('bankReceipt'))}
-                                                            className="bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-1.5 rounded-xl font-bold text-sm transition-all"
-                                                        >
-                                                            {tc('viewReceipt')}
-                                                        </button>
-                                                    ) : (
-                                                        <span className="text-gray-400 text-sm font-bold block">{tc('noReceipt')}</span>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Modal Footer - Fixed */}
-                            <div className="p-8 border-t border-gray-50 bg-gray-50/30 flex gap-4 shrink-0 z-20">
-                                {isEditing ? (
-                                    <>
-                                        <Button
-                                            form="edit-subscription-form"
-                                            type="submit"
-                                            disabled={isUpdating}
-                                            className="flex-1 rounded-[1.5rem] py-8 bg-primary hover:bg-secondary text-info text-xl font-black shadow-xl shadow-primary/20 transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {isUpdating ? <RefreshCcw className="w-6 h-6 me-2 animate-spin" /> : <Check className="w-6 h-6 me-2" />}
-                                            {tc('saveChanges')}
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={handleCloseModal}
-                                            className="flex-1 rounded-[1.5rem] py-8 bg-white border-2 border-gray-200 text-gray-600 text-xl font-bold hover:bg-gray-50 transition-all active:scale-95"
-                                        >
-                                            {tc('cancel')}
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <Button
-                                        type="button"
-                                        onClick={handleCloseModal}
-                                        className="w-full rounded-[1.5rem] py-8 bg-gray-800 hover:bg-gray-900 text-white text-xl font-black transition-all active:scale-95"
-                                    >
-                                        {tc('close')}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-            ) : null}
-            {
-                showDeleteModal && (
-                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-                        <div
-                            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                            onClick={handleCloseModal}
-                        />
-                        <div className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-sm relative z-10 animate-in fade-in zoom-in duration-200 text-center">
-                            <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Trash2 className="w-10 h-10" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-800 mb-2">{tc('confirmDelete')}</h3>
-                            <p className="text-gray-500 mb-8">{tc('deleteWarning')}</p>
-                            <div className="flex gap-3">
-                                <Button
-                                    onClick={confirmDelete}
-                                    className="flex-1 rounded-xl py-6 bg-red-600 hover:bg-red-700"
-                                >
-                                    {tc('yesDelete')}
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={handleCloseModal}
-                                    className="flex-1 rounded-xl py-6"
-                                >
-                                    {tc('cancel')}
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
+            )}
 
             <FilePreviewModal
                 isOpen={!!previewFile}
@@ -994,43 +484,25 @@ export default function Subscription() {
             {showProvisioningModal && provisioningResult && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowProvisioningModal(false)} />
-                    <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg relative z-10 animate-in fade-in zoom-in duration-300 overflow-hidden">
-                        <div className={`p-1 h-2 w-full ${provisioningResult.success ? 'bg-green-500' : 'bg-red-500'}`} />
-                        <div className="p-10 text-center">
-                            <div className={`w-20 h-20 mx-auto rounded-[2rem] flex items-center justify-center mb-6 ${provisioningResult.success ? 'bg-green-50' : 'bg-red-50'}`}>
-                                {provisioningResult.success ? (
-                                    <Check className="w-10 h-10 text-green-500" />
-                                ) : (
-                                    <X className="w-10 h-10 text-red-500" />
-                                )}
-                            </div>
-                            
-                            <h3 className="text-2xl font-black text-gray-900 mb-2">
-                                {provisioningResult.success ? t('provisioningSuccess') : t('provisioningError')}
-                            </h3>
-                            
-                            <p className="text-gray-500 font-medium mb-8 leading-relaxed">
-                                {provisioningResult.success 
-                                    ? t('provisioningSuccessMsg') 
-                                    : provisioningResult.message || t('provisioningErrorMsg')}
-                            </p>
-
-                            {provisioningResult.success && provisioningResult.domain && (
-                                <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
-                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">{t('instanceUrl')}</span>
-                                    <a href={provisioningResult.domain} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline break-all">
-                                        {provisioningResult.domain}
-                                    </a>
-                                </div>
-                            )}
-
-                            <Button 
-                                onClick={() => setShowProvisioningModal(false)}
-                                className="w-full bg-gray-900 hover:bg-gray-800 text-white py-6 rounded-2xl font-bold text-lg shadow-xl shadow-gray-200 transition-all active:scale-95"
-                            >
-                                {t('close')}
-                            </Button>
+                    <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg relative z-10 animate-in fade-in zoom-in duration-300 overflow-hidden text-center p-10">
+                        <div className={`w-20 h-20 mx-auto rounded-[2rem] flex items-center justify-center mb-6 ${provisioningResult.success ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
+                            {provisioningResult.success ? <Check className="w-10 h-10" /> : <X className="w-10 h-10" />}
                         </div>
+                        <h3 className="text-2xl font-black text-gray-900 mb-2">
+                            {provisioningResult.success ? t('provisioningSuccess') : t('provisioningError')}
+                        </h3>
+                        <p className="text-gray-500 font-medium mb-8">
+                            {provisioningResult.success ? t('provisioningSuccessMsg') : provisioningResult.message || t('provisioningErrorMsg')}
+                        </p>
+                        {provisioningResult.success && provisioningResult.domain && (
+                            <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">{t('instanceUrl')}</span>
+                                <a href={provisioningResult.domain} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline break-all">
+                                    {provisioningResult.domain}
+                                </a>
+                            </div>
+                        )}
+                        <Button onClick={() => setShowProvisioningModal(false)} className="w-full py-6 rounded-2xl font-bold text-lg">{t('close')}</Button>
                     </div>
                 </div>
             )}

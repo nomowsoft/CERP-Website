@@ -23,6 +23,7 @@ export interface SubscriptionFormData {
   packageId?: number;
   selectedServices?: number[]; // IDs of selected services
   selectedSystems?: number[]; // IDs of selected systems
+  acceptTerms: boolean;
 }
 
 export const initialFormData: SubscriptionFormData = {
@@ -40,4 +41,5 @@ export const initialFormData: SubscriptionFormData = {
   cvv: '',
   selectedServices: [],
   selectedSystems: [],
+  acceptTerms: false,
 };

@@ -176,7 +176,7 @@ export default function AddSystemForm() {
                                         <div className={`p-4 rounded-2xl transition-colors ${
                                             selectedSystems.includes(system.id) ? 'bg-primary/20 text-primary' : 'bg-gray-50 text-gray-400 group-hover:bg-primary/10 group-hover:text-primary'
                                         }`}>
-                                            {system.icon && system.icon.startsWith('http') ? (
+                                            {system.icon && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
                                                 <Image src={system.icon} alt={system.name} width={32} height={32} className="w-8 h-8 object-contain" />
                                             ) : (
                                                 <div className="w-8 h-8 flex items-center justify-center font-black text-xl">

@@ -9,6 +9,20 @@ export type System = {
     id: number;
     titleKey: string;
 }
+
+export type SystemDTO = {
+    id: number;
+    name: string;
+    name_ar?: string;
+    name_en?: string;
+    description: string;
+    description_ar?: string;
+    description_en?: string;
+    icon?: string;
+    price: number | string;
+    createdAt: string;
+    updatedAt: string;
+}
 export type CutomerPartner = {
     id: number;
     image: string;

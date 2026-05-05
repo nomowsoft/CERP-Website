@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { SubscriptionFormData } from "@/utils/subscription";
 import { ServiceDTO } from "@/utils/types";
@@ -12,12 +13,39 @@ interface ServicesSelectionStepProps {
     onSkip: () => void;
     selectedPackage?: any;
     allSystems: any[];
+    mySubscription: any;
 }
 
-const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems }: ServicesSelectionStepProps) => {
+const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, mySubscription }: ServicesSelectionStepProps) => {
     const t = useTranslations('subscription.servicesSelection');
     const locale = useLocale();
     const isAr = locale === 'ar';
+
+    const filteredSystems = useMemo(() => {
+        if (!allSystems) return [];
+        
+        // Get IDs of systems that should be hidden
+        const hiddenSystemIds = new Set<number>();
+        
+        // 1. Hide systems already in the selected package (the one being subscribed to)
+        if (selectedPackage?.systems) {
+            selectedPackage.systems.forEach((s: any) => hiddenSystemIds.add(s.id));
+        }
+
+        // 2. Hide systems already in user's current subscription (if upgrading/renewing)
+        if (mySubscription) {
+            // Systems in the current package
+            if (mySubscription.package?.systems) {
+                mySubscription.package.systems.forEach((s: any) => hiddenSystemIds.add(s.id));
+            }
+            // Add-on systems in the current subscription
+            if (mySubscription.systems) {
+                mySubscription.systems.forEach((s: any) => hiddenSystemIds.add(s.id));
+            }
+        }
+
+        return allSystems.filter(system => !hiddenSystemIds.has(system.id));
+    }, [allSystems, selectedPackage, mySubscription]);
 
     const toggleService = (serviceId: number) => {
         const currentServices = data.selectedServices || [];
@@ -132,7 +160,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems }
             </div>
 
             {/* Systems Selection */}
-            {allSystems && allSystems.length > 0 && (
+            {filteredSystems && filteredSystems.length > 0 && (
                 <div className="pt-10 border-t border-gray-100">
                     <div className="text-center mb-6">
                         <h2 className="text-2xl font-bold font-doto2 mb-2">
@@ -144,7 +172,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems }
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {allSystems.map((system) => {
+                        {filteredSystems.map((system) => {
                             const isSelected = isSystemSelected(system.id);
 
                             return (
@@ -165,7 +193,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems }
 
                                     {/* System Icon */}
                                     <div className="mb-4">
-                                        {system.icon && system.icon.startsWith('http') ? (
+                                        {system.icon && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
                                             <Image src={system.icon} alt={system.name} width={48} height={48} className="w-12 h-12 object-contain" />
                                         ) : (
                                             <div className="w-12 h-12 flex items-center justify-center text-primary font-bold text-lg bg-white rounded-xl shadow-sm">

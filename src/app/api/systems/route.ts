@@ -7,11 +7,18 @@ const formatIcon = (icon: any) => {
     if (!icon) return null;
     const buf = Buffer.from(icon);
     const iconStr = buf.toString('utf8');
+    
     // If it's a legacy URL or already a data URI string stored as bytes
     if (iconStr.startsWith('http') || iconStr.startsWith('data:image')) {
         return iconStr;
     }
-    // Otherwise it's raw binary data
+    
+    // Check if it's an SVG
+    if (iconStr.includes('<svg')) {
+        return `data:image/svg+xml;base64,${buf.toString('base64')}`;
+    }
+    
+    // Default to PNG raw binary data
     return `data:image/png;base64,${buf.toString('base64')}`;
 };
 

@@ -42,20 +42,15 @@ export const Schemastep3customdomain = z.object({
 })
 
 export const Schemastep4electronic = z.object({
-    licenseFile: z
-        .instanceof(File, { message: "يرجى رفع ملف السجل" })
-        .refine(
-            (file) => file.size <= 5_000_000,
-            "حجم الملف يجب أن يكون أقل من 5MB"
-        )
+    acceptTerms: z.literal(true, { 
+        errorMap: () => ({ message: "يجب الموافقة على الشروط والأحكام للاستمرار" }) 
+    })
 })
 export const Schemastep4bank = z.object({
-    licenseFile: z
-        .instanceof(File, { message: "يرجى رفع ملف السجل" })
-        .refine(
-            (file) => file.size <= 5_000_000,
-            "حجم الملف يجب أن يكون أقل من 5MB"
-        )
+    bankReceiptFile: z.any().refine((file) => !!file, "يرجى رفع إيصال التحويل"),
+    acceptTerms: z.literal(true, { 
+        errorMap: () => ({ message: "يجب الموافقة على الشروط والأحكام للاستمرار" }) 
+    })
 })
 
 
@@ -80,6 +75,7 @@ export const SubscriptionSchema = z.object({
     packageId: z.number().optional(),
     selectedServices: z.array(z.number()).optional(),
     selectedSystems: z.array(z.number()).optional(),
+    acceptTerms: z.boolean().refine(val => val === true, { message: 'يجب الموافقة على الشروط والأحكام' }),
 })
     .superRefine((data, ctx) => {
         if (data.domainType === 'SUBDOMAIN') {

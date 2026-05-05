@@ -113,7 +113,33 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
             )}
           </div>
         </div>
-      )}
+      {/* Terms and Conditions */}
+      <div className="mt-8 pt-6 border-t border-gray-100">
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <div className="relative flex items-center h-5">
+            <input
+              type="checkbox"
+              checked={data.acceptTerms}
+              onChange={(e) => onChange({ acceptTerms: e.target.checked })}
+              className="w-5 h-5 rounded border-gray-300 text-secondary focus:ring-secondary cursor-pointer transition-all"
+            />
+          </div>
+          <div className="text-sm">
+            <span className="font-medium text-gray-900">
+              {isAr ? "أوافق على " : "I agree to the "}
+            </span>
+            <a href="#" className="font-bold text-primary hover:underline">
+              {isAr ? "الشروط والأحكام" : "Terms and Conditions"}
+            </a>
+            <span className="font-medium text-gray-900">
+              {isAr ? " و" : " and "}
+            </span>
+            <a href="#" className="font-bold text-primary hover:underline">
+              {isAr ? "سياسة الخصوصية" : "Privacy Policy"}
+            </a>
+          </div>
+        </label>
+      </div>
     </div>
   );
 };

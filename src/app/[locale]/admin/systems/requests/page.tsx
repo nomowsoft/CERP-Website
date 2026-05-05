@@ -49,14 +49,20 @@ export default function SystemRequestsManagement() {
     const handleAction = async (requestId: number, action: 'APPROVED' | 'REJECTED') => {
         setIsProcessing(true);
         try {
+            const isNewSub = selectedRequest.isNewSub;
+            const payload: any = {
+                status: action === 'APPROVED' ? 'DONE' : 'CANCEL',
+                provision: action === 'APPROVED'
+            };
+            
+            if (!isNewSub) {
+                payload.requestId = requestId;
+            }
+
             const res = await fetch(`/api/subscription/${selectedRequest.subscriptionId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    requestId: requestId,
-                    status: action === 'APPROVED' ? 'DONE' : 'CANCEL', // Note: applyRequest expects specific flow
-                    provision: action === 'APPROVED'
-                })
+                body: JSON.stringify(payload)
             });
 
             // Wait, the [id]/route.ts handles PUT with requestId?
@@ -94,6 +100,7 @@ export default function SystemRequestsManagement() {
                                 <th className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest text-start">{locale === 'ar' ? "العميل" : "Customer"}</th>
                                 <th className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest text-start">{locale === 'ar' ? "الأنظمة المطلوبة" : "Requested Systems"}</th>
                                 <th className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest text-start">{locale === 'ar' ? "تاريخ الطلب" : "Request Date"}</th>
+                                <th className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest text-start">{locale === 'ar' ? "النوع" : "Type"}</th>
                                 <th className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest text-start">{locale === 'ar' ? "الحالة" : "Status"}</th>
                                 <th className="px-6 py-4 text-sm font-black text-gray-400 uppercase tracking-widest text-start">{locale === 'ar' ? "الإجراءات" : "Actions"}</th>
                             </tr>
@@ -104,11 +111,11 @@ export default function SystemRequestsManagement() {
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                                                {request.subscription?.user?.name?.charAt(0)}
+                                                {request.customer?.name?.charAt(0)}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-gray-900">{request.subscription?.user?.name}</div>
-                                                <div className="text-xs text-gray-500">{request.subscription?.user?.charityName}</div>
+                                                <div className="font-bold text-gray-900">{request.customer?.name}</div>
+                                                <div className="text-xs text-gray-500">{request.customer?.charityName}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -123,6 +130,11 @@ export default function SystemRequestsManagement() {
                                     </td>
                                     <td className="px-6 py-5 text-sm text-gray-500">
                                         {new Date(request.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US')}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${request.isNewSub ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
+                                            {request.isNewSub ? (locale === 'ar' ? "اشتراك جديد" : "New Subscription") : (locale === 'ar' ? "إضافة نظام" : "Add System")}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-5">
                                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold gap-1.5 ${
@@ -192,16 +204,16 @@ export default function SystemRequestsManagement() {
                                         </button>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <div className="p-6 bg-gray-50 rounded-3xl space-y-4">
                                             <h4 className="text-sm font-black text-primary uppercase tracking-widest flex items-center gap-2">
                                                 <User className="w-4 h-4" />
                                                 {locale === 'ar' ? "معلومات العميل" : "Customer Info"}
                                             </h4>
                                             <div className="space-y-2">
-                                                <p className="font-bold text-gray-900 text-lg">{selectedRequest.subscription?.user?.name}</p>
-                                                <p className="text-gray-600">{selectedRequest.subscription?.user?.charityName}</p>
-                                                <p className="text-sm text-gray-500">{selectedRequest.subscription?.user?.email}</p>
+                                                <p className="font-bold text-gray-900 text-lg">{selectedRequest.customer?.name}</p>
+                                                <p className="text-gray-600">{selectedRequest.customer?.charityName}</p>
+                                                <p className="text-sm text-gray-500">{selectedRequest.customer?.email}</p>
                                             </div>
                                         </div>
                                         
@@ -211,11 +223,34 @@ export default function SystemRequestsManagement() {
                                                 {locale === 'ar' ? "الاشتراك الحالي" : "Current Subscription"}
                                             </h4>
                                             <div className="space-y-2">
-                                                <p className="font-bold text-gray-900">{selectedRequest.subscription?.domainName}</p>
+                                                <p className="font-bold text-gray-900">{selectedRequest.subscription?.domainName || (locale === 'ar' ? "نطاق جديد" : "New Domain")}</p>
                                                 <p className="text-sm text-gray-500">
                                                     {locale === 'ar' ? "الحالة: " : "Status: "}
-                                                    <span className="font-bold text-emerald-600">{selectedRequest.subscription?.status}</span>
+                                                    <span className="font-bold text-emerald-600">{selectedRequest.isNewSub ? (locale === 'ar' ? "جديد" : "New") : selectedRequest.subscription?.status}</span>
                                                 </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-6 bg-gray-50 rounded-3xl space-y-4">
+                                            <h4 className="text-sm font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                                <FileText className="w-4 h-4" />
+                                                {locale === 'ar' ? "بيانات الترخيص" : "License Info"}
+                                            </h4>
+                                            <div className="space-y-2">
+                                                <p className="text-sm text-gray-500">{locale === 'ar' ? "رقم الترخيص:" : "License No:"}</p>
+                                                <p className="font-bold text-gray-900">{selectedRequest.charityRegisterNo}</p>
+                                                {selectedRequest.licenseFile || selectedRequest.subscription?.licenseFile ? (
+                                                    <a 
+                                                        href={selectedRequest.licenseFile || selectedRequest.subscription?.licenseFile} 
+                                                        target="_blank"
+                                                        className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+                                                    >
+                                                        <ExternalLink className="w-3 h-3" />
+                                                        {locale === 'ar' ? "عرض ملف الترخيص" : "View License File"}
+                                                    </a>
+                                                ) : (
+                                                    <p className="text-xs text-red-500">{locale === 'ar' ? "لا يوجد ملف ترخيص" : "No license file"}</p>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

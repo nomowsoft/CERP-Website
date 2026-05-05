@@ -27,6 +27,7 @@ export class ServerManager {
                             systems: true
                         }
                     },
+                    systems: true,
                     user: true
                 }
             });
@@ -36,15 +37,17 @@ export class ServerManager {
                 return { success: false, message: "Subscription not found" };
             }
 
-            if (!subscription.package) {
-                console.error(`[ServerManager] Package not found for subscription ${subscriptionId}`);
-                return { success: false, message: "Package not found" };
-            }
-
-            // Prepare ADDONS_LIST from package systems (sanitized: trim, lowercase, alphanumeric only)
-            const addonsList = subscription.package.systems.map(s => 
+            // Prepare ADDONS_LIST from BOTH package systems and individual systems (sanitized: trim, lowercase, alphanumeric only)
+            const packageSystems = subscription.package?.systems || [];
+            const individualSystems = subscription.systems || [];
+            const allSystemsList = [...packageSystems, ...individualSystems];
+            
+            // Use a Set to ensure unique names in case of overlaps
+            const addonsSet = new Set(allSystemsList.map(s => 
                 (s.name_en || s.name).trim().toLowerCase().replace(/[^a-z0-9]/g, '')
-            ).filter(name => name.length > 0);
+            ).filter(name => name.length > 0));
+
+            const addonsList = Array.from(addonsSet);
 
             // Ensure fully qualified domain name for the payload and lowercase
             const domainNameStr = subscription.domainName || `sub-${subscriptionId}`;
