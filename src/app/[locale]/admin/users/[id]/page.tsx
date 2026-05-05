@@ -49,7 +49,7 @@ export default function UserFormPage() {
 
     useEffect(() => {
         if (!isNew && users.length > 0) {
-            const user = users.find(u => u.id === id);
+            const user = users.find(u => String(u.id) === id);
             if (user) {
                 setFormData({
                     name: user.name || "",
@@ -71,7 +71,7 @@ export default function UserFormPage() {
                 // If not, I'll focus on Edit for now as requested for the modal change.
                 toast.info("Create user functionality would go here");
             } else {
-                await dispatch(adminUpdateUser({ id, data: formData })).unwrap();
+                await dispatch(adminUpdateUser({ id: Number(id), data: formData })).unwrap();
                 toast.success(t("updateSuccess"));
                 router.push(`/${locale}/admin/users`);
             }

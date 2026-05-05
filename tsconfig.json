@@ -36,6 +36,9 @@
     ".next/dev/types/**/*.ts"
 , "src/app/[locale]/subscription/Stepper/Stepper.tsx", "src/app/[locale]/admin/subscription/subscription"  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "scratch",
+    "check_db.ts",
+    ".gemini"
   ]
 }

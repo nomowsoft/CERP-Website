@@ -296,7 +296,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
         
         if (hasNewPackage) {
           action = 'UPGRADE';
-        } else if (formData.selectedSystems.length > 0) {
+        } else if (formData.selectedSystems && formData.selectedSystems.length > 0) {
           action = 'ADD_SYSTEM';
         }
         

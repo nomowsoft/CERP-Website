@@ -142,7 +142,7 @@ export default function UsersManagement() {
                                 {/* Floating Actions */}
                                 <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-10">
                                     <button 
-                                        onClick={() => handleEditClick(user.id)}
+                                        onClick={() => handleEditClick(String(user.id))}
                                         className="p-3 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-600 hover:text-white shadow-sm transition-all duration-300"
                                     >
                                         <Edit2 className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function UsersManagement() {
                                         </div>
                                     </div>
                                     <button 
-                                        onClick={() => handleEditClick(user.id)}
+                                        onClick={() => handleEditClick(String(user.id))}
                                         className="p-3 bg-gray-50 text-gray-400 rounded-2xl hover:bg-primary hover:text-white transition-all duration-300"
                                     >
                                         <ExternalLink className="w-4 h-4" />

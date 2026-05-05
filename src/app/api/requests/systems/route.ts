@@ -11,7 +11,12 @@ import { verifyToken } from '@/utils/verifyToken';
 export async function GET(request: NextRequest) {
     try {
         const userFromToken = verifyToken(request);
-        if (!userFromToken || userFromToken.role !== 'ADMIN') {
+        if (!userFromToken) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({ where: { id: userFromToken.id } });
+        if (!user || user.role !== 'ADMIN') {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 

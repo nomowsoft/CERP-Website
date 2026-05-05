@@ -145,7 +145,8 @@ export class SubscriptionService {
         // System additions are handled locally in the database and don't require re-provisioning
         let provisioningResult = { success: true, message: "Processed successfully" };
         if (request.type !== 'ADD_SYSTEM') {
-            provisioningResult = await ServerManager.provisionServer(subscription.id);
+            const res = await ServerManager.provisionServer(subscription.id);
+            provisioningResult = { success: res.success, message: res.message || "" };
         }
 
         // Also create a payment record

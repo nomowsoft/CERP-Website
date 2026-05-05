@@ -12,7 +12,7 @@ async function main() {
     });
 
     console.log("Systems Check:");
-    systems.forEach(s => {
+    systems.forEach((s: any) => {
         if (s.icon) {
             const str = s.icon.toString('utf8');
             console.log(`ID: ${s.id}, Name: ${s.name}, Icon Length: ${s.icon.length}`);

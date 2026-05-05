@@ -47,6 +47,7 @@ interface UpdateSubscriptionBody {
     approvalDate?: string | Date;
     status?: 'DRAFT' | 'PROGRES' | 'DONE' | 'CANCEL';
     provision?: boolean;
+    requestId?: number;
 }
 
 export async function DELETE(request: NextRequest, { params }: Props) {
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest, { params }: Props) {
             // Format images and serializable numbers
             const formatted = {
                 ...other,
-                totalPrice: Number(other.totalPrice),
+                totalPrice: Number(other.totalPrice || 0),
                 package: other.package ? {
                     ...other.package,
                     price: Number(other.package.price),
@@ -416,8 +417,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
             });
 
             const finalResponse = {
-                ...finalSub,
-                totalPrice: Number(finalSub?.totalPrice),
+                ...(finalSub as any),
+                totalPrice: Number((finalSub as any)?.totalPrice || 0),
                 package: finalSub?.package ? {
                     ...finalSub.package,
                     price: Number(finalSub.package.price)

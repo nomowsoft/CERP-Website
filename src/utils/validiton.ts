@@ -27,10 +27,8 @@ export const Schemastep1 = z.object({
 })
 export const Schemastep2 = z.object({
     charityRegisterNo: z.string().min(1, "Charity RegisterNo is required"),
-    licenseFile: z.union([
-        z.instanceof(File),
-        z.string().min(1)
-    ], { errorMap: () => ({ message: "يرجى رفع ملف السجل" }) })
+    licenseFile: z.any()
+    .refine((val) => !!val, "يرجى رفع ملف السجل")
     .refine(
         (file) => {
             if (file instanceof File) return file.size <= 5_000_000;
