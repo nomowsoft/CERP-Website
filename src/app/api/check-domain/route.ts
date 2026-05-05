@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { domainType } = body;
+        const { domainType, licenseFile } = body;
 
         // Match frontend field names
         let domainName = body.domainName;
@@ -35,7 +35,8 @@ export async function POST(request: NextRequest) {
                 domainName: domainName,
                 status: {
                     in: ['DONE', 'PROGRES', 'DRAFT']
-                }
+                },
+                userId: { not: userFromToken.id }
             }
         });
 

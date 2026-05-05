@@ -207,7 +207,10 @@ export default function FilePreviewModal({
                                         </div>
                                         <h3 className="text-2xl font-bold text-gray-800 mb-3">No direct preview</h3>
                                         <p className="text-gray-500 mb-8 max-w-xs leading-relaxed">
-                                            This file type ({fileUrl.split('.').pop()?.toUpperCase()}) cannot be displayed here.
+                                            {fileUrl.startsWith('data:') 
+                                                ? "This content cannot be displayed directly here."
+                                                : `This file type (${fileUrl.split('.').pop()?.substring(0, 10).toUpperCase()}${fileUrl.split('.').pop()!.length > 10 ? '...' : ''}) cannot be displayed here.`
+                                            }
                                         </p>
                                         <a
                                             href={fileUrl}

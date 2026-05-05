@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
                 subscriptionId: r.subscriptionId,
                 type: 'ADD_SYSTEM',
                 customer: r.subscription.user,
-                systems: r.systems,
+                systems: r.systems.map(sys => ({ ...sys, price: Number(sys.price) })),
                 createdAt: r.createdAt,
                 status: r.status,
                 licenseFile: r.licenseFile || r.subscription.licenseFile,
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
                 type: 'NEW_SUBSCRIPTION',
                 isNewSub: true,
                 customer: s.user,
-                systems: s.systems,
+                systems: s.systems.map(sys => ({ ...sys, price: Number(sys.price) })),
                 createdAt: s.createdAt,
                 status: 'PENDING', // Map DRAFT to PENDING for UI
                 licenseFile: s.licenseFile,

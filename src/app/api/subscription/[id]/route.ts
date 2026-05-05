@@ -92,19 +92,23 @@ export async function GET(request: NextRequest, { params }: Props) {
             // Remove sensitive info using destructuring correctly
             const { cardCVV, cardNumber, ...other } = sub as any;
             
-            // Format images
+            // Format images and serializable numbers
             const formatted = {
                 ...other,
+                totalPrice: Number(other.totalPrice),
                 package: other.package ? {
                     ...other.package,
+                    price: Number(other.package.price),
                     image: formatImage(other.package.image),
                     systems: other.package.systems?.map((sys: any) => ({
                         ...sys,
+                        price: Number(sys.price),
                         icon: formatImage(sys.icon)
                     }))
                 } : null,
                 systems: other.systems?.map((sys: any) => ({
                     ...sys,
+                    price: Number(sys.price),
                     icon: formatImage(sys.icon)
                 }))
             };
@@ -411,6 +415,15 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 include: { package: true, services: true, payments: true } 
             });
 
+            const finalResponse = {
+                ...finalSub,
+                totalPrice: Number(finalSub?.totalPrice),
+                package: finalSub?.package ? {
+                    ...finalSub.package,
+                    price: Number(finalSub.package.price)
+                } : null
+            };
+
             return NextResponse.json({ 
                 message: provisioningResult && !provisioningResult.success 
                     ? provisioningResult.message 
@@ -420,7 +433,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     : "تمت الموافقة على الاشتراك وتجهيز النظام بنجاح.",
                 provisioning: provisioningResult,
                 domain: finalSub?.instanceUrl || "Not applicable",
-                subscription: finalSub 
+                subscription: finalResponse 
             }, { status: 200 });
         }
         return NextResponse.json({ message: 'Unauthorized action' }, { status: 403 });

@@ -28,9 +28,10 @@ export async function GET(request: NextRequest) {
             orderBy: { createdAt: 'desc' }
         });
 
-        // Convert Buffer icons to Base64 strings for the frontend
+        // Convert Buffer icons to Base64 strings and Decimal to Number for the frontend
         const formattedSystems = systems.map(system => ({
             ...system,
+            price: Number(system.price),
             icon: formatIcon(system.icon)
         }));
 

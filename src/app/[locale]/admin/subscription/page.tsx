@@ -43,6 +43,16 @@ export default function Subscription() {
     const [requests, setRequests] = useState<any[]>([]);
     const [provisioningResult, setProvisioningResult] = useState<any>(null);
     const [showProvisioningModal, setShowProvisioningModal] = useState(false);
+    const [previewFile, setPreviewFile] = useState<{ url: string; type?: string; name?: string } | null>(null);
+
+    const handlePreviewFile = (url: string, name: string) => {
+        let type = url.split('.').pop()?.toLowerCase();
+        // Check for base64 data URLs
+        if (url.startsWith('data:image/')) type = 'image';
+        else if (url.startsWith('data:application/pdf')) type = 'pdf';
+        
+        setPreviewFile({ url, name, type });
+    };
 
     const fetchRequests = async () => {
         try {
@@ -165,8 +175,6 @@ export default function Subscription() {
     return (
 
         <section className="container mx-auto p-4 lg:p-8" dir={dir}>
-            {viewMode === 'LIST' ? (
-                <>
             <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                     <div className="bg-primary/10 p-3 rounded-2xl">

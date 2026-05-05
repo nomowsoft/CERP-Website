@@ -33,9 +33,11 @@ export async function GET(request: NextRequest, { params }: Props) {
         // Convert Buffer image to Base64 string
         const formattedPackage = {
             ...pkg,
+            price: Number(pkg.price),
             image: formatImage(pkg.image),
             systems: pkg.systems?.map(system => ({
                 ...system,
+                price: Number(system.price),
                 icon: formatImage(system.icon)
             })) || []
         };
@@ -127,9 +129,11 @@ export async function PUT(request: NextRequest, { params }: Props) {
         // Convert back for response
         const responsePackage = {
             ...updatedPackage,
+            price: Number(updatedPackage?.price),
             image: updatedPackage ? formatImage(updatedPackage.image) : null,
             systems: updatedPackage?.systems?.map(system => ({
                 ...system,
+                price: Number(system.price),
                 icon: formatImage(system.icon)
             })) || []
         };

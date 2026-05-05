@@ -339,7 +339,8 @@
       "licensePlaceholder": "أدخل رقم الرخصة",
       "licenseFileLabel": "اختر ملف الرخصة",
       "licenseFilePlaceholder": "اختر ملف الرخصة",
-      "fileSelected": "تم اختيار:"
+      "fileSelected": "تم اختيار:",
+      "existingFile": "الملف الحالي"
     },
     "domainSelection": {
       "title": "اختيار النطاق",
@@ -418,6 +419,12 @@
       "paid": "مدفوعه"
     },
     "common": {
+      "basicInfo": "المعلومات الأساسية",
+      "dates": "التواريخ",
+      "dangerZone": "منطقة الخطر",
+      "updateError": "خطأ في التحديث",
+      "deleteSuccess": "تم الحذف بنجاح",
+      "deleteError": "خطأ في الحذف",
       "details": "تفاصيل الإشتراك",
       "currentInfo": "عرض معلومات الإشتراك الحالي",
       "allInvoices": "جميع الفواتير",
@@ -515,6 +522,13 @@
       "deleteError": "فشل الحذف"
     },
     "subscriptions": {
+      "basicInfo": "المعلومات الأساسية",
+      "dates": "التواريخ",
+      "dangerZone": "منطقة الخطر",
+      "deleteWarning": "هل أنت متأكد من رغبتك في حذف هذا الإشتراك؟ لا يمكن التراجع عن هذا الإجراء.",
+      "updateError": "خطأ في التحديث",
+      "deleteSuccess": "تم الحذف بنجاح",
+      "deleteError": "خطأ في الحذف",
       "title": "إدارة الإشتراكات",
       "subtitle": "إدارة وتفعيل نُسخ العملاء",
       "editSubscription": "تعديل الإشتراكات",

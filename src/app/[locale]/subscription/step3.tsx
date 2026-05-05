@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,16 +11,25 @@ import axios from "axios";
 interface DomainSelectionStepProps {
   data: SubscriptionFormData;
   onChange: (data: Partial<SubscriptionFormData>) => void;
+  mySubscription?: any;
 }
 
 type DomainCheckStatus = "idle" | "checking" | "available" | "unavailable" | "error";
 
-const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
+const Step3 = ({ data, onChange, mySubscription }: DomainSelectionStepProps) => {
   const t = useTranslations('subscription.domainSelection');
   const locale = useLocale();
 
   const [checkStatus, setCheckStatus] = useState<DomainCheckStatus>("idle");
   const [checkMessage, setCheckMessage] = useState("");
+
+  const isLocked = !!mySubscription?.domainName;
+
+  useEffect(() => {
+    if (isLocked && (data.subdomain || data.customDomain)) {
+      setCheckStatus("available");
+    }
+  }, [isLocked, data.subdomain, data.customDomain]);
 
   const getDomainToCheck = (): string => {
     if (data.domainType === "SUBDOMAIN") {
@@ -37,6 +46,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
   };
 
   const handleCheckDomain = async () => {
+    if (isLocked) return;
     const domainName = getDomainToCheck();
     if (!domainName) return;
 
@@ -69,6 +79,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
 
   // Reset check status when domain input changes
   const handleSubdomainChange = (value: string) => {
+    if (isLocked) return;
     onChange({ subdomain: value });
     if (checkStatus !== "idle") {
       setCheckStatus("idle");
@@ -77,6 +88,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
   };
 
   const handleCustomDomainChange = (value: string) => {
+    if (isLocked) return;
     onChange({ customDomain: value });
     if (checkStatus !== "idle") {
       setCheckStatus("idle");
@@ -85,12 +97,14 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
   };
 
   const handleDomainTypeChange = (type: "SUBDOMAIN" | "CUSTOM_DOMAIN") => {
+    if (isLocked) return;
     onChange({ domainType: type });
     setCheckStatus("idle");
     setCheckMessage("");
   };
 
   const getStatusColor = () => {
+    if (isLocked) return "border-gray-200 bg-gray-50";
     switch (checkStatus) {
       case "available":
         return "border-green-400 bg-green-50";
@@ -104,6 +118,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
   };
 
   const getStatusIcon = () => {
+    if (isLocked) return <CheckCircle2 className="w-5 h-5 text-primary/40" />;
     switch (checkStatus) {
       case "checking":
         return <Loader2 className="w-5 h-5 text-primary animate-spin" />;
@@ -128,7 +143,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
         {/* Subdomain Option */}
         <div
           onClick={() => handleDomainTypeChange('SUBDOMAIN')}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.domainType === 'SUBDOMAIN'
+          className={`p-10 rounded-3xl border-2 transition-all ${isLocked ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'} ${data.domainType === 'SUBDOMAIN'
             ? 'border-secondary bg-secondary/5 shadow-md'
             : 'border-primary hover:border-primary/50'
             }`}
@@ -151,7 +166,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
         {/* Custom Domain Option */}
         <div
           onClick={() => handleDomainTypeChange('CUSTOM_DOMAIN')}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.domainType === 'CUSTOM_DOMAIN'
+          className={`p-10 rounded-3xl border-2 transition-all ${isLocked ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'} ${data.domainType === 'CUSTOM_DOMAIN'
             ? 'border-secondary bg-secondary/5 shadow-md'
             : 'border-primary hover:border-primary/50'
             }`}
@@ -185,7 +200,8 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
                   value={data.subdomain}
                   onChange={(e) => handleSubdomainChange(e.target.value)}
                   placeholder="yourname"
-                  className={`text-left flex-1 border transition-colors duration-300 ${getStatusColor()} ${checkStatus !== "idle" ? "pr-10" : ""}`}
+                  className={`text-left flex-1 border transition-colors duration-300 ${getStatusColor()} ${checkStatus !== "idle" ? "pr-10" : ""} ${isLocked ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
+                  readOnly={isLocked}
                 />
                 {checkStatus !== "idle" && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -204,7 +220,8 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
                 value={data.customDomain}
                 onChange={(e) => handleCustomDomainChange(e.target.value)}
                 placeholder="www.example.com"
-                className={`text-left border transition-colors duration-300 ${getStatusColor()} ${checkStatus !== "idle" ? "pr-10" : ""}`}
+                className={`text-left border transition-colors duration-300 ${getStatusColor()} ${checkStatus !== "idle" ? "pr-10" : ""} ${isLocked ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
+                readOnly={isLocked}
                 dir="ltr"
               />
               {checkStatus !== "idle" && (
@@ -221,7 +238,7 @@ const Step3 = ({ data, onChange }: DomainSelectionStepProps) => {
           <Button
             type="button"
             onClick={handleCheckDomain}
-            disabled={!canCheck() || checkStatus === "checking"}
+            disabled={!canCheck() || checkStatus === "checking" || isLocked}
             className={`w-full py-6 rounded-xl font-bold text-base transition-all duration-300 ${checkStatus === "available"
               ? "bg-green-500 hover:bg-green-600 text-white"
               : checkStatus === "unavailable"

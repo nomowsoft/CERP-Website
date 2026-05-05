@@ -120,7 +120,7 @@ export default function SubscriptionFormPage({
             toast.success(isAr ? result.message_ar : result.message);
             setIsEditing(false);
         } catch (err: any) {
-            toast.error(err || tc('updateError'));
+            toast.error(err || t('updateError'));
         } finally {
             setIsUpdating(false);
         }
@@ -132,13 +132,13 @@ export default function SubscriptionFormPage({
     };
 
     const handleDelete = async () => {
-        if (confirm(tc('deleteWarning'))) {
+        if (confirm(t('deleteWarning'))) {
             try {
                 await dispatch(deleteSubscription(parseInt(id))).unwrap();
-                toast.success(tc('deleteSuccess'));
+                toast.success(t('deleteSuccess'));
                 router.push(`/${locale}/admin/subscription`);
             } catch (err: any) {
-                toast.error(tc('deleteError'));
+                toast.error(t('deleteError'));
             }
         }
     };
@@ -355,7 +355,7 @@ export default function SubscriptionFormPage({
                             <div className="space-y-6">
                                 <div className="flex items-center gap-2 text-primary font-bold border-b border-primary/10 pb-2">
                                     <Info className="w-5 h-5" />
-                                    <span>{tc('basicInfo')}</span>
+                                    <span>{t('basicInfo')}</span>
                                 </div>
                                 <div className="space-y-4">
                                     <DetailField 
@@ -423,7 +423,7 @@ export default function SubscriptionFormPage({
                             <div className="space-y-6">
                                 <div className="flex items-center gap-2 text-primary font-bold border-b border-primary/10 pb-2">
                                     <Calendar className="w-5 h-5" />
-                                    <span>{tc('dates')}</span>
+                                    <span>{t('dates')}</span>
                                 </div>
                                 <div className="space-y-4">
                                     <DetailField 
@@ -529,10 +529,10 @@ export default function SubscriptionFormPage({
                     <div>
                         <h4 className="text-red-900 font-bold flex items-center gap-2 text-lg">
                             <Trash2 className="w-5 h-5" />
-                            {tc('dangerZone')}
+                            {t('dangerZone')}
                         </h4>
                         <p className="text-red-700 text-sm mt-1">
-                            {tc('deleteWarning')}
+                            {t('deleteWarning')}
                         </p>
                     </div>
                     <button

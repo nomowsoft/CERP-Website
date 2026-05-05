@@ -27,12 +27,17 @@ export const Schemastep1 = z.object({
 })
 export const Schemastep2 = z.object({
     charityRegisterNo: z.string().min(1, "Charity RegisterNo is required"),
-    licenseFile: z
-        .instanceof(File, { message: "يرجى رفع ملف السجل" })
-        .refine(
-            (file) => file.size <= 5_000_000,
-            "حجم الملف يجب أن يكون أقل من 5MB"
-        )
+    licenseFile: z.union([
+        z.instanceof(File),
+        z.string().min(1)
+    ], { errorMap: () => ({ message: "يرجى رفع ملف السجل" }) })
+    .refine(
+        (file) => {
+            if (file instanceof File) return file.size <= 5_000_000;
+            return true;
+        },
+        "حجم الملف يجب أن يكون أقل من 5MB"
+    )
 })
 export const Schemastep3Subdomain = z.object({
     subdomain: z.string().min(1, "Subdomain is required"),
@@ -42,14 +47,14 @@ export const Schemastep3customdomain = z.object({
 })
 
 export const Schemastep4electronic = z.object({
-    acceptTerms: z.literal(true, { 
-        errorMap: () => ({ message: "يجب الموافقة على الشروط والأحكام للاستمرار" }) 
+    acceptTerms: z.boolean().refine(val => val === true, { 
+        message: "يجب الموافقة على الشروط والأحكام للاستمرار" 
     })
 })
 export const Schemastep4bank = z.object({
     bankReceiptFile: z.any().refine((file) => !!file, "يرجى رفع إيصال التحويل"),
-    acceptTerms: z.literal(true, { 
-        errorMap: () => ({ message: "يجب الموافقة على الشروط والأحكام للاستمرار" }) 
+    acceptTerms: z.boolean().refine(val => val === true, { 
+        message: "يجب الموافقة على الشروط والأحكام للاستمرار" 
     })
 })
 

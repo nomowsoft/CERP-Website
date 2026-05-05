@@ -76,12 +76,45 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     }
   }, [packageId, systemId]);
 
-  const mySubscription = subscriptionInfo?.find((s: any) => s.userId === userInfo?.id);
+  const mySubscription = (subscriptionInfo?.length > 0 && userInfo?.id) 
+    ? subscriptionInfo.find((s: any) => s.userId == userInfo.id) 
+    : null;
 
   useEffect(() => {
     if (mySubscription && !dataLoaded) {
-      const { licenseFile, bankReceiptFile, ...rest } = mySubscription;
-      setFormData((prev) => ({ ...prev, ...rest }));
+      const {
+        fullName,
+        email,
+        phone,
+        charityRegisterNo,
+        licenseFile,
+        domainType,
+        domainName,
+      } = mySubscription;
+
+      setFormData((prev) => {
+        const next = { ...prev };
+        
+        if (!next.fullName && fullName) next.fullName = fullName;
+        if (!next.email && email) next.email = email;
+        if (!next.phone && phone) next.phone = phone;
+        if (!next.charityRegisterNo && charityRegisterNo) next.charityRegisterNo = charityRegisterNo;
+        
+        if (domainType) {
+          next.domainType = domainType;
+          if (domainType === 'SUBDOMAIN') {
+            if (domainName) next.subdomain = domainName;
+          } else if (domainType === 'CUSTOM_DOMAIN') {
+            if (domainName) next.customDomain = domainName;
+          }
+        }
+
+        if (licenseFile) {
+          next.licenseFile = licenseFile;
+        }
+
+        return next;
+      });
       setDataLoaded(true);
     }
   }, [mySubscription, dataLoaded]);
@@ -256,9 +289,21 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
 
       let subId = mySubscription?.id;
       if (mySubscription) {
-        payload.action = (formData.packageId !== mySubscription.packageId) ? 'UPGRADE' : 'RENEW';
+        let action: 'RENEW' | 'UPGRADE' | 'ADD_SYSTEM' = 'RENEW';
+        
+        // If a packageId was passed in URL or selected, and it's DIFFERENT from current
+        const hasNewPackage = formData.packageId && formData.packageId !== mySubscription.packageId;
+        
+        if (hasNewPackage) {
+          action = 'UPGRADE';
+        } else if (formData.selectedSystems.length > 0) {
+          action = 'ADD_SYSTEM';
+        }
+        
+        payload.action = action;
         await axios.put(`/api/subscription/${mySubscription.id}`, payload);
       } else {
+        payload.action = 'NEW';
         const res = await axios.post('/api/subscription', payload);
         subId = res.data.id;
       }
@@ -291,8 +336,8 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     switch (currentStep) {
       case 1: return <Step0 data={formData} onChange={handleDataChange} services={services} onSkip={() => setCurrentStep(2)} selectedPackage={selectedPkg} allSystems={allSystems} mySubscription={mySubscription} />;
       case 2: return <Step1 data={formData} onChange={handleDataChange} />;
-      case 3: return <Step2 data={formData} onChange={handleDataChange} />;
-      case 4: return <Step3 data={formData} onChange={handleDataChange} />;
+      case 3: return <Step2 data={formData} onChange={handleDataChange} mySubscription={mySubscription} />;
+      case 4: return <Step3 data={formData} onChange={handleDataChange} mySubscription={mySubscription} />;
       case 5: return <Step4 data={formData} onChange={handleDataChange} />;
       default: return null;
     }

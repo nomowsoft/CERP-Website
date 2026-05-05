@@ -35,6 +35,7 @@ export async function GET(request: NextRequest, { params }: any) {
         // Convert Buffer icon to Base64 string
         const formattedSystem = {
             ...system,
+            price: Number(system.price),
             icon: formatIcon(system.icon)
         };
         
@@ -84,6 +85,7 @@ export async function PUT(request: NextRequest, { params }: any) {
         // Convert back for response
         const responseSystem = {
             ...updatedSystem,
+            price: Number(updatedSystem.price),
             icon: formatIcon(updatedSystem.icon)
         };
 

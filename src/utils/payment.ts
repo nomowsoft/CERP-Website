@@ -141,8 +141,12 @@ export class SubscriptionService {
             data: updateData
         });
 
-        // Trigger server provisioning/update
-        const provisioningResult = await ServerManager.provisionServer(subscription.id);
+        // Trigger server provisioning/update only for NEW or UPGRADE requests
+        // System additions are handled locally in the database and don't require re-provisioning
+        let provisioningResult = { success: true, message: "Processed successfully" };
+        if (request.type !== 'ADD_SYSTEM') {
+            provisioningResult = await ServerManager.provisionServer(subscription.id);
+        }
 
         // Also create a payment record
         if (pkg || (request.systems && request.systems.length > 0)) {

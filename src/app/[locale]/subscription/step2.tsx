@@ -7,9 +7,10 @@ import { useTranslations } from "next-intl";
 interface AssociationDataStepProps {
   data: SubscriptionFormData;
   onChange: (data: Partial<SubscriptionFormData>) => void;
+  mySubscription?: any;
 }
 
-const Step2 = ({ data, onChange }: AssociationDataStepProps) => {
+const Step2 = ({ data, onChange, mySubscription }: AssociationDataStepProps) => {
   const t = useTranslations('subscription.associationData');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,6 +19,8 @@ const Step2 = ({ data, onChange }: AssociationDataStepProps) => {
       onChange({ licenseFile: file });
     }
   };
+
+  const isReadOnly = !!mySubscription?.charityRegisterNo;
 
   return (
     <div className="space-y-6">
@@ -36,7 +39,8 @@ const Step2 = ({ data, onChange }: AssociationDataStepProps) => {
             value={data.charityRegisterNo}
             onChange={(e) => onChange({ charityRegisterNo: e.target.value })}
             placeholder={t('associationNumberPlaceholder')}
-            className="text-right border border-gray-300"
+            className={`text-right border border-gray-300 ${isReadOnly ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
+            readOnly={isReadOnly}
           />
         </div>
 
@@ -61,7 +65,7 @@ const Step2 = ({ data, onChange }: AssociationDataStepProps) => {
 
             {data.licenseFile && (
               <p className="text-sm text-muted-foreground mt-2">
-                {t('fileSelected')} {data.licenseFile.name}
+                {t('fileSelected')} {data.licenseFile instanceof File ? data.licenseFile.name : (typeof data.licenseFile === 'string' ? t('existingFile') : '')}
               </p>
             )}
           </div>

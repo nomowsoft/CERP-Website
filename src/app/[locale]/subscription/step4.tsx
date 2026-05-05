@@ -1,9 +1,12 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreditCard, Building, Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { SubscriptionFormData } from "@/utils/subscription";
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 interface PaymentStepProps {
   data: SubscriptionFormData;
@@ -14,6 +17,8 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
   const t = useTranslations('subscription.payment');
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -110,9 +115,11 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
               <p className="text-sm text-green-600 font-bold mt-2 flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4" /> {data.bankReceiptFile.name}
               </p>
-            )}
-          </div>
+          )}
         </div>
+      </div>
+    )}
+
       {/* Terms and Conditions */}
       <div className="mt-8 pt-6 border-t border-gray-100">
         <label className="flex items-start gap-3 cursor-pointer group">
@@ -128,18 +135,112 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
             <span className="font-medium text-gray-900">
               {isAr ? "أوافق على " : "I agree to the "}
             </span>
-            <a href="#" className="font-bold text-primary hover:underline">
+            <button 
+              type="button"
+              onClick={(e) => { e.preventDefault(); setShowTerms(true); }}
+              className="font-bold text-primary hover:underline bg-transparent border-none p-0 inline mx-1"
+            >
               {isAr ? "الشروط والأحكام" : "Terms and Conditions"}
-            </a>
-            <span className="font-medium text-gray-900">
+            </button>
+            <span className="font-medium text-gray-900 mx-1">
               {isAr ? " و" : " and "}
             </span>
-            <a href="#" className="font-bold text-primary hover:underline">
+            <button 
+              type="button"
+              onClick={(e) => { e.preventDefault(); setShowPrivacy(true); }}
+              className="font-bold text-primary hover:underline bg-transparent border-none p-0 inline"
+            >
               {isAr ? "سياسة الخصوصية" : "Privacy Policy"}
-            </a>
+            </button>
           </div>
         </label>
       </div>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {(showTerms || showPrivacy) && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+              onClick={() => { setShowTerms(false); setShowPrivacy(false); }}
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl p-8 z-10 max-h-[80vh] overflow-y-auto"
+            >
+              <button 
+                onClick={() => { setShowTerms(false); setShowPrivacy(false); }}
+                className="absolute top-6 left-6 p-2 text-gray-400 hover:text-red-500 rounded-xl transition-all"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              
+              <h3 className="text-2xl font-black mb-6">
+                {showTerms ? (isAr ? "الشروط والأحكام" : "Terms and Conditions") : (isAr ? "سياسة الخصوصية" : "Privacy Policy")}
+              </h3>
+              
+              <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+                {showTerms ? (
+                  isAr ? (
+                    <>
+                      <p>مرحباً بكم في منصة CERP. باستخدامكم لخدماتنا، فإنكم توافقون على الالتزام بالشروط التالية:</p>
+                      <ul className="list-disc pr-5 space-y-2">
+                        <li><strong>الاشتراكات:</strong> يتم تجديد الاشتراك تلقائياً ما لم يتم الإلغاء قبل موعد التجديد بـ 48 ساعة.</li>
+                        <li><strong>الاستخدام العادل:</strong> يمنع استخدام الأنظمة في أغراض غير قانونية أو تضر بالمنصة.</li>
+                        <li><strong>الدعم الفني:</strong> نلتزم بتوفير دعم فني خلال ساعات العمل الرسمية لكافة المشتركين.</li>
+                        <li><strong>إلغاء الخدمة:</strong> يحق للمنصة إيقاف الخدمة في حال مخالفة أي من هذه الشروط.</li>
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      <p>Welcome to CERP platform. By using our services, you agree to comply with the following terms:</p>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Subscriptions:</strong> Subscriptions renew automatically unless cancelled 48 hours before the renewal date.</li>
+                        <li><strong>Fair Use:</strong> Systems must not be used for illegal purposes or activities that harm the platform.</li>
+                        <li><strong>Technical Support:</strong> We commit to providing technical support during official working hours for all subscribers.</li>
+                        <li><strong>Termination:</strong> We reserve the right to suspend the service if any of these terms are violated.</li>
+                      </ul>
+                    </>
+                  )
+                ) : (
+                  isAr ? (
+                    <>
+                      <p>نحن في CERP نولي أهمية قصوى لخصوصية بياناتكم:</p>
+                      <ul className="list-disc pr-5 space-y-2">
+                        <li><strong>جمع البيانات:</strong> نقوم بجمع البيانات الضرورية فقط لتقديم الخدمة وإتمام عمليات الدفع.</li>
+                        <li><strong>أمن البيانات:</strong> نستخدم تقنيات تشفير متقدمة لحماية بياناتكم من الوصول غير المصرح به.</li>
+                        <li><strong>مشاركة البيانات:</strong> لا نقوم ببيع أو مشاركة بياناتكم مع أي أطراف ثالثة لأغراض تسويقية.</li>
+                        <li><strong>حقوق المستخدم:</strong> يحق لكم طلب تعديل أو حذف بياناتكم الشخصية في أي وقت.</li>
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      <p>At CERP, we prioritize your data privacy:</p>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Data Collection:</strong> We only collect data necessary to provide the service and complete payments.</li>
+                        <li><strong>Data Security:</strong> We use advanced encryption technologies to protect your data from unauthorized access.</li>
+                        <li><strong>Data Sharing:</strong> We do not sell or share your data with any third parties for marketing purposes.</li>
+                        <li><strong>User Rights:</strong> You have the right to request modification or deletion of your personal data at any time.</li>
+                      </ul>
+                    </>
+                  )
+                )}
+              </div>
+              
+              <div className="mt-8 flex justify-end">
+                <Button onClick={() => { setShowTerms(false); setShowPrivacy(false); }} className="px-8 py-4 rounded-xl bg-primary text-white font-bold">
+                  {isAr ? "فهمت ذلك" : "Got it"}
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
