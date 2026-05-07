@@ -88,7 +88,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 </div>
             </div>
 
-            <nav className="flex-1 mt-6 px-4 space-y-2" dir={`${locale === 'ar' ? 'rtl' : 'ltr'}`}>
+            <nav className="flex-1 mt-6 px-4 space-y-2 overflow-y-auto custom-scrollbar" dir={`${locale === 'ar' ? 'rtl' : 'ltr'}`}>
                 {filteredNavItems.map((item) => (
                     <Link
                         key={item.label}

@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
             description_en: body.description_en,
             description_ar: body.description_ar,
             image: imageBuffer as any,
-            price: body.price,
+            price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
             currency: body.currency,
             features: {
                 create: body.features?.map((f: any) => ({

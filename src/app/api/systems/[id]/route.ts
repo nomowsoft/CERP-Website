@@ -78,7 +78,7 @@ export async function PUT(request: NextRequest, { params }: any) {
                 description_en: body.description_en,
                 description_ar: body.description_ar,
                 icon: iconBuffer,
-                price: body.price,
+                price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
             }
         });
 
