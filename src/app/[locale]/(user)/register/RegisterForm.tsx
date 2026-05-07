@@ -9,7 +9,7 @@ const RegisterForm = () => {
     const router = useRouter();
     const locale = useLocale();
     const t = useTranslations("contact.register");
-    const tCommon = useTranslations("form");
+    const tCommon = useTranslations("dashboard.common");
     const DOMAIN = process.env.NEXT_PUBLIC_API_URL;
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");

@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
                 name: body.name,
                 name_en: body.name_en,
                 name_ar: body.name_ar,
-                price: body.price || 0,
+                price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
                 currency: body.currency || 'SAR',
                 description: body.description,
                 description_en: body.description_en,

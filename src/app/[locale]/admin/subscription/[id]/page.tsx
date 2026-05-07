@@ -23,7 +23,8 @@ import {
     LayoutGrid,
     Info,
     Search,
-    Eye
+    Eye,
+    Copy
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -141,6 +142,12 @@ export default function SubscriptionFormPage({
                 toast.error(t('deleteError'));
             }
         }
+    };
+
+    const copyToClipboard = (text: string) => {
+        if (!text) return;
+        navigator.clipboard.writeText(text);
+        toast.success(t('copied'));
     };
 
     const currentIndex = subscriptions.findIndex((s: any) => s.id === parseInt(id));
@@ -567,12 +574,58 @@ export default function SubscriptionFormPage({
                         <p className="text-gray-500 font-medium mb-8">
                             {provisioningResult.success ? t('provisioningSuccessMsg') : provisioningResult.message || t('provisioningErrorMsg')}
                         </p>
-                        {provisioningResult.success && provisioningResult.domain && (
-                            <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">{t('instanceUrl')}</span>
-                                <a href={provisioningResult.domain} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline break-all">
-                                    {provisioningResult.domain}
-                                </a>
+                        {provisioningResult.success && (
+                            <div className="space-y-4 mb-8">
+                                {provisioningResult.domain && (
+                                    <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-start relative group">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{t('instanceUrl')}</span>
+                                        <div className="flex items-center justify-between gap-3">
+                                            <a href={provisioningResult.domain} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline break-all text-sm">
+                                                {provisioningResult.domain}
+                                            </a>
+                                            <button 
+                                                onClick={() => copyToClipboard(provisioningResult.domain)}
+                                                className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors shrink-0"
+                                                title={t('copy')}
+                                            >
+                                                <Copy className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {provisioningResult.data?.Data?.Credentials && (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-start">
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{t('login')}</span>
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className="font-mono font-bold text-gray-700 text-xs truncate">
+                                                    {provisioningResult.data.Data.Credentials.Login}
+                                                </span>
+                                                <button 
+                                                    onClick={() => copyToClipboard(provisioningResult.data.Data.Credentials.Login)}
+                                                    className="p-1.5 hover:bg-gray-200 rounded-md text-gray-500 transition-colors shrink-0"
+                                                >
+                                                    <Copy className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 text-start">
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{t('password')}</span>
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className="font-mono font-bold text-gray-700 text-xs truncate">
+                                                    {provisioningResult.data.Data.Credentials.Password}
+                                                </span>
+                                                <button 
+                                                    onClick={() => copyToClipboard(provisioningResult.data.Data.Credentials.Password)}
+                                                    className="p-1.5 hover:bg-gray-200 rounded-md text-gray-500 transition-colors shrink-0"
+                                                >
+                                                    <Copy className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                         <Button onClick={() => setShowProvisioningModal(false)} className="w-full py-6 rounded-2xl font-bold text-lg">{t('close')}</Button>

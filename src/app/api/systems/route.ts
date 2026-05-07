@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
                 description_en: body.description_en || "",
                 description_ar: body.description_ar || "",
                 icon: iconBuffer as any,
-                price: body.price || 0,
+                price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
             }
         });
 

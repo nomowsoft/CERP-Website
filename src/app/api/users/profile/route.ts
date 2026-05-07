@@ -42,9 +42,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(user, { status: 200 });
 
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Profile error:", error);
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      { message: "Internal Server Error", error: error.message },
       { status: 500 }
     );
   }

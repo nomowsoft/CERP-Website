@@ -84,7 +84,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description_en: body.description_en,
                     description_ar: body.description_ar,
                     image: imageBuffer,
-                    price: body.price,
+                    price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
                     currency: body.currency,
                 }
             });
@@ -139,7 +139,10 @@ export async function PUT(request: NextRequest, { params }: Props) {
         };
 
         return NextResponse.json(responsePackage, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
+        if (error.code === 'P2025') {
+            return NextResponse.json({ message: "Package not found" }, { status: 404 });
+        }
         console.error("Error updating package:", error);
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
