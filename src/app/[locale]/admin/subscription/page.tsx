@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { UserSubscriptionView } from "./UserSubscriptionView";
 import FilePreviewModal from "@/components/FilePreviewModal";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -493,6 +494,18 @@ export default function Subscription() {
                 fileUrl={previewFile?.url || ""}
                 fileType={previewFile?.type}
                 fileName={previewFile?.name}
+            />
+
+            <ConfirmDialog
+                isOpen={showDeleteModal}
+                onClose={handleCloseModal}
+                onConfirm={confirmDelete}
+                title={tc('confirmDelete')}
+                message={tc('deleteWarning')}
+                confirmText={tc('delete')}
+                cancelText={tc('cancel')}
+                variant="danger"
+                locale={params.locale as string}
             />
 
             {showProvisioningModal && provisioningResult && (
