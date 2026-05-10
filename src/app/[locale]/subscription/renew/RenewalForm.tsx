@@ -251,11 +251,19 @@ export default function RenewalForm() {
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <button onClick={() => setPaymentMethod('ONLINE')} className={`p-6 rounded-2xl border-2 transition-all flex items-center gap-4 ${paymentMethod === 'ONLINE' ? 'border-secondary bg-secondary/5' : 'border-gray-50 bg-gray-50/50'}`}>
-                                <CreditCard className="w-6 h-6 text-secondary" />
+                            <button 
+                                disabled 
+                                className={`p-6 rounded-2xl border-2 transition-all flex items-center gap-4 opacity-50 cursor-not-allowed border-gray-50 bg-gray-50/50 relative overflow-hidden`}
+                            >
+                                <div className="absolute top-2 left-2 bg-gray-200 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded-full uppercase">
+                                    {isAr ? "قريباً" : "Soon"}
+                                </div>
+                                <div className={`p-3 rounded-xl bg-white text-gray-300 border`}>
+                                    <CreditCard className="w-6 h-6 text-gray-300" />
+                                </div>
                                 <div className="text-right">
-                                    <span className="block font-bold text-gray-800">{isAr ? "بطاقة ائتمانية" : "Credit Card"}</span>
-                                    <span className="text-xs text-gray-400">{isAr ? "تفعيل فوري" : "Instant Activation"}</span>
+                                    <span className="block font-bold text-gray-400">{isAr ? "بطاقة ائتمانية" : "Credit Card"}</span>
+                                    <span className="text-[10px] text-gray-400">{isAr ? "غير متوفر حالياً" : "Currently unavailable"}</span>
                                 </div>
                             </button>
                             <button onClick={() => setPaymentMethod('BANK')} className={`p-6 rounded-2xl border-2 transition-all flex items-center gap-4 ${paymentMethod === 'BANK' ? 'border-secondary bg-secondary/5' : 'border-gray-50 bg-gray-50/50'}`}>

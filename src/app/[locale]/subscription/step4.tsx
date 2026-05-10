@@ -35,21 +35,20 @@ const Step4 = ({ data, onChange }: PaymentStepProps) => {
 
       {/* Payment Method Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Electronic Payment */}
+        {/* Electronic Payment - DISABLED */}
         <div
-          onClick={() => onChange({ paymentMethod: 'ONLINE' })}
-          className={`p-10 rounded-3xl border-2 cursor-pointer transition-all ${data.paymentMethod === 'ONLINE'
-            ? 'border-secondary bg-secondary/5 shadow-md'
-            : 'border-primary hover:border-primary/50'
-            }`}
+          className={`p-10 rounded-3xl border-2 transition-all opacity-60 cursor-not-allowed bg-gray-50/50 border-gray-100 relative overflow-hidden`}
         >
+          <div className="absolute top-4 right-4 bg-gray-200 text-gray-600 text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest">
+            {isAr ? "قريباً" : "Soon"}
+          </div>
           <div className="flex flex-col items-center text-center">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${data.paymentMethod === 'ONLINE' ? 'bg-secondary' : 'bg-primary'}`}>
-              <CreditCard className="w-7 h-7 text-info" />
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 bg-gray-200`}>
+              <CreditCard className="w-7 h-7 text-gray-400" />
             </div>
-            <h3 className="font-doto">{t('electronicPayment')}</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {t('electronicPaymentDesc')}
+            <h3 className="font-doto text-gray-400">{t('electronicPayment')}</h3>
+            <p className="text-sm text-gray-400 mt-1">
+              {isAr ? "سيتم تفعيل هذه الوسيلة قريباً" : "This method will be activated soon"}
             </p>
           </div>
         </div>

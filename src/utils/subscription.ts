@@ -34,7 +34,7 @@ export const initialFormData: SubscriptionFormData = {
   domainType: 'SUBDOMAIN',
   subdomain: '',
   customDomain: '',
-  paymentMethod: 'ONLINE',
+  paymentMethod: 'BANK',
   cardNumber: '',
   cardHolder: '',
   expiryDate: '',

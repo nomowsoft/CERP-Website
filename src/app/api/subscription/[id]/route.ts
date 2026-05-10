@@ -387,28 +387,32 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 dataToUpdate.status = subscription.status;
             }
 
-            // Trigger provisioning ONLY if the provision flag is explicitly true
-            const shouldProvision = body.provision === true && body.status === 'DONE' && subscription.status !== 'DONE';
-            
-            if (shouldProvision) {
-                provisioningResult = await ServerManager.provisionServer(subId);
-                
-                if (!provisioningResult.success) {
-                    // STOP HERE. Don't update the DB status to DONE if provisioning failed.
-                    return NextResponse.json({ 
-                        message: provisioningResult.message,
-                        message_ar: provisioningResult.message,
-                        provisioning: provisioningResult,
-                        success: false
-                    }, { status: 400 });
-                }
-            }
-
+            // 1. ALWAYS update the subscription metadata first so that provisioning uses the new data
+            // and so that the manual retry button has the correct data to work with if provisioning fails.
             const updatedSub = await prisma.subscription.update({ 
                 where: { id: subId }, 
                 data: dataToUpdate,
                 include: { package: true, services: true, payments: true } 
             });
+
+            // Trigger provisioning ONLY if the provision flag is explicitly true
+            const shouldProvision = body.provision === true && (body.status === 'DONE' || subscription.status === 'DONE');
+            
+            if (shouldProvision) {
+                provisioningResult = await ServerManager.provisionServer(subId);
+                
+                if (!provisioningResult.success) {
+                    // If provisioning failed, we return the error but the metadata is already saved.
+                    // This allows the admin to use the "Provision Server" button to retry.
+                    return NextResponse.json({ 
+                        message: provisioningResult.message,
+                        message_ar: provisioningResult.message,
+                        provisioning: provisioningResult,
+                        success: false,
+                        subscription: updatedSub
+                    }, { status: 400 });
+                }
+            }
 
             // Refetch to get the latest data including instanceUrl from provisioning
             const finalSub = await prisma.subscription.findUnique({ 

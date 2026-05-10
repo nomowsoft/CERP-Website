@@ -111,7 +111,13 @@ export default function SubscriptionFormPage({
                 payload.bankReceipt = await fileToBase64(payload.bankReceipt);
             }
 
-            const result = await dispatch(updateSubscription({ id: parseInt(id), data: payload })).unwrap();
+            // Add provision flag if status is DONE to ensure server is updated/created
+            const finalPayload = {
+                ...payload,
+                provision: payload.status === 'DONE'
+            };
+
+            const result = await dispatch(updateSubscription({ id: parseInt(id), data: finalPayload })).unwrap();
             
             if (result.provisioning) {
                 setProvisioningResult(result.provisioning);
@@ -130,6 +136,36 @@ export default function SubscriptionFormPage({
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         await performUpdate(formData);
+    };
+
+    const handleManualProvision = async () => {
+        setIsUpdating(true);
+        try {
+            const response = await axios.post(`/api/subscription/${id}/provision`);
+            const data = response.data;
+            
+            if (data.result) {
+                setProvisioningResult(data.result);
+                setShowProvisioningModal(true);
+            }
+            
+            toast.success(isAr ? data.message_ar : data.message);
+            
+            // Refresh subscription info to get new instanceUrl etc.
+            dispatch(getSubscription());
+        } catch (err: any) {
+            console.error("Manual Provision Error:", err);
+            const errorMsg = err.response?.data?.message || err.message;
+            const errorMsgAr = err.response?.data?.message_ar || errorMsg;
+            toast.error(isAr ? errorMsgAr : errorMsg);
+            
+            if (err.response?.data?.result) {
+                setProvisioningResult(err.response.data.result);
+                setShowProvisioningModal(true);
+            }
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     const handleDelete = async () => {
@@ -269,13 +305,26 @@ export default function SubscriptionFormPage({
                                     </Button>
                                 </div>
                             ) : (
-                                <Button
-                                    onClick={() => setIsEditing(true)}
-                                    className="px-8 py-3 bg-primary text-white rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-                                >
-                                    <Settings className="w-5 h-5" />
-                                    <span className="font-bold ms-2">{tc('edit')}</span>
-                                </Button>
+                                <div className="flex gap-2">
+                                    {selectedSubscription.status === 'DONE' && (
+                                        <Button
+                                            onClick={handleManualProvision}
+                                            disabled={isUpdating}
+                                            variant="outline"
+                                            className="px-6 py-3 rounded-2xl border-primary text-primary hover:bg-primary/5 transition-all"
+                                        >
+                                            {isUpdating ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <RefreshCcw className="w-5 h-5" />}
+                                            <span className="font-bold ms-2">{t('provisioningTitle')}</span>
+                                        </Button>
+                                    )}
+                                    <Button
+                                        onClick={() => setIsEditing(true)}
+                                        className="px-8 py-3 bg-primary text-white rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                                    >
+                                        <Settings className="w-5 h-5" />
+                                        <span className="font-bold ms-2">{tc('edit')}</span>
+                                    </Button>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -471,7 +520,7 @@ export default function SubscriptionFormPage({
                                                 onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
                                                 className="w-full rounded-xl border-gray-200 py-3 bg-gray-50 focus:bg-white transition-all text-sm font-bold"
                                             >
-                                                <option value="ONLINE">{tc('online')}</option>
+                                                <option value="ONLINE" disabled>{tc('online')} ({isAr ? "غير مفعل حالياً" : "Currently Disabled"})</option>
                                                 <option value="BANK">{tc('bank')}</option>
                                             </select>
                                         ) : (
