@@ -19,7 +19,7 @@ export default function HyperPayWidget({ checkoutId, brands = "MADA VISA MASTER 
         if (!checkoutId || scriptInjected.current) return;
 
         setStatus('loading');
-        console.log("[HyperPay] Initializing for checkoutId:", checkoutId);
+        // console.log("[HyperPay] Initializing for checkoutId:", checkoutId);
 
         // 1. Set global options
         // @ts-ignore
@@ -28,7 +28,7 @@ export default function HyperPayWidget({ checkoutId, brands = "MADA VISA MASTER 
             locale: isAr ? "ar" : "en",
             style: "card",
             onReady: function () {
-                console.log("[HyperPay] Widget Ready");
+                // console.log("[HyperPay] Widget Ready");
                 setStatus('ready');
             },
             onError: function (error: any) {
@@ -65,7 +65,7 @@ export default function HyperPayWidget({ checkoutId, brands = "MADA VISA MASTER 
 
         // 5. Inject script with a slight delay to ensure the formRef is stable
         const injectTimer = setTimeout(() => {
-            console.log("[HyperPay] Appending script to body now");
+            // console.log("[HyperPay] Appending script to body now");
             document.body.appendChild(script);
             scriptInjected.current = true;
         }, 800);

@@ -2,25 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
 import { PackageType } from "@/generated/prisma";
-import { PackageDTO } from "@/utils/types";
-
-// Helper to format image for frontend
-const formatImage = (image: any) => {
-    if (!image) return null;
-    const buf = Buffer.from(image);
-    const imageStr = buf.toString('utf8');
-    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
-        return imageStr;
-    }
-    return `data:image/png;base64,${buf.toString('base64')}`;
-};
+import { formatImage } from "@/utils/imageUtils";
 
 export async function GET(request: NextRequest) {
     try {
         const packages = await prisma.package.findMany({
-            include: { 
+            select: {
+                id: true,
+                name: true,
+                name_en: true,
+                name_ar: true,
+                type: true,
+                description: true,
+                description_en: true,
+                description_ar: true,
+                image: true,
+                price: true,
+                currency: true,
                 features: true,
-                systems: true
+                systems: {
+                    select: {
+                        id: true,
+                        name: true,
+                        name_en: true,
+                        name_ar: true,
+                        icon: true,
+                        price: true
+                    }
+                }
             },
             orderBy: { createdAt: 'desc' }
         });
@@ -39,6 +48,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json(formattedPackages, { status: 200 });
     } catch (error) {
+        console.error("Error fetching packages:", error);
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
 }

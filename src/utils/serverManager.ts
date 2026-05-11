@@ -27,7 +27,7 @@ export class ServerManager {
      */
     static async provisionServer(subscriptionId: number): Promise<ProvisionResult> {
         try {
-            console.log(`[ServerManager] Starting provisioning for subscription ${subscriptionId}`);
+            // console.log(`[ServerManager] Starting provisioning for subscription ${subscriptionId}`);
 
             const subscription = await prisma.subscription.findUnique({
                 where: { id: subscriptionId },
@@ -55,29 +55,38 @@ export class ServerManager {
             // Improved mapping for Odoo module names (Addons)
             const addonsSet = new Set<string>();
             allSystemsList.forEach(s => {
-                let name = (s.name_en || s.name).trim().toLowerCase();
-                
-                // Map common system names to Odoo module names
-                if (name === 'sales' || name === 'المبيعات') name = 'sale';
-                if (name === 'accounting' || name === 'المحاسبة') name = 'account';
-                if (name === 'inventory' || name === 'المخازن') name = 'stock';
-                if (name === 'crm' || name === 'إدارة العملاء') name = 'crm';
-                if (name === 'purchases' || name === 'المشتريات') name = 'purchase';
-                if (name === 'hr' || name === 'الموارد البشرية') name = 'hr';
-                if (name === 'website' || name === 'الموقع الإلكتروني') name = 'website';
-                if (name === 'point of sale' || name === 'pos' || name === 'نقاط البيع') name = 'point_of_sale';
-                if (name === 'fleet' || name === 'الأسطول') name = 'fleet';
-                if (name === 'marketing automation' || name === 'أتمتة التسويق') name = 'marketing_automation';
-                if (name === 'project' || name === 'المشاريع') name = 'project';
-                if (name === 'timesheet' || name === 'ساعات العمل') name = 'hr_timesheet';
-                if (name === 'helpdesk' || name === 'الدعم الفني') name = 'helpdesk';
-                if (name === 'manufacturing' || name === 'mrp' || name === 'التصنيع') name = 'mrp';
-                if (name === 'quality' || name === 'الجودة') name = 'quality_control';
-                if (name === 'maintenance' || name === 'الصيانة') name = 'maintenance';
-                
-                // Sanitize: lowercase, alphanumeric and underscores only
-                const sanitized = name.replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
-                if (sanitized) addonsSet.add(sanitized);
+                // Priority 1: Use explicitly defined modules if available
+                if (s.modules && Array.isArray(s.modules) && s.modules.length > 0) {
+                    s.modules.forEach(m => {
+                        const sanitized = m.trim().toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
+                        if (sanitized) addonsSet.add(sanitized);
+                    });
+                } else {
+                    // Priority 2: Fallback to name-based mapping for systems without explicit modules
+                    let name = (s.name_en || s.name).trim().toLowerCase();
+                    
+                    // Map common system names to Odoo module names
+                    if (name === 'sales' || name === 'المبيعات') name = 'sale';
+                    if (name === 'accounting' || name === 'المحاسبة') name = 'account';
+                    if (name === 'inventory' || name === 'المخازن') name = 'stock';
+                    if (name === 'crm' || name === 'إدارة العملاء') name = 'crm';
+                    if (name === 'purchases' || name === 'المشتريات') name = 'purchase';
+                    if (name === 'hr' || name === 'الموارد البشرية') name = 'hr';
+                    if (name === 'website' || name === 'الموقع الإلكتروني') name = 'website';
+                    if (name === 'point of sale' || name === 'pos' || name === 'نقاط البيع') name = 'point_of_sale';
+                    if (name === 'fleet' || name === 'الأسطول') name = 'fleet';
+                    if (name === 'marketing automation' || name === 'أتمتة التسويق') name = 'marketing_automation';
+                    if (name === 'project' || name === 'المشاريع') name = 'project';
+                    if (name === 'timesheet' || name === 'ساعات العمل') name = 'hr_timesheet';
+                    if (name === 'helpdesk' || name === 'الدعم الفني') name = 'helpdesk';
+                    if (name === 'manufacturing' || name === 'mrp' || name === 'التصنيع') name = 'mrp';
+                    if (name === 'quality' || name === 'الجودة') name = 'quality_control';
+                    if (name === 'maintenance' || name === 'الصيانة') name = 'maintenance';
+                    
+                    // Sanitize: lowercase, alphanumeric and underscores only
+                    const sanitized = name.replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
+                    if (sanitized) addonsSet.add(sanitized);
+                }
             });
 
             const addonsList = Array.from(addonsSet);
@@ -96,7 +105,7 @@ export class ServerManager {
                 ADMIN_USER: "admin-cerp"
             };
 
-            console.log(`[ServerManager] Sending webhook payload for subscription ${subscriptionId}:`, JSON.stringify(payload, null, 2));
+            // console.log(`[ServerManager] Sending webhook payload for subscription ${subscriptionId}:`, JSON.stringify(payload, null, 2));
 
             // Use native fetch API (recommended in Next.js App Router)
             const response = await fetch(this.WEBHOOK_URL, {
@@ -126,7 +135,7 @@ export class ServerManager {
                 throw new Error(serverError);
             }
 
-            console.log(`[ServerManager] Webhook response:`, data);
+            // console.log(`[ServerManager] Webhook response:`, data);
 
             // Update subscription with instance info
             const instanceUrl = `https://${fullDomain}`;
@@ -169,7 +178,7 @@ export class ServerManager {
      */
     static async sendAction(payload: any): Promise<ProvisionResult> {
         try {
-            console.log(`[ServerManager] Sending ${payload.action} action to webhook:`, payload);
+            // console.log(`[ServerManager] Sending ${payload.action} action to webhook:`, payload);
 
             const response = await fetch(this.WEBHOOK_URL, {
                 method: 'POST',

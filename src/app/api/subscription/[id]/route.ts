@@ -7,12 +7,31 @@ import { ServerManager } from '@/utils/serverManager';
 
 const formatImage = (image: any) => {
     if (!image) return null;
-    const buf = Buffer.from(image);
-    const imageStr = buf.toString('utf8');
-    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
-        return imageStr;
+    
+    // If it's already a string, return as-is or wrap in base64
+    if (typeof image === 'string') {
+        if (image.startsWith('http') || image.startsWith('data:image')) {
+            return image;
+        }
+        return `data:image/png;base64,${image}`;
     }
-    return `data:image/png;base64,${buf.toString('base64')}`;
+
+    // Handle Buffer/Uint8Array safely
+    try {
+        const buf = Buffer.isBuffer(image) ? image : Buffer.from(image);
+        if (buf.length === 0) return null;
+
+        if (buf.length > 4) {
+            const start = buf.toString('utf8', 0, 4);
+            if (start === 'http' || start === 'data') {
+                return buf.toString('utf8');
+            }
+        }
+
+        return `data:image/png;base64,${buf.toString('base64')}`;
+    } catch (error) {
+        return null;
+    }
 };
 
 type Props = {
@@ -68,7 +87,8 @@ export async function DELETE(request: NextRequest, { params }: Props) {
             return NextResponse.json({ message: 'Deleted successfully' }, { status: 200 });
         }
         return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
-    } catch (error) {
+    } catch (error: any) {
+        console.error("DELETE Error:", error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
@@ -81,7 +101,12 @@ export async function GET(request: NextRequest, { params }: Props) {
 
         const sub = await prisma.subscription.findUnique({
             where: { id: parseInt(id) },
-            include: { package: { include: { systems: true } }, services: true, payments: true, systems: true }
+            include: { 
+                package: { include: { systems: true, features: true } }, 
+                services: { include: { contents: true } }, 
+                payments: true, 
+                systems: true 
+            }
         });
         if (!sub) return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
 
@@ -111,13 +136,23 @@ export async function GET(request: NextRequest, { params }: Props) {
                     ...sys,
                     price: Number(sys.price),
                     icon: formatImage(sys.icon)
+                })),
+                services: other.services?.map((ser: any) => ({
+                    ...ser,
+                    price: Number(ser.price),
+                    image: formatImage(ser.image)
+                })),
+                payments: other.payments?.map((pay: any) => ({
+                    ...pay,
+                    amount: Number(pay.amount)
                 }))
             };
 
             return NextResponse.json(formatted, { status: 200 });
         }
         return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
-    } catch (error) {
+    } catch (error: any) {
+        console.error("GET Error:", error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
@@ -189,8 +224,9 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     }
                 });
 
-                // Provision server for the new subscription
-                const provisioningResult = await ServerManager.provisionServer(subId);
+                // Provision server for the new subscription (Disabled - Manual provisioning required)
+                // const provisioningResult = await ServerManager.provisionServer(subId);
+                const provisioningResult = { success: true, message: "Subscription approved. Please provision manually." };
 
                 return NextResponse.json({
                     message: "Subscription approved and system provisioning started",
@@ -298,8 +334,9 @@ export async function PUT(request: NextRequest, { params }: Props) {
                             data: { subscriptionId: subId, amount: finalPrice, method: 'ONLINE', status: 'SUCCESS', transactionId: paymentId || 'MANUAL' }
                         });
                         
-                        // Provision server
-                        provisioningResult = await ServerManager.provisionServer(subId);
+                        // Provision server (Disabled - Manual provisioning required)
+                        // provisioningResult = await ServerManager.provisionServer(subId);
+                        provisioningResult = { success: true, message: "Subscription created. Please provision manually." };
 
                         // Refetch to get the latest data including instanceUrl
                         const finalUpdated = await prisma.subscription.findUnique({
@@ -444,6 +481,9 @@ export async function PUT(request: NextRequest, { params }: Props) {
         return NextResponse.json({ message: 'Unauthorized action' }, { status: 403 });
     } catch (error: any) {
         console.error("PUT Error:", error);
-        return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
+        return NextResponse.json(
+            { message: 'Internal Server Error', ...(process.env.NODE_ENV !== 'production' && { error: error.message }) },
+            { status: 500 }
+        );
     }
 }

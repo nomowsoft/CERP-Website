@@ -3,7 +3,7 @@ import Image from "next/image";
 import { SubscriptionDTO } from "@/utils/types";
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '@/app/store/store';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getSubscription, deleteSubscription, updateSubscription } from "@/app/store/slices/subscriptionSlice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,8 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { UserSubscriptionView } from "./UserSubscriptionView";
 import FilePreviewModal from "@/components/FilePreviewModal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { getModuleFriendlyName } from "@/utils/moduleMapper";
+
 
 const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -55,10 +57,23 @@ export default function Subscription() {
         setPreviewFile({ url, name, type });
     };
 
+    const [requestsPage, setRequestsPage] = useState(1);
+    const [requestsPagination, setRequestsPagination] = useState({
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0
+    });
+
     const fetchRequests = async () => {
         try {
-            const resp = await axios.get('/api/subscription-requests');
-            setRequests(resp.data);
+            const type = activeTab === 'RENEWAL_REQUESTS' ? 'RENEW' : 
+                         activeTab === 'UPGRADE_REQUESTS' ? 'UPGRADE' : 
+                         activeTab === 'SYSTEM_REQUESTS' ? 'ADD_SYSTEM' : 'ALL';
+            
+            const resp = await axios.get(`/api/subscription-requests?page=${requestsPage}&limit=10&type=${type}`);
+            setRequests(resp.data.data);
+            setRequestsPagination(resp.data.pagination);
         } catch (err) {
             console.error("Failed to fetch requests", err);
         }
@@ -77,9 +92,11 @@ export default function Subscription() {
     };
 
     useEffect(() => {
-        if (activeTab === 'RENEWAL_REQUESTS' || activeTab === 'UPGRADE_REQUESTS' || activeTab === 'SYSTEM_REQUESTS') fetchRequests();
+        if (activeTab === 'RENEWAL_REQUESTS' || activeTab === 'UPGRADE_REQUESTS' || activeTab === 'SYSTEM_REQUESTS') {
+            fetchRequests();
+        }
         if (activeTab === 'SETTINGS') fetchSettings();
-    }, [activeTab]);
+    }, [activeTab, requestsPage]);
 
     const handleSaveSetting = async (key: string, value: any) => {
         setIsSavingSetting(true);
@@ -97,25 +114,40 @@ export default function Subscription() {
 
 
     const params = useParams();
-    const isAr = params.locale === 'ar';
+    const locale = params.locale as string || 'ar';
+    const isAr = locale === 'ar';
     const dir = isAr ? 'rtl' : 'ltr';
 
     useEffect(() => {
         dispatch(getSubscription());
     }, [dispatch]);
 
-    const { subscriptionInfo: subscriptions, loading } = useSelector((state: any) => state.subscription);
+    const { subscriptionInfo, loading } = useSelector((state: any) => state.subscription);
+    const subscriptions = subscriptionInfo?.data || [];
+    const pagination = subscriptionInfo?.pagination || { total: 0, totalPages: 0 };
 
-    const filteredSubscriptions = subscriptions.filter((item: SubscriptionDTO) => {
-        const matchesSearch =
-            item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (item.domainName && item.domainName.toLowerCase().includes(searchTerm.toLowerCase()));
+    const [page, setPage] = useState(1);
+    const [limit] = useState(10);
 
-        const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            dispatch(getSubscription({ 
+                page, 
+                limit, 
+                search: searchTerm, 
+                status: statusFilter 
+            }));
+        }, 500); // Debounce search
+        return () => clearTimeout(timer);
+    }, [dispatch, page, limit, searchTerm, statusFilter]);
 
-        return matchesSearch && matchesStatus;
-    });
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.totalPages) {
+            setPage(newPage);
+        }
+    };
+
+    const filteredSubscriptions = subscriptions; // Now handled by server
 
     const handleShowDetails = (item: SubscriptionDTO) => {
         router.push(`/${params.locale}/admin/subscription/${item.id}`);
@@ -130,14 +162,24 @@ export default function Subscription() {
         setShowDeleteModal(true);
     };
 
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const confirmDelete = async () => {
         if (subscriptionToDelete) {
+            setIsDeleting(true);
             try {
                 await dispatch(deleteSubscription(subscriptionToDelete)).unwrap();
                 toast.success(tc('deleteSuccess'));
                 handleCloseModal();
-            } catch (err: any) {
+                // Re-fetch to update pagination and ensure state is fresh from server
+                // We do this after closing modal and success toast
+                setTimeout(() => {
+                    dispatch(getSubscription({ page, limit, search: searchTerm, status: statusFilter }));
+                }, 100);
+            } catch (error) {
                 toast.error(tc('deleteError'));
+            } finally {
+                setIsDeleting(false);
             }
         }
     };
@@ -171,7 +213,7 @@ export default function Subscription() {
                 </div>
             );
         }
-        const userSubscription = subscriptions?.find((s: any) => s.userId === userInfo?.id);
+        const userSubscription = subscriptions?.[0];
         return (
             <section className="container mx-auto p-4 lg:p-8" dir={dir}>
                 <UserSubscriptionView subscription={userSubscription} />
@@ -242,12 +284,13 @@ export default function Subscription() {
                             <table className="w-full text-start border-collapse">
                                 <thead>
                                     <tr className="bg-gray-50/50">
-                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{tc('id')}</th>
-                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{tc('user')}</th>
-                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{tc('package')}</th>
-                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{tc('status')}</th>
-                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start">{tc('lastRenewal')}</th>
-                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-center">{tc('actions')}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{tc('id')}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{tc('user')}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{tc('package')}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{isAr ? "الأنظمة والوحدات" : "Systems & Modules"}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{tc('status')}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-start px-6">{tc('lastRenewal')}</th>
+                                        <th className="py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-center px-6">{tc('actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
@@ -274,6 +317,30 @@ export default function Subscription() {
                                                 <td className="py-5 px-6">
                                                     <span className="font-bold text-primary">{isAr ? item.package?.name_ar : item.package?.name_en}</span>
                                                 </td>
+                                                <td className="py-5 px-6 max-w-[250px]">
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {(() => {
+                                                            const systems = [...(item.package?.systems || []), ...(item.systems || [])];
+                                                            return systems.map((sys: any, sIdx: number) => (
+                                                                <div key={sIdx} className="flex flex-col gap-1">
+                                                                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[9px] px-2 py-0 rounded-lg font-bold w-fit">
+                                                                        {isAr ? sys.name_ar : sys.name_en}
+                                                                    </Badge>
+                                                                    {sys.modules && sys.modules.length > 0 && (
+                                                                        <div className="flex flex-wrap gap-1">
+                                                                            {sys.modules.slice(0, 3).map((mod: string, mIdx: number) => (
+                                                                                <span key={mIdx} className="text-[8px] bg-gray-50 px-1 rounded text-gray-400 font-medium border border-gray-100">
+                                                                                    {getModuleFriendlyName(mod, locale)}
+                                                                                </span>
+                                                                            ))}
+                                                                            {sys.modules.length > 3 && <span className="text-[8px] text-gray-300">+{sys.modules.length - 3}</span>}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ));
+                                                        })()}
+                                                    </div>
+                                                </td>
                                                 <td className="py-5 px-6">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${item.status === 'DRAFT' ? 'bg-blue-100 text-blue-600' :
                                                         item.status === 'PROGRES' ? 'bg-yellow-100 text-yellow-600' :
@@ -291,21 +358,21 @@ export default function Subscription() {
                                                 <td className="py-5 px-6">
                                                     <div className="flex items-center justify-center gap-2">
                                                         <button
-                                                            onClick={() => handleShowDetails(item)}
+                                                            onClick={(e) => { e.stopPropagation(); handleShowDetails(item); }}
                                                             className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
                                                             title={tc('view')}
                                                         >
                                                             <Eye className="w-5 h-5" />
                                                         </button>
                                                         <button
-                                                            onClick={() => handleEdit(item)}
+                                                            onClick={(e) => { e.stopPropagation(); handleEdit(item); }}
                                                             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                                                             title={tc('edit')}
                                                         >
                                                             <Edit className="w-5 h-5" />
                                                         </button>
                                                         <button
-                                                            onClick={() => handleDeleteClick(item.id)}
+                                                            onClick={(e) => { e.stopPropagation(); handleDeleteClick(item.id); }}
                                                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                                                             title={tc('delete')}
                                                         >
@@ -319,6 +386,50 @@ export default function Subscription() {
                                 </tbody>
                             </table>
                         </div>
+                        
+                        {pagination.totalPages > 1 && (
+                            <div className="p-6 border-t border-gray-100 flex items-center justify-between gap-4">
+                                <div className="text-[12px] text-gray-500 font-medium">
+                                    {isAr ? `عرض ${subscriptions.length} من أصل ${pagination.total}` : `Showing ${subscriptions.length} of ${pagination.total}`}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handlePageChange(page - 1)}
+                                        disabled={page === 1}
+                                        className="rounded-xl h-9 px-4 border-gray-200"
+                                    >
+                                        <ChevronLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
+                                    </Button>
+                                    <div className="flex items-center gap-1">
+                                        {[...Array(pagination.totalPages)].map((_, i) => (
+                                            <Button
+                                                key={i + 1}
+                                                variant={page === i + 1 ? "default" : "outline"}
+                                                size="sm"
+                                                onClick={() => handlePageChange(i + 1)}
+                                                className={cn(
+                                                    "w-9 h-9 rounded-xl font-bold text-[12px]",
+                                                    page === i + 1 ? "bg-primary text-white shadow-lg shadow-primary/20" : "border-gray-200 text-gray-500"
+                                                )}
+                                            >
+                                                {i + 1}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handlePageChange(page + 1)}
+                                        disabled={page === pagination.totalPages}
+                                        className="rounded-xl h-9 px-4 border-gray-200"
+                                    >
+                                        <ChevronRight className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </>
             ) : activeTab === 'SETTINGS' ? (
@@ -373,14 +484,7 @@ export default function Subscription() {
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {(() => {
-                                    const filteredReqs = requests.filter(req => {
-                                        if (activeTab === 'RENEWAL_REQUESTS') return req.type === 'RENEW';
-                                        if (activeTab === 'UPGRADE_REQUESTS') return req.type === 'UPGRADE';
-                                        if (activeTab === 'SYSTEM_REQUESTS') return req.type === 'ADD_SYSTEM';
-                                        return false;
-                                    });
-
-                                    if (filteredReqs.length === 0) {
+                                    if (requests.length === 0) {
                                         return (
                                             <tr>
                                                 <td colSpan={7} className="py-20 text-center">
@@ -395,7 +499,7 @@ export default function Subscription() {
                                         );
                                     }
 
-                                    return filteredReqs.map((req: any) => (
+                                    return requests.map((req: any) => (
                                         <tr key={req.id} className="hover:bg-gray-50/30 transition-colors">
                                             <td className="py-5 px-6">
                                                 <p className="font-bold text-gray-800">{req.subscription?.user?.charityName || req.subscription?.fullName}</p>
@@ -485,6 +589,50 @@ export default function Subscription() {
                             </tbody>
                         </table>
                     </div>
+
+                    {requestsPagination.totalPages > 1 && (
+                        <div className="p-6 border-t border-gray-100 flex items-center justify-between gap-4">
+                            <div className="text-[12px] text-gray-500 font-medium">
+                                {isAr ? `عرض ${requests.length} من أصل ${requestsPagination.total}` : `Showing ${requests.length} of ${requestsPagination.total}`}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setRequestsPage(prev => Math.max(1, prev - 1))}
+                                    disabled={requestsPage === 1}
+                                    className="rounded-xl h-9 px-4 border-gray-200"
+                                >
+                                    <ChevronLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
+                                </Button>
+                                <div className="flex items-center gap-1">
+                                    {[...Array(requestsPagination.totalPages)].map((_, i) => (
+                                        <Button
+                                            key={i + 1}
+                                            variant={requestsPage === i + 1 ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setRequestsPage(i + 1)}
+                                            className={cn(
+                                                "w-9 h-9 rounded-xl font-bold text-[12px]",
+                                                requestsPage === i + 1 ? "bg-primary text-white shadow-lg shadow-primary/20" : "border-gray-200 text-gray-500"
+                                            )}
+                                        >
+                                            {i + 1}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setRequestsPage(prev => Math.min(requestsPagination.totalPages, prev + 1))}
+                                    disabled={requestsPage === requestsPagination.totalPages}
+                                    className="rounded-xl h-9 px-4 border-gray-200"
+                                >
+                                    <ChevronRight className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -506,6 +654,7 @@ export default function Subscription() {
                 cancelText={tc('cancel')}
                 variant="danger"
                 locale={params.locale as string}
+                isLoading={isDeleting}
             />
 
             {showProvisioningModal && provisioningResult && (

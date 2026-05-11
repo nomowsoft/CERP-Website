@@ -7,6 +7,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { getModuleFriendlyName } from "@/utils/moduleMapper";
 
 export default function SystemsPage() {
     const t = useTranslations("admin.systems");
@@ -15,6 +17,8 @@ export default function SystemsPage() {
     const [systems, setSystems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [systemToDelete, setSystemToDelete] = useState<number | null>(null);
 
     const fetchSystems = async () => {
         try {
@@ -32,14 +36,22 @@ export default function SystemsPage() {
         fetchSystems();
     }, []);
 
-    const handleDelete = async (id: number) => {
-        if (!confirm(t("deleteConfirm"))) return;
+    const handleDeleteClick = (id: number) => {
+        setSystemToDelete(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!systemToDelete) return;
         try {
-            await axios.delete(`/api/systems/${id}`);
+            await axios.delete(`/api/systems/${systemToDelete}`);
             toast.success(t("deleteSuccess"));
             fetchSystems();
         } catch (err) {
             toast.error("Failed to delete system");
+        } finally {
+            setShowDeleteModal(false);
+            setSystemToDelete(null);
         }
     };
 
@@ -100,17 +112,27 @@ export default function SystemsPage() {
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className="group bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 relative overflow-hidden"
                             >
-                                <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="absolute top-0 right-0 p-4 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-20">
                                     <div className="flex gap-2">
                                         <button 
-                                            onClick={() => router.push(`/${locale}/admin/systems/${system.id}`)}
-                                            className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                router.push(`/${locale}/admin/systems/${system.id}`);
+                                            }}
+                                            className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors shadow-sm"
+                                            title={t("editSystem")}
                                         >
                                             <Edit className="w-4 h-4" />
                                         </button>
                                         <button 
-                                            onClick={() => handleDelete(system.id)}
-                                            className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleDeleteClick(system.id);
+                                            }}
+                                            className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors shadow-sm"
+                                            title={t("deleteConfirm")}
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
@@ -132,6 +154,24 @@ export default function SystemsPage() {
                                         <p className="text-gray-500 text-sm line-clamp-2 mt-1">
                                             {locale === 'ar' ? system.description_ar : system.description_en}
                                         </p>
+                                        
+                                        {system.modules && system.modules.length > 0 && (
+                                            <div className="mt-3 flex flex-wrap gap-1.5">
+                                                {system.modules.slice(0, 4).map((mod: string, mIdx: number) => (
+                                                    <span 
+                                                        key={mIdx} 
+                                                        className="text-[9px] bg-primary/5 text-primary px-2 py-0.5 rounded-md font-bold border border-primary/10"
+                                                    >
+                                                        {getModuleFriendlyName(mod, locale)}
+                                                    </span>
+                                                ))}
+                                                {system.modules.length > 4 && (
+                                                    <span className="text-[9px] text-gray-400 font-bold">
+                                                        +{system.modules.length - 4}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 
@@ -164,6 +204,18 @@ export default function SystemsPage() {
                     </div>
                 )}
             </div>
+
+            <ConfirmDialog
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={confirmDelete}
+                title={t("deleteConfirm")}
+                message={t("deleteWarning")}
+                confirmText={t("delete")}
+                cancelText={t("cancel")}
+                variant="danger"
+                locale={locale}
+            />
         </div>
     );
 }

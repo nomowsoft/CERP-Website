@@ -14,6 +14,7 @@ interface ConfirmDialogProps {
     cancelText?: string;
     variant?: "danger" | "warning" | "info";
     locale?: string;
+    isLoading?: boolean;
 }
 
 export default function ConfirmDialog({
@@ -25,7 +26,8 @@ export default function ConfirmDialog({
     confirmText,
     cancelText,
     variant = "danger",
-    locale = "ar"
+    locale = "ar",
+    isLoading = false
 }: ConfirmDialogProps) {
     const t = useTranslations("dashboard.common");
 
@@ -56,7 +58,6 @@ export default function ConfirmDialog({
 
     const handleConfirm = () => {
         onConfirm();
-        onClose();
     };
 
     return (
@@ -69,7 +70,7 @@ export default function ConfirmDialog({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="absolute inset-0 bg-black/60 backdrop-blur-md"
-                        onClick={onClose}
+                        onClick={isLoading ? undefined : onClose}
                     />
 
                     {/* Dialog */}
@@ -81,12 +82,14 @@ export default function ConfirmDialog({
                         className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-md relative z-10"
                     >
                         {/* Close Button */}
-                        <button
-                            onClick={onClose}
-                            className={`absolute top-6 ${locale === 'ar' ? 'left-6' : 'right-6'} p-2 rounded-full hover:bg-gray-100 transition-colors`}
-                        >
-                            <X className="w-5 h-5 text-gray-400" />
-                        </button>
+                        {!isLoading && (
+                            <button
+                                onClick={onClose}
+                                className={`absolute top-6 ${locale === 'ar' ? 'left-6' : 'right-6'} p-2 rounded-full hover:bg-gray-100 transition-colors`}
+                            >
+                                <X className="w-5 h-5 text-gray-400" />
+                            </button>
+                        )}
 
                         {/* Icon */}
                         <div className="flex justify-center mb-6">
@@ -96,18 +99,22 @@ export default function ConfirmDialog({
                                 transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
                                 className={`p-4 ${styles.iconBg} rounded-full`}
                             >
-                                <AlertTriangle className={`w-12 h-12 ${styles.icon}`} />
+                                {isLoading ? (
+                                    <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+                                ) : (
+                                    <AlertTriangle className={`w-12 h-12 ${styles.icon}`} />
+                                )}
                             </motion.div>
                         </div>
 
                         {/* Title */}
                         <h3 className="text-2xl font-black text-gray-900 text-center mb-3">
-                            {title || defaultTitle}
+                            {isLoading ? (locale === 'ar' ? 'جاري التنفيذ...' : 'Processing...') : (title || defaultTitle)}
                         </h3>
 
                         {/* Message */}
                         <p className="text-gray-600 text-center mb-8 leading-relaxed">
-                            {message || defaultMessage}
+                            {isLoading ? (locale === 'ar' ? 'يرجى الانتظار، جاري معالجة طلبك.' : 'Please wait while we process your request.') : (message || defaultMessage)}
                         </p>
 
                         {/* Actions */}
@@ -116,16 +123,22 @@ export default function ConfirmDialog({
                                 type="button"
                                 onClick={onClose}
                                 variant="outline"
-                                className="flex-1 py-6 rounded-xl font-bold border-2 border-gray-200 hover:bg-gray-50 transition-all"
+                                disabled={isLoading}
+                                className="flex-1 py-6 rounded-xl font-bold border-2 border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-50"
                             >
                                 {cancelText || defaultCancelText}
                             </Button>
                             <Button
                                 type="button"
                                 onClick={handleConfirm}
-                                className={`flex-1 py-6 rounded-xl font-bold transition-all active:scale-95 ${styles.confirmBtn}`}
+                                disabled={isLoading}
+                                className={`flex-1 py-6 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 ${styles.confirmBtn}`}
                             >
-                                {confirmText || defaultConfirmText}
+                                {isLoading ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+                                ) : (
+                                    confirmText || defaultConfirmText
+                                )}
                             </Button>
                         </div>
                     </motion.div>

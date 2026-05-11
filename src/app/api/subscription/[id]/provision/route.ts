@@ -29,7 +29,7 @@ export async function POST(request: NextRequest, { params }: Props) {
             return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
         }
 
-        console.log(`[ManualProvision] Manually triggering provisioning for subscription ${subId}`);
+        // console.log(`[ManualProvision] Manually triggering provisioning for subscription ${subId}`);
         const provisioningResult = await ServerManager.provisionServer(subId);
 
         if (provisioningResult.success) {

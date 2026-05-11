@@ -1,6 +1,13 @@
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Use production HyperPay domains in prod, test domains in dev
+const hyperPayDomain = isProduction
+    ? 'https://eu-prod.oppwa.com'
+    : 'https://eu-test.oppwa.com https://test.oppwa.com';
+
 const nextConfig: NextConfig = {
     env: {
         NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
@@ -19,20 +26,20 @@ const nextConfig: NextConfig = {
             {
                 source: "/(.*)",
                 headers: [
-                    { key: "X-Frame-Options", value: "SAMEORIGIN" },
+                    { key: "X-Frame-Options", value: "DENY" },
                     { key: "X-Content-Type-Options", value: "nosniff" },
                     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
                     {
                         key: "Content-Security-Policy",
                         value: `
                             default-src 'self';
-                            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://eu-test.oppwa.com https://test.oppwa.com;
-                            style-src 'self' 'unsafe-inline' https://eu-test.oppwa.com https://test.oppwa.com;
+                            script-src 'self' 'unsafe-inline' 'unsafe-eval' ${hyperPayDomain};
+                            style-src 'self' 'unsafe-inline' ${hyperPayDomain};
                             img-src 'self' https: data: blob:;
                             font-src 'self' https: data:;
-                            connect-src 'self' https: https://eu-test.oppwa.com https://test.oppwa.com;
-                            frame-src 'self' https: data: blob: https://eu-test.oppwa.com https://test.oppwa.com;
-                            frame-ancestors 'self';
+                            connect-src 'self' https: ${hyperPayDomain};
+                            frame-src 'self' https: data: blob: ${hyperPayDomain};
+                            frame-ancestors 'none';
                             object-src 'self' data:;
                             base-uri 'self';
                         `.replace(/\s{2,}/g, " ").trim()

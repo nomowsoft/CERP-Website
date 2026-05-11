@@ -405,7 +405,13 @@
       "totalInvoices": "Total Invoices",
       "paidPending": "{paid} Paid , {pending} Pending",
       "nextPayment": "Next Payment",
-      "currency": "SAR"
+      "currency": "SAR",
+      "totalUsers": "Total Users",
+      "totalRegistered": "Total Registered",
+      "pendingRequests": "Pending Requests",
+      "requiresAction": "Requires Action",
+      "availablePackages": "Available Packages",
+      "totalPackages": "Total Packages"
     },
     "invoices": {
       "latestInvoices": "Latest Invoices",
@@ -582,7 +588,11 @@
     },
     "services": {
       "title": "Services Management",
-      "subtitle": "Manage provided services and their content"
+      "subtitle": "Manage provided services and their content",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this service?",
+      "deleteWarning": "Deleting this service will permanently remove it from the platform and cannot be undone.",
+      "cancel": "Cancel"
     },
     "systems": {
       "title": "Systems Management",
@@ -599,7 +609,10 @@
       "descLabel": "System Description",
       "iconLabel": "System Icon (Class name)",
       "save": "Save",
+      "delete": "Delete",
       "deleteConfirm": "Are you sure you want to delete this system?",
+      "deleteWarning": "This action will permanently delete the system and cannot be undone.",
+      "cancel": "Cancel",
       "deleteSuccess": "System deleted successfully",
       "updateSuccess": "System updated successfully",
       "createSuccess": "System created successfully",

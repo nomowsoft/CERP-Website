@@ -21,16 +21,19 @@ import {
     ChevronLeft,
     ChevronRight,
     LayoutGrid,
+    Layers,
     Info,
     Search,
     Eye,
     Copy
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getModuleFriendlyName, getUnifiedModules } from "@/utils/moduleMapper";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,10 +62,12 @@ export default function SubscriptionFormPage({
     const isAr = locale === 'ar';
     const dispatch = useDispatch<AppDispatch>();
 
-    const { subscriptionInfo: subscriptions, loading: listLoading } = useSelector((state: RootState) => state.subscription);
+    const { subscriptionInfo, loading: listLoading } = useSelector((state: RootState) => state.subscription);
+    const subscriptions = subscriptionInfo?.data || [];
     const [selectedSubscription, setSelectedSubscription] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [formData, setFormData] = useState<any>({});
     const [isUpdating, setIsUpdating] = useState(false);
     const [provisioningResult, setProvisioningResult] = useState<any>(null);
@@ -71,7 +76,7 @@ export default function SubscriptionFormPage({
 
     useEffect(() => {
         if (subscriptions.length === 0) {
-            dispatch(getSubscription());
+            dispatch(getSubscription({ page: 1, limit: 100 })); // Fetch more for sidebar/navigation
         }
     }, [dispatch, subscriptions.length]);
 
@@ -111,13 +116,7 @@ export default function SubscriptionFormPage({
                 payload.bankReceipt = await fileToBase64(payload.bankReceipt);
             }
 
-            // Add provision flag if status is DONE to ensure server is updated/created
-            const finalPayload = {
-                ...payload,
-                provision: payload.status === 'DONE'
-            };
-
-            const result = await dispatch(updateSubscription({ id: parseInt(id), data: finalPayload })).unwrap();
+            const result = await dispatch(updateSubscription({ id: parseInt(id), data: payload })).unwrap();
             
             if (result.provisioning) {
                 setProvisioningResult(result.provisioning);
@@ -168,15 +167,24 @@ export default function SubscriptionFormPage({
         }
     };
 
-    const handleDelete = async () => {
-        if (confirm(t('deleteWarning'))) {
-            try {
-                await dispatch(deleteSubscription(parseInt(id))).unwrap();
-                toast.success(t('deleteSuccess'));
-                router.push(`/${locale}/admin/subscription`);
-            } catch (err: any) {
-                toast.error(t('deleteError'));
-            }
+    const handleDelete = () => {
+        setShowDeleteModal(true);
+    };
+
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const confirmDelete = async () => {
+        setIsDeleting(true);
+        try {
+            await dispatch(deleteSubscription(parseInt(id))).unwrap();
+            // No need for dispatch(getSubscription()) here as we're redirecting
+            toast.success(tc('deleteSuccess'));
+            router.push(`/${locale}/admin/subscription`);
+        } catch (err: any) {
+            toast.error(tc('deleteError'));
+        } finally {
+            setIsDeleting(false);
+            setShowDeleteModal(false);
         }
     };
 
@@ -206,6 +214,11 @@ export default function SubscriptionFormPage({
     }
 
     if (!selectedSubscription) return null;
+
+    const allSystemList = [
+        ...(selectedSubscription.package?.systems || []),
+        ...(selectedSubscription.systems || [])
+    ];
 
     return (
         <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={isAr ? 'rtl' : 'ltr'}>
@@ -289,7 +302,10 @@ export default function SubscriptionFormPage({
                             {isEditing ? (
                                 <div className="flex gap-2">
                                     <Button
-                                        onClick={handleUpdate}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleUpdate(e);
+                                        }}
                                         disabled={isUpdating}
                                         className="px-8 py-3 bg-primary text-white rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
                                     >
@@ -298,7 +314,10 @@ export default function SubscriptionFormPage({
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        onClick={() => setIsEditing(false)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setIsEditing(false);
+                                        }}
                                         className="px-6 py-3 rounded-2xl border-gray-200"
                                     >
                                         {tc('cancel')}
@@ -318,7 +337,11 @@ export default function SubscriptionFormPage({
                                         </Button>
                                     )}
                                     <Button
-                                        onClick={() => setIsEditing(true)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsEditing(true);
+                                        }}
                                         className="px-8 py-3 bg-primary text-white rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
                                     >
                                         <Settings className="w-5 h-5" />
@@ -577,6 +600,86 @@ export default function SubscriptionFormPage({
                                 </div>
                             </div>
                         </div>
+
+                        {/* Systems & Modules Section */}
+                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-8">
+                            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                <div className="flex items-center gap-3 text-primary font-bold">
+                                    <Layers className="w-6 h-6" />
+                                    <span className="text-xl">{isAr ? "الأنظمة والوحدات المضمنة" : "Included Systems & Modules"}</span>
+                                </div>
+                                {allSystemList.length > 0 && (
+                                    <Badge className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none py-1.5 px-4 rounded-xl">
+                                        {allSystemList.length} {isAr ? "أنظمة" : "Systems"}
+                                    </Badge>
+                                )}
+                            </div>
+                            
+                            {/* Unified Modules Summary (New) */}
+                            {allSystemList.length > 1 && (
+                                <div className="bg-primary/[0.02] p-6 rounded-[2rem] border border-primary/5 space-y-4">
+                                    <div className="flex items-center gap-2 text-primary/70 font-black text-xs uppercase tracking-widest">
+                                        <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+                                        {isAr ? "إجمالي الوحدات في الباقة" : "Total Modules in Package"}
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {getUnifiedModules(allSystemList).map((mod, mIdx) => (
+                                            <div key={mIdx} className="bg-white px-4 py-2 rounded-xl text-xs font-bold text-gray-700 shadow-sm border border-gray-100 flex items-center gap-2 group hover:border-primary/30 transition-all">
+                                                <div className="w-1.5 h-1.5 bg-primary/30 rounded-full group-hover:bg-primary transition-colors" />
+                                                {getModuleFriendlyName(mod, locale)}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {allSystemList.map((system: any, idx: number) => (
+                                    <div key={idx} className="p-6 bg-gray-50/50 rounded-[2rem] border border-gray-100 space-y-4 group hover:bg-white hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary border border-gray-100 group-hover:scale-110 transition-transform">
+                                                {system.icon ? (
+                                                    <img src={system.icon} alt={system.name} className="w-8 h-8 object-contain" />
+                                                ) : (
+                                                    <Settings className="w-6 h-6" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <h5 className="font-black text-gray-900 text-lg">
+                                                    {isAr ? system.name_ar || system.name : system.name_en || system.name}
+                                                </h5>
+                                                <p className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-full w-fit">
+                                                    {isAr ? "نظام مفعل" : "Active System"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        {system.modules && system.modules.length > 0 && (
+                                            <div className="space-y-3 pt-4 border-t border-gray-200/50">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                    {isAr ? "الوحدات البرمجية:" : "Software Modules:"}
+                                                </p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {system.modules.map((mod: string, mIdx: number) => (
+                                                        <Badge key={mIdx} variant="secondary" className="bg-white text-gray-600 border-gray-100 text-[10px] py-1.5 px-3 rounded-lg font-bold shadow-sm">
+                                                            {getModuleFriendlyName(mod, locale)}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                {allSystemList.length === 0 && (
+                                    <div className="col-span-2 py-12 text-center bg-gray-50 rounded-[2rem] border border-dashed border-gray-200">
+                                        <Layers className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                        <p className="text-gray-400 text-sm font-bold">
+                                            {isAr ? "لا توجد أنظمة مرتبطة بهذا الاشتراك" : "No systems associated with this subscription"}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -681,12 +784,36 @@ export default function SubscriptionFormPage({
                     </div>
                 </div>
             )}
+
+            <ConfirmDialog
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={confirmDelete}
+                title={tc('confirmDelete')}
+                message={tc('deleteWarning')}
+                confirmText={tc('delete')}
+                cancelText={tc('cancel')}
+                variant="danger"
+                locale={locale}
+                isLoading={isDeleting}
+            />
         </div>
     );
 }
 
 function DetailField({ label, value, isEditing, onChange, mono = false, type = "text" }: { label: string, value: any, isEditing: boolean, onChange: (v: string) => void, mono?: boolean, type?: string }) {
-    const displayValue = type === "date" && value ? new Date(value).toISOString().split('T')[0] : value || "—";
+    let displayValue = value || "—";
+    
+    if (type === "date" && value) {
+        try {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                displayValue = date.toISOString().split('T')[0];
+            }
+        } catch (e) {
+            displayValue = value;
+        }
+    }
     
     return (
         <div className="space-y-1">

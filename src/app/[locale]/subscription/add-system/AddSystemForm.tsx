@@ -13,6 +13,8 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { isValidImage } from "@/utils/imageUtils";
+import { Server } from "lucide-react";
 
 export default function AddSystemForm() {
     const router = useRouter();
@@ -45,7 +47,7 @@ export default function AddSystemForm() {
         }
     }, [initialSystemId]);
 
-    const mySubscription = subscriptionInfo?.find((s: any) => s.userId === userInfo?.id);
+    const mySubscription = subscriptionInfo?.data?.find((s: any) => s.userId === userInfo?.id);
     const activeSystemIds = mySubscription?.systems?.map((s: any) => s.id) || [];
     const availableSystems = allSystems.filter(s => !activeSystemIds.includes(s.id));
 
@@ -173,15 +175,13 @@ export default function AddSystemForm() {
                                     }`}
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className={`p-4 rounded-2xl transition-colors ${
+                                        <div className={`p-4 rounded-2xl transition-colors flex items-center justify-center w-[64px] h-[64px] ${
                                             selectedSystems.includes(system.id) ? 'bg-primary/20 text-primary' : 'bg-gray-50 text-gray-400 group-hover:bg-primary/10 group-hover:text-primary'
                                         }`}>
-                                            {system.icon && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
+                                            {isValidImage(system.icon) ? (
                                                 <Image src={system.icon} alt={system.name} width={32} height={32} className="w-8 h-8 object-contain" />
                                             ) : (
-                                                <div className="w-8 h-8 flex items-center justify-center font-black text-xl">
-                                                    {system.name[0]}
-                                                </div>
+                                                <Server className="w-8 h-8" />
                                             )}
                                         </div>
                                         <div className="flex-1">

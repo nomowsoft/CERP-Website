@@ -9,14 +9,16 @@ import {
     History,
     Check,
     TrendingUp,
-    Download
+    Download,
+    Inbox
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { generateInvoicePDF } from '@/utils/invoicePdf';
+import { getModuleFriendlyName } from '@/utils/moduleMapper';
 
 export const UserSubscriptionView = ({ subscription }: { subscription: any }) => {
     const [nearExpiryDays, setNearExpiryDays] = useState(30);
@@ -36,6 +38,16 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
         fetchSettings();
     }, []);
 
+    const allSystems = useMemo(() => {
+        if (!subscription) return [];
+        const packageSystems = subscription.package?.systems || [];
+        const extraSystems = subscription.systems || [];
+        const combined = [...packageSystems, ...extraSystems];
+        return combined.filter((sys: any, index: number, self: any[]) =>
+            index === self.findIndex((t: any) => t.id === sys.id)
+        );
+    }, [subscription]);
+
     useEffect(() => {
         if (!subscription || !subscription.expiryDate || subscription.status !== 'DONE') {
             setShowRenew(false);
@@ -53,47 +65,41 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
     const tc = useTranslations('dashboard.common');
     const locale = useLocale();
     const isAr = locale === 'ar';
-    if (!subscription) {
-        return (
-            <div className="max-w-4xl mx-auto p-20 text-center bg-white rounded-[3rem] shadow-xl shadow-gray-100 border border-gray-50 flex flex-col items-center gap-6" dir={isAr ? 'rtl' : 'ltr'}>
-                <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
-                    <CreditCard className="w-12 h-12" />
-                </div>
-                <div>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-2">{isAr ? "لا يوجد اشتراك نشط" : "No Active Subscription"}</h3>
-                    <p className="text-gray-500">{isAr ? "يبدو أنك لم تشترك في أي باقة بعد." : "It looks like you haven't subscribed to any package yet."}</p>
-                </div>
-                <Link href={`/${locale}/backages_service`}>
-                    <button className="bg-primary text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
-                        {isAr ? "استكشاف الباقات" : "Explore Packages"}
-                    </button>
-                </Link>
-            </div>
+
+    const packageName = useMemo(() => {
+        if (!subscription || !subscription.package) return isAr ? "الباقة الأساسية" : "Basic Package";
+        return isAr ?
+            (subscription.package.name_ar || subscription.package.name) :
+            (subscription.package.name_en || subscription.package.name);
+    }, [subscription, isAr]);
+
+    const features = useMemo(() => {
+        if (!subscription || !subscription.package?.features) return [];
+        return subscription.package.features.map((f: any) =>
+            isAr ? (f.text_ar || f.text) : (f.text_en || f.text)
         );
-    }
-
-    const packageName = isAr ?
-        (subscription.package?.name_ar || subscription.package?.name) :
-        (subscription.package?.name_en || subscription.package?.name);
-
-    const features = subscription.package?.features?.map((f: any) =>
-        isAr ? (f.text_ar || f.text) : (f.text_en || f.text)
-    ) || [];
+    }, [subscription, isAr]);
 
     const handleDownloadPDF = async (invoice: any) => {
+        if (!subscription) return;
         await generateInvoicePDF(invoice, subscription, locale);
     };
 
     // Use real payments from subscription
-    const invoices = subscription.payments?.map((p: any) => ({
-        id: `INV-${p.id.toString().padStart(4, '0')}`,
-        date: new Date(p.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US'),
-        amount: Number(p.amount).toFixed(2),
-        status: p.status === 'SUCCESS' ? 'PAID' : p.status,
-    })) || [];
+    const invoices = useMemo(() => {
+        if (!subscription || !subscription.payments) return [];
+        return subscription.payments.map((p: any) => ({
+            id: `INV-${p.id.toString().padStart(4, '0')}`,
+            date: new Date(p.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US'),
+            amount: Number(p.amount).toFixed(2),
+            status: p.status === 'SUCCESS' ? 'PAID' : p.status,
+        }));
+    }, [subscription, isAr]);
 
-    const totalPaid = (subscription.payments || []).reduce((sum: number, p: any) => sum + Number(p.amount), 0);
-
+    const totalPaid = useMemo(() => {
+        if (!subscription || !subscription.payments) return 0;
+        return subscription.payments.reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+    }, [subscription]);
     const getStatusText = (status: string) => {
         if (status === 'DONE') return t('activeStatus');
         if (status === 'PROGRES') return tc('inProgress');
@@ -109,6 +115,24 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
         return 'bg-gray-50 text-gray-600 border-gray-100';
     };
 
+    if (!subscription) {
+        return (
+            <div className="max-w-6xl mx-auto flex flex-col items-center justify-center py-20 text-center bg-white rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100 px-4" dir={isAr ? 'rtl' : 'ltr'}>
+                <div className="bg-gray-50 p-6 rounded-full mb-6">
+                    <Inbox className="w-12 h-12 text-gray-300" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">{isAr ? 'لا يوجد اشتراك نشط' : 'No active subscription found'}</h3>
+                <p className="text-gray-500 mt-2 max-w-md">{isAr ? 'يبدو أنك لم تشترك في أي باقة بعد، يمكنك استكشاف باقاتنا المتاحة والاشتراك في الأفضل لك.' : 'It seems you haven\'t subscribed to any package yet. You can explore our available packages and subscribe to the one that best fits your needs.'}</p>
+                <Link 
+                    href={`/${locale}/backages_service`}
+                    className="mt-8 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                >
+                    {isAr ? 'تصفح الباقات' : 'Browse Packages'}
+                </Link>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-12 px-4 lg:px-0" dir={isAr ? 'rtl' : 'ltr'}>
             {/* Header */}
@@ -118,7 +142,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         <div className="p-3 bg-white shadow-sm rounded-xl">
                             <CreditCard className="w-8 h-8 text-primary" />
                         </div>
-                        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1B1464] to-[#FF4500] bg-clip-text text-transparent">
                             {t('title')}
                         </h1>
                     </div>
@@ -272,7 +296,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
             )}
 
             {/* Active Systems Section */}
-            {subscription.systems && subscription.systems.length > 0 && (
+            {allSystems.length > 0 && (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -283,27 +307,49 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         <div className="p-2 bg-blue-50 rounded-xl">
                             <CheckCircle2 className="w-5 h-5 text-blue-600" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-800">{isAr ? "الأنظمة التقنية النشطة" : "Active Technical Systems"}</h3>
+                        <h3 className="text-xl font-bold text-gray-800">{isAr ? "الأنظمة والوحدات المفعلة" : "Active Systems & Modules"}</h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {subscription.systems.map((system: any) => (
-                            <div key={system.id} className="p-5 bg-blue-50/30 rounded-3xl border border-blue-100 flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all">
-                                <div className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl border border-blue-100 shadow-sm shrink-0">
-                                    {system.icon && typeof system.icon === 'string' && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
-                                        <Image src={system.icon} alt={system.name} width={32} height={32} className="object-contain" />
-                                    ) : (
-                                        <Check className="w-6 h-6 text-blue-500" />
-                                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {allSystems.map((system: any) => (
+                            <div key={system.id} className="group h-full bg-white rounded-[1.8rem] p-5 border border-gray-100 shadow-[0_4px_15px_rgb(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgb(var(--primary-rgb),0.1)] hover:-translate-y-1.5 hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                                
+                                <div className="relative z-10 flex-1">
+                                    <div className="flex flex-col items-center text-center mb-4">
+                                        <div className="w-16 h-16 flex items-center justify-center bg-gray-50 group-hover:bg-primary/5 rounded-2xl border border-gray-100 group-hover:border-primary/20 mb-4 transition-all duration-300 shadow-sm">
+                                            {system.icon && typeof system.icon === 'string' && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
+                                                <Image src={system.icon} alt={system.name} width={36} height={36} className="object-contain group-hover:scale-110 transition-transform duration-500" />
+                                            ) : (
+                                                <Check className="w-8 h-8 text-primary/50 group-hover:scale-110 transition-transform duration-500" />
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="text-lg font-black text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
+                                                {isAr ? (system.name_ar || system.name) : (system.name_en || system.name)}
+                                            </h4>
+                                            <span className="text-[9px] font-black text-primary/60 uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-full inline-block mt-1">
+                                                {isAr ? "نظام مفعل" : "Active System"}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-gray-800">
-                                        {isAr ? (system.name_ar || system.name) : (system.name_en || system.name)}
-                                    </h4>
-                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
-                                        {isAr ? "نشط" : "Active"}
-                                    </span>
-                                </div>
+
+                                {system.modules && Array.isArray(system.modules) && system.modules.length > 0 && (
+                                    <div className="space-y-2 pt-3 border-t border-gray-50 mt-4">
+                                        <div className="flex flex-wrap gap-1 justify-center">
+                                            {system.modules.map((mod: string, mIdx: number) => (
+                                                <span 
+                                                    key={mIdx}
+                                                    className="bg-gray-50 px-2 py-1 rounded-lg text-[9px] font-bold text-gray-500 border border-gray-100 flex items-center gap-1 group-hover:bg-white group-hover:border-primary/20 transition-colors"
+                                                >
+                                                    <div className="w-1 h-1 rounded-full bg-primary/40" />
+                                                    {getModuleFriendlyName(mod, locale)}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

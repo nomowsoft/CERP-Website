@@ -25,19 +25,44 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: "Forbidden" }, { status: 403 });
         }
 
-        const requests = await prisma.subscriptionRequest.findMany({
-            include: {
-                subscription: {
-                    include: { user: { select: { name: true, charityName: true } } }
-                },
-                package: true,
-                systems: true,
-                services: true
-            },
-            orderBy: { createdAt: 'desc' }
-        });
+        const { searchParams } = new URL(request.url);
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '10');
+        const type = searchParams.get('type') || '';
+        const skip = (page - 1) * limit;
 
-        return NextResponse.json(requests, { status: 200 });
+        const where: any = {};
+        if (type && type !== 'ALL') {
+            where.type = type;
+        }
+
+        const [requests, total] = await Promise.all([
+            prisma.subscriptionRequest.findMany({
+                where,
+                include: {
+                    subscription: {
+                        include: { user: { select: { name: true, charityName: true } } }
+                    },
+                    package: true,
+                    systems: true,
+                    services: true
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit
+            }),
+            prisma.subscriptionRequest.count({ where })
+        ]);
+
+        return NextResponse.json({
+            data: requests,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });

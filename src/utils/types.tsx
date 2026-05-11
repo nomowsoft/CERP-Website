@@ -20,6 +20,7 @@ export type SystemDTO = {
     description_en?: string;
     icon?: string;
     price: number | string;
+    modules?: string[];
     createdAt: string;
     updatedAt: string;
 }
@@ -97,6 +98,8 @@ export type CreateSubscriptionDTO = {
     cardCVV?: string;
     bankReceipt?: string;
     packageId?: number;
+    systemIds?: number[];
+    serviceIds?: number[];
     status?: State;
     approvalDate?: string;
     expiryDate?: string;
@@ -106,6 +109,8 @@ export type SubscriptionDTO = CreateSubscriptionDTO & {
     id: number;
     userId: number;
     package?: PackageDTO;
+    systems?: SystemDTO[];
+    services?: ServiceDTO[];
     approvalDate?: string;
     expiryDate?: string;
     createdAt: string;
@@ -121,7 +126,15 @@ export type UserState = {
 }
 
 export type subscriptionState = {
-    subscriptionInfo: SubscriptionDTO | any;
+    subscriptionInfo: {
+        data: SubscriptionDTO[];
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    };
     loading: boolean;
     error: string | null;
 }

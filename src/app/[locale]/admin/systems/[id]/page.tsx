@@ -18,6 +18,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 export default function SystemFormPage({
   params,
@@ -38,10 +39,12 @@ export default function SystemFormPage({
     description_en: "",
     icon: "",
     price: 0,
+    modules: [] as string[],
   });
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [allSystems, setAllSystems] = useState<any[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchAllSystems = async () => {
     try {
@@ -334,21 +337,73 @@ export default function SystemFormPage({
                     placeholder="اسم النظام"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <span className="w-6 h-4 bg-blue-600 rounded-sm"></span>
-                    Name (English)
+                    <Layers className="w-4 h-4 text-primary" />
+                    {locale === 'ar' ? 'الوحدات / الموديولات (Addons)' : 'Modules / Units (Addons)'}
                   </label>
-                  <input
-                    required
-                    type="text"
-                    value={formData.name_en}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name_en: e.target.value })
-                    }
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    placeholder="System Name in English"
-                  />
+                  
+                  <div className="flex flex-wrap gap-2 min-h-[46px] p-2 bg-gray-50 border border-gray-100 rounded-xl">
+                    {formData.modules && formData.modules.length > 0 ? (
+                      formData.modules.map((module, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-center gap-2 px-3 py-1 bg-white text-primary rounded-lg border border-primary/10 shadow-sm animate-in zoom-in-95 duration-200"
+                        >
+                          <span className="font-mono text-[11px] font-bold">{module}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newModules = [...formData.modules];
+                              newModules.splice(index, 1);
+                              setFormData({ ...formData, modules: newModules });
+                            }}
+                            className="hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-gray-400 text-xs italic p-2 self-center">
+                        {locale === 'ar' ? 'لم يتم إضافة موديولات' : 'No modules added'}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      id="newModuleInputMain"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const val = input.value.trim();
+                          if (val && !formData.modules.includes(val)) {
+                            setFormData({ ...formData, modules: [...formData.modules, val] });
+                            input.value = "";
+                          }
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
+                      placeholder={locale === 'ar' ? "أضف موديول (Enter)" : "Add module (Enter)"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const input = document.getElementById('newModuleInputMain') as HTMLInputElement;
+                        const val = input.value.trim();
+                        if (val && !formData.modules.includes(val)) {
+                          setFormData({ ...formData, modules: [...formData.modules, val] });
+                          input.value = "";
+                        }
+                      }}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all font-bold text-xs"
+                    >
+                      {locale === 'ar' ? 'إضافة' : 'Add'}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -424,6 +479,8 @@ export default function SystemFormPage({
                 </div>
               </div>
             </section>
+            
+            {/* End of Section */}
           </div>
         </div>
 
@@ -437,21 +494,37 @@ export default function SystemFormPage({
             </div>
             <button
               type="button"
-              onClick={() => {
-                if (confirm(t("deleteConfirm"))) {
-                  axios.delete(`/api/systems/${id}`).then(() => {
-                    toast.success(t("deleteSuccess"));
-                    router.push(`/${locale}/admin/systems`);
-                  });
-                }
-              }}
+              onClick={() => setShowDeleteModal(true)}
               className="px-6 py-3 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition-all font-bold"
             >
-              {t("deleteConfirm") ? "حذف النظام" : "Delete System"}
+              {t("delete")}
             </button>
           </div>
         )}
       </form>
+
+      <ConfirmDialog
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={async () => {
+          try {
+            await axios.delete(`/api/systems/${id}`);
+            toast.success(t("deleteSuccess"));
+            router.push(`/${locale}/admin/systems`);
+            router.refresh();
+          } catch (err) {
+            toast.error("Failed to delete system");
+          } finally {
+            setShowDeleteModal(false);
+          }
+        }}
+        title={t("deleteConfirm")}
+        message={t("deleteWarning")}
+        confirmText={t("delete")}
+        cancelText={t("cancel")}
+        variant="danger"
+        locale={locale}
+      />
     </div>
   );
 }

@@ -1,27 +1,15 @@
-// Forced reload at 2026-05-04T16:57:00
 import { PrismaClient } from "@/generated/prisma/client";
 
-const prismaClientSingleton = () => {
-    // console.log("Initializing new PrismaClient instance"); 
-    return new PrismaClient();
-};
-
-type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
-
 const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClientSingleton | undefined;
+    prisma: PrismaClient | undefined;
 };
 
-// Forced reset at 2026-02-08T14:40:00
-if (globalThis && (globalThis as any).prisma) {
-    (globalThis as any).prisma.$disconnect?.();
-    (globalThis as any).prisma = undefined;
-}
-
-const prisma = prismaClientSingleton();
-
-export default prisma;
+// Reuse existing instance in development to prevent connection pool exhaustion
+// during Hot Module Replacement (HMR). In production, always create a fresh instance.
+const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
     globalForPrisma.prisma = prisma;
 }
+
+export default prisma;

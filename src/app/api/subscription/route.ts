@@ -15,36 +15,48 @@ import { PaymentGateway } from '@/utils/paymentGateway';
  */
 
 const formatImage = (image: any) => {
-    try {
-        if (!image) return null;
-        
-        // If it's already a string, check if it's a URL or base64
-        if (typeof image === 'string') {
-            if (image.startsWith('http') || image.startsWith('data:image')) {
-                return image;
-            }
-            return `data:image/png;base64,${image}`;
+    if (!image) return null;
+    
+    // If it's already a string, check if it's a URL or base64
+    if (typeof image === 'string') {
+        if (image.startsWith('http') || image.startsWith('data:image')) {
+            return image;
         }
+        return `data:image/png;base64,${image}`;
+    }
 
-        // Handle Buffer/Uint8Array
-        const buf = Buffer.from(image);
+    // Handle Buffer/Uint8Array
+    try {
+        const buf = Buffer.isBuffer(image) ? image : Buffer.from(image);
         if (buf.length === 0) return null;
 
-        // Try to see if it's a string stored in the buffer
-        try {
-            const imageStr = buf.toString('utf8');
-            if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
-                return imageStr;
+        // Peak at the first few bytes to see if it's already a string/URL
+        if (buf.length > 4) {
+            const start = buf.toString('utf8', 0, 4);
+            if (start === 'http' || start === 'data') {
+                return buf.toString('utf8');
             }
-        } catch (e) {
-            // Not a UTF-8 string, proceed to base64
         }
 
         return `data:image/png;base64,${buf.toString('base64')}`;
     } catch (error) {
-        console.error("Error in formatImage:", error);
         return null;
     }
+};
+
+/**
+ * Serialize Decimal fields to strings for JSON compatibility.
+ * Defined at module level for reuse across handlers.
+ */
+const serializeDecimal = (obj: any) => {
+    if (!obj) return obj;
+    const newObj = { ...obj };
+    for (const key in newObj) {
+        if (newObj[key] && typeof newObj[key] === 'object' && newObj[key].constructor?.name === 'Decimal') {
+            newObj[key] = newObj[key].toString();
+        }
+    }
+    return newObj;
 };
 
 export async function POST(request: NextRequest) {
@@ -150,26 +162,27 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: "Domain name is already taken" }, { status: 400 });
         }
 
-        // External Domain Check
+        // External Domain Check — API key loaded from environment variable
         if (body.domainType === 'CUSTOM_DOMAIN') {
             try {
-                const apiKey = '1KFwkMpz7KayZNUdunTEgZcpyPcpf1p0W9ZUXinW';
-                const apiRes = await axios.get(`https://api.api-ninjas.com/v1/domain?domain=${domainName}`, {
-                    headers: { 'X-Api-Key': apiKey }
-                });
-                console.log(apiRes.data);
-                if (apiRes.data?.available === false) {
-                    return NextResponse.json({ message: "Domain is reserved" }, { status: 400 });
+                const apiKey = process.env.DOMAIN_CHECK_API_KEY;
+                if (apiKey) {
+                    const apiRes = await axios.get(`https://api.api-ninjas.com/v1/domain?domain=${encodeURIComponent(domainName)}`, {
+                        headers: { 'X-Api-Key': apiKey },
+                        timeout: 5000
+                    });
+                    if (apiRes.data?.available === false) {
+                        return NextResponse.json({ message: "Domain is reserved" }, { status: 400 });
+                    }
                 }
             } catch (e) {
+                // Domain check is non-critical — log and continue
                 console.error("Domain check error", e);
             }
         }
 
         // Initial Status
         const isOnline = body.paymentMethod === 'ONLINE';
-        // Note: For ONLINE, if it's Legacy (has cardNumber), it might be DONE. 
-        // If it's HyperPay (no cardNumber here), it's DRAFT.
         const initialStatus: any = (isOnline && transactionId) ? 'DONE' : 'DRAFT';
 
         // Update user if fields are different
@@ -232,7 +245,10 @@ export async function POST(request: NextRequest) {
 
     } catch (error: any) {
         console.error("Error in POST:", error);
-        return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
+        return NextResponse.json(
+            { message: 'Internal Server Error', ...(process.env.NODE_ENV !== 'production' && { error: error.message }) },
+            { status: 500 }
+        );
     }
 }
 
@@ -241,47 +257,87 @@ export async function GET(request: NextRequest) {
         const userFromToken = verifyToken(request);
         if (!userFromToken) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+        const { searchParams } = new URL(request.url);
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '10');
+        const search = searchParams.get('search') || '';
+        const status = searchParams.get('status') || '';
+        const skip = (page - 1) * limit;
+
         const user = await prisma.user.findUnique({ where: { id: userFromToken.id } }) as any;
         if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-        let subscriptions;
-        if (user.role === 'ADMIN') {
-            subscriptions = await prisma.subscription.findMany({
-                include: {
-                    user: { select: { name: true, email: true, charityName: true } },
-                    package: { include: { systems: true } },
-                    services: true,
-                    systems: true,
-                    payments: true
-                }
-            });
-        } else {
-            subscriptions = await prisma.subscription.findMany({
-                where: { userId: user.id },
-                include: {
-                    package: { include: { systems: true } },
-                    services: true,
-                    systems: true,
-                    payments: true
-                }
-            });
+        // Build Where Clause
+        let where: any = {};
+        if (user.role !== 'ADMIN') {
+            where.userId = user.id;
         }
 
+        if (search) {
+            where.OR = [
+                { fullName: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
+                { domainName: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+
+        if (status) {
+            where.status = status;
+        }
+
+        const listSelection = {
+            id: true,
+            userId: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            domainName: true,
+            domainType: true,
+            status: true,
+            paymentMethod: true,
+            createdAt: true,
+            packageId: true,
+            instanceUrl: true,
+            expiryDate: true,
+            approvalDate: true,
+            charityRegisterNo: true,
+            licenseFile: true,
+            bankReceipt: true,
+            package: { 
+                include: { 
+                    systems: true,
+                    features: true
+                } 
+            },
+            services: {
+                include: {
+                    contents: true
+                }
+            },
+            systems: true,
+            payments: true,
+            user: { 
+                select: { 
+                    name: true, email: true, charityName: true 
+                } 
+            }
+        };
+
+        const [subscriptions, total] = await Promise.all([
+            prisma.subscription.findMany({
+                where,
+                select: listSelection,
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit
+            }),
+            prisma.subscription.count({ where })
+        ]);
+
+        // Format only the fields that are actually included in listSelection
         const formattedSubscriptions = subscriptions.map((sub: any) => {
             try {
-                // Ensure all Decimal fields are converted to strings for safe JSON serialization
-                const serializeDecimal = (obj: any) => {
-                    if (!obj) return obj;
-                    const newObj = { ...obj };
-                    for (const key in newObj) {
-                        if (newObj[key] && typeof newObj[key] === 'object' && newObj[key].constructor?.name === 'Decimal') {
-                            newObj[key] = newObj[key].toString();
-                        }
-                    }
-                    return newObj;
-                };
-
-                const formattedSub = {
+                return {
                     ...sub,
                     package: sub.package ? {
                         ...sub.package,
@@ -293,29 +349,36 @@ export async function GET(request: NextRequest) {
                             icon: formatImage(sys.icon)
                         }))
                     } : null,
-                    services: sub.services?.map((s: any) => ({
-                        ...s,
-                        price: s.price?.toString()
-                    })),
                     systems: sub.systems?.map((sys: any) => ({
                         ...sys,
                         price: sys.price?.toString(),
                         icon: formatImage(sys.icon)
                     })),
-                    payments: sub.payments?.map((p: any) => ({
-                        ...p,
-                        amount: p.amount?.toString()
+                    services: sub.services?.map((ser: any) => ({
+                        ...ser,
+                        price: ser.price?.toString(),
+                        image: formatImage(ser.image)
+                    })),
+                    payments: sub.payments?.map((pay: any) => ({
+                        ...pay,
+                        amount: pay.amount?.toString()
                     }))
                 };
-
-                return formattedSub;
             } catch (mapError: any) {
                 console.error("Error mapping subscription:", sub?.id, mapError);
-                return sub; // Return unformatted as fallback instead of throwing
+                return sub;
             }
         });
 
-        return NextResponse.json(formattedSubscriptions, { status: 200 });
+        return NextResponse.json({
+            data: formattedSubscriptions,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        }, { status: 200 });
     } catch (error: any) {
         console.error("Error in GET /api/subscription:", error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

@@ -2,7 +2,8 @@
 import { useTranslations, useLocale } from "next-intl";
 import { PackageDTO } from "@/utils/types";
 import Image from "next/image";
-import { Check } from "lucide-react";
+import { Check, Package } from "lucide-react";
+import { isValidImage } from "@/utils/imageUtils";
 
 interface StepPackageProps {
     packages: PackageDTO[];
@@ -45,8 +46,14 @@ const StepPackage = ({ packages, selectedPackageId, onSelect }: StepPackageProps
                             )}
 
                             <div>
-                                <div className="flex justify-center mb-4">
-                                    <Image src={pkg.image} alt={pkg.name} width={80} height={80} className="object-contain" />
+                                <div className="flex justify-center mb-4 w-20 h-20 mx-auto">
+                                    {isValidImage(pkg.image) ? (
+                                        <Image src={pkg.image} alt={pkg.name} width={80} height={80} className="object-contain" />
+                                    ) : (
+                                        <div className="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center">
+                                            <Package className="w-12 h-12 text-primary/20" />
+                                        </div>
+                                    )}
                                 </div>
                                 <h3 className="text-xl font-bold font-doto2 text-center mb-1">
                                     {isAr ? pkg.name_ar || pkg.name : pkg.name_en || pkg.name}

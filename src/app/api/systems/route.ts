@@ -1,30 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
-
-// Helper to format icon for frontend
-const formatIcon = (icon: any) => {
-    if (!icon) return null;
-    const buf = Buffer.from(icon);
-    const iconStr = buf.toString('utf8');
-    
-    // If it's a legacy URL or already a data URI string stored as bytes
-    if (iconStr.startsWith('http') || iconStr.startsWith('data:image')) {
-        return iconStr;
-    }
-    
-    // Check if it's an SVG
-    if (iconStr.includes('<svg')) {
-        return `data:image/svg+xml;base64,${buf.toString('base64')}`;
-    }
-    
-    // Default to PNG raw binary data
-    return `data:image/png;base64,${buf.toString('base64')}`;
-};
+import { formatImage } from "@/utils/imageUtils";
 
 export async function GET(request: NextRequest) {
     try {
         const systems = await prisma.system.findMany({
+            select: {
+                id: true,
+                name: true,
+                name_en: true,
+                name_ar: true,
+                description: true,
+                description_en: true,
+                description_ar: true,
+                icon: true,
+                price: true,
+                modules: true,
+            },
             orderBy: { createdAt: 'desc' }
         });
 
@@ -32,7 +25,7 @@ export async function GET(request: NextRequest) {
         const formattedSystems = systems.map(system => ({
             ...system,
             price: Number(system.price),
-            icon: formatIcon(system.icon)
+            icon: formatImage(system.icon)
         }));
 
         return NextResponse.json(formattedSystems, { status: 200 });
@@ -73,13 +66,14 @@ export async function POST(request: NextRequest) {
                 description_ar: body.description_ar || "",
                 icon: iconBuffer as any,
                 price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+                modules: body.modules || [],
             }
         });
 
         // Convert back for response
         const responseSystem = {
             ...newSystem,
-            icon: formatIcon(newSystem.icon)
+            icon: formatImage(newSystem.icon)
         };
 
         return NextResponse.json(responseSystem, { status: 201 });

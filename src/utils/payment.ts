@@ -16,7 +16,7 @@ export class HyperPayService {
     static async createCheckout(amount: number | Decimal, currency: string = 'SAR'): Promise<string> {
         // In a real implementation, this would call HyperPay's /v1/checkouts endpoint
         // For now, we mock the response as requested in the workflow
-        console.log(`[HyperPay] Creating checkout for ${amount} ${currency}`);
+        // console.log(`[HyperPay] Creating checkout for ${amount} ${currency}`);
 
         // Mocking the API response
         // const response = await axios.post(`${this.baseUrl}/v1/checkouts`, {
@@ -35,7 +35,7 @@ export class HyperPayService {
      * Verify payment status
      */
     static async verifyPayment(checkoutId: string): Promise<boolean> {
-        console.log(`[HyperPay] Verifying payment for session ${checkoutId}`);
+        // console.log(`[HyperPay] Verifying payment for session ${checkoutId}`);
         // Mock verify
         return checkoutId.startsWith('MOCK_CHECKOUT_');
     }
@@ -141,13 +141,15 @@ export class SubscriptionService {
             data: updateData
         });
 
-        // Trigger server provisioning/update only for NEW or UPGRADE requests
-        // System additions are handled locally in the database and don't require re-provisioning
-        let provisioningResult = { success: true, message: "Processed successfully" };
+        // Manual server provisioning is now required via the "Provision Server" button in the admin dashboard.
+        // This ensures admins have full control over when infrastructure is deployed.
+        let provisioningResult = { success: true, message: "Request approved. Please provision the server manually." };
+        /* 
         if (request.type !== 'ADD_SYSTEM') {
             const res = await ServerManager.provisionServer(subscription.id);
             provisioningResult = { success: res.success, message: res.message || "" };
         }
+        */
 
         // Also create a payment record
         if (pkg || (request.systems && request.systems.length > 0)) {

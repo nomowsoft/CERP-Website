@@ -156,6 +156,7 @@ model System {
   description_en String    @default("")
   icon           Bytes?
   price          Decimal   @default(0)
+  modules        String[]  @default([])
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   packages       Package[]             @relation("PackageToSystem")

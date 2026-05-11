@@ -76,8 +76,8 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
     }
   }, [packageId, systemId]);
 
-  const mySubscription = (subscriptionInfo?.length > 0 && userInfo?.id) 
-    ? subscriptionInfo.find((s: any) => s.userId == userInfo.id) 
+  const mySubscription = (subscriptionInfo?.data?.length > 0 && userInfo?.id) 
+    ? subscriptionInfo.data.find((s: any) => s.userId == userInfo.id) 
     : null;
 
   useEffect(() => {

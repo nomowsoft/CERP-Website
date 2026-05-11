@@ -11,7 +11,8 @@ import { generateInvoicePDF } from "@/utils/invoicePdf";
 
 export default function Invoice() {
     const dispatch = useDispatch<any>();
-    const { subscriptionInfo: subscriptions, loading } = useSelector((state: any) => state.subscription);
+    const { subscriptionInfo, loading } = useSelector((state: any) => state.subscription);
+    const subscriptions = subscriptionInfo?.data || [];
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('ALL');

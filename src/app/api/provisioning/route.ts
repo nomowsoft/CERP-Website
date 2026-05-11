@@ -9,10 +9,14 @@ export async function POST(request: Request) {
         const body = await request.json();
         const authHeader = request.headers.get('Authorization');
 
-        const expectedToken = process.env.PROVISIONING_AUTH_TOKEN;
+        const expectedToken = (process.env.PROVISIONING_AUTH_TOKEN || '').trim();
         
-        // Flexible token check
-        if (!authHeader || (authHeader !== `Bearer ${expectedToken}` && authHeader !== expectedToken)) {
+        // Normalize both to raw token (strip Bearer prefix if present)
+        const normalizeToken = (t: string) => t.replace(/^Bearer\s+/i, '').trim();
+        const incomingToken = normalizeToken(authHeader || '');
+        const expectedNormalized = normalizeToken(expectedToken);
+
+        if (!incomingToken || !expectedNormalized || incomingToken !== expectedNormalized) {
             console.error('[Provisioning API] Unauthorized access attempt');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

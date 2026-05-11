@@ -11,16 +11,22 @@ import { title } from 'process';
 import Image from 'next/image';
 
 async function getStats(t: any) {
-    const [UserCount] = await Promise.all([
+    const [userCount, activeSubCount, pendingRequestCount, totalPackageCount] = await Promise.all([
         prisma.user.count(),
-
+        prisma.subscription.count({
+            where: { status: 'DONE' }
+        }),
+        prisma.subscriptionRequest.count({
+            where: { status: 'PENDING' }
+        }),
+        prisma.package.count()
     ]);
 
     return [
-        { id: 1, name: t('stats.activeSubscriptions'), title: t('stats.basicPlan'), img: '/admin/supscription.svg', value: t('stats.activeUntil') },
-        { id: 2, name: UserCount, title: t('stats.totalInvoices'), img: '/admin/invoice.svg', value: t('stats.paidPending', { paid: 4, pending: 1 }) },
-        { id: 3, name: t('stats.currency'), title: t('stats.nextPayment'), img: '/admin/payment.svg', value: '15 مارس 2024' },
-        { id: 4, name: t('stats.activeSubscriptions'), title: t('stats.basicPlan'), img: '/admin/payment.svg', value: UserCount },
+        { id: 1, name: activeSubCount, title: t('stats.activeSubscriptions'), img: '/admin/supscription.svg', value: t('stats.activeUntil') },
+        { id: 2, name: userCount, title: t('stats.totalUsers'), img: '/admin/invoice.svg', value: t('stats.totalRegistered') },
+        { id: 3, name: pendingRequestCount, title: t('stats.pendingRequests'), img: '/admin/payment.svg', value: t('stats.requiresAction') },
+        { id: 4, name: totalPackageCount, title: t('stats.availablePackages'), img: '/admin/payment.svg', value: t('stats.totalPackages') },
     ];
 }
 export async function KpiCard() {

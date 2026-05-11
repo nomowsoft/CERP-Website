@@ -17,7 +17,9 @@ import {
     AlertCircle,
     Building2,
     Plus,
-    ExternalLink
+    ExternalLink,
+    ChevronRight,
+    ChevronLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,22 +34,27 @@ export default function UsersManagement() {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
 
-    const { users, loading } = useSelector((state: RootState) => state.users);
+    const { users, loading, pagination } = useSelector((state: RootState) => state.users);
     const { userInfo } = useSelector((state: RootState) => state.user);
 
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
-        dispatch(getAllUsers());
-    }, [dispatch]);
+        dispatch(getAllUsers({ page: currentPage, search: searchTerm }));
+    }, [dispatch, currentPage, searchTerm]);
 
-    const filteredUsers = users.filter(u =>
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.phone?.includes(searchTerm)
-    );
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleEditClick = (id: string) => {
         router.push(`/${locale}/admin/users/${id}`);
@@ -63,6 +70,8 @@ export default function UsersManagement() {
             await dispatch(adminDeleteUser(selectedUser.id)).unwrap();
             toast.success(t("deleteSuccess"));
             setShowDeleteModal(false);
+            // Re-fetch to keep pagination synced
+            dispatch(getAllUsers({ page: currentPage, search: searchTerm }));
         } catch (error: any) {
             toast.error(error || t("deleteError"));
         }
@@ -113,7 +122,7 @@ export default function UsersManagement() {
                         type="text"
                         placeholder={t("searchPlaceholder")}
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={handleSearch}
                         className={`w-full ${isAr ? 'pr-14 pl-6' : 'pl-14 pr-6'} py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all outline-none text-gray-700 font-bold placeholder:text-gray-300`}
                     />
                 </div>
@@ -125,9 +134,9 @@ export default function UsersManagement() {
                     Array.from({ length: 6 }).map((_, i) => (
                         <div key={i} className="h-64 bg-gray-50 rounded-[2.5rem] animate-pulse border border-gray-100" />
                     ))
-                ) : filteredUsers.length > 0 ? (
+                ) : users.length > 0 ? (
                     <AnimatePresence mode="popLayout">
-                        {filteredUsers.map((user) => (
+                        {users.map((user: any) => (
                             <motion.div
                                 key={user.id}
                                 layout
@@ -224,6 +233,60 @@ export default function UsersManagement() {
                     </div>
                 )}
             </div>
+
+            {/* Pagination Controls */}
+            {pagination && pagination.totalPages > 1 && (
+                <div className="flex items-center justify-center gap-4 py-12">
+                    <Button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        variant="outline"
+                        className="p-4 rounded-xl border-gray-200 text-gray-500 hover:bg-primary hover:text-white disabled:opacity-50 transition-all duration-300"
+                    >
+                        {isAr ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
+                    </Button>
+                    
+                    <div className="flex items-center gap-2">
+                        {Array.from({ length: pagination.totalPages }).map((_, i) => {
+                            const pageNum = i + 1;
+                            if (
+                                pageNum === 1 || 
+                                pageNum === pagination.totalPages || 
+                                (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                            ) {
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => handlePageChange(pageNum)}
+                                        className={`w-12 h-12 rounded-xl font-black transition-all duration-300 ${
+                                            currentPage === pageNum 
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                                            : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100'
+                                        }`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            } else if (
+                                pageNum === currentPage - 2 || 
+                                pageNum === currentPage + 2
+                            ) {
+                                return <span key={pageNum} className="text-gray-300">...</span>;
+                            }
+                            return null;
+                        })}
+                    </div>
+
+                    <Button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === pagination.totalPages}
+                        variant="outline"
+                        className="p-4 rounded-xl border-gray-200 text-gray-500 hover:bg-primary hover:text-white disabled:opacity-50 transition-all duration-300"
+                    >
+                        {isAr ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
+                    </Button>
+                </div>
+            )}
 
             {/* Delete Confirmation Modal */}
             <AnimatePresence>

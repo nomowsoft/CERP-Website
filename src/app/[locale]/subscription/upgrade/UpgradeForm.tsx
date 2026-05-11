@@ -69,7 +69,7 @@ export default function UpgradeForm() {
         }
     };
 
-    const mySubscription = subscriptionInfo?.find((s: any) => s.userId === userInfo?.id);
+    const mySubscription = subscriptionInfo?.data?.find((s: any) => s.userId === userInfo?.id);
     const activeServiceIds = mySubscription?.services?.map((s: any) => s.id) || [];
     const availableServices = services.filter(s => !activeServiceIds.includes(s.id));
 
@@ -126,7 +126,7 @@ export default function UpgradeForm() {
                 billingPostcode: "12345"
             };
 
-            console.log("DEBUG: Sending Payment Payload:", payload);
+            // console.log("DEBUG: Sending Payment Payload:", payload);
             const response = await axios.post('/api/payment/checkout', payload);
             if (response.data.id) {
                 sessionStorage.setItem('pendingUpgrade', JSON.stringify({

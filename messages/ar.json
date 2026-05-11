@@ -405,7 +405,13 @@
       "totalInvoices": "إجمالي الفواتير",
       "paidPending": "{paid} مدفوعه ، {pending} في الإنتظار",
       "nextPayment": "الدفع القادم",
-      "currency": "ر.س"
+      "currency": "ر.س",
+      "totalUsers": "إجمالي المستخدمين",
+      "totalRegistered": "إجمالي المسجلين",
+      "pendingRequests": "الطلبات المعلقة",
+      "requiresAction": "تطلب إجراء",
+      "availablePackages": "الباقات المتاحة",
+      "totalPackages": "إجمالي الباقات"
     },
     "invoices": {
       "latestInvoices": "الفواتير الأخيرة",
@@ -582,7 +588,11 @@
     },
     "services": {
       "title": "إدارة الخدمات",
-      "subtitle": "إدارة الخدمات المقدمة ومحتوياتها"
+      "subtitle": "إدارة الخدمات المقدمة ومحتوياتها",
+      "delete": "حذف",
+      "deleteConfirm": "هل أنت متأكد من حذف هذه الخدمة؟",
+      "deleteWarning": "حذف هذه الخدمة سيؤدي لإزالتها بشكل نهائي من المنصة ولا يمكن التراجع عن هذا الإجراء.",
+      "cancel": "إلغاء"
     },
     "systems": {
       "title": "إدارة الأنظمة",
@@ -599,7 +609,10 @@
       "descLabel": "وصف النظام",
       "iconLabel": "أيقونة النظام (Class name)",
       "save": "حفظ",
+      "delete": "حذف",
       "deleteConfirm": "هل أنت متأكد من حذف هذا النظام؟",
+      "deleteWarning": "هذا الإجراء سيؤدي لحذف النظام بشكل نهائي ولا يمكن التراجع عنه.",
+      "cancel": "إلغاء",
       "deleteSuccess": "تم حذف النظام بنجاح",
       "updateSuccess": "تم تحديث النظام بنجاح",
       "createSuccess": "تم إنشاء النظام بنجاح",

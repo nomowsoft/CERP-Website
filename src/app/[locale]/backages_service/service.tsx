@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { ServiceDTO, ServiceTypeDto } from '@/utils/types';
 import { ArrowLeft, ArrowRight, Settings, CheckCircle2 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
+import { isValidImage } from '@/utils/imageUtils';
 
 export const Service = () => {
     const locale = useLocale();
@@ -21,15 +22,21 @@ export const Service = () => {
     
     return (
         <section className="container mx-auto py-16 lg:py-20 relative z-10" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-            <div className="text-center mb-12" data-aos="fade-up">
+            <div className="flex flex-col items-center mb-12 text-center" data-aos="fade-up">
                 <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-secondary/10 text-secondary font-bold mb-6 border border-secondary/20">
                     <Settings className="w-5 h-5 drop-shadow-sm" />
                     <span>{t('additionalServices')}</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-doto2 font-bold mb-6 text-gray-900 leading-snug">
-                    {t('additionalServices')}
+                
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 font-doto2 leading-tight mb-4">
+                    {locale === 'ar' ? (
+                        <>خدمات <span className="bg-gradient-to-l from-secondary to-primary bg-clip-text text-transparent inline-block pb-2 px-1">سرب</span> الإضافية</>
+                    ) : (
+                        <>Additional <span className="bg-gradient-to-l from-secondary to-primary bg-clip-text text-transparent inline-block pb-2 px-1">Sarb</span> Services</>
+                    )}
                 </h2>
-                <p className="text-xl text-gray-500 mt-2 max-w-3xl mx-auto leading-relaxed">
+                
+                <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                     {t('additionalServicesSubtitle')}
                 </p>
             </div>
@@ -47,8 +54,12 @@ export const Service = () => {
                             
                             <div className="relative z-10 mb-8">
                                 <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-start mb-6">
-                                    <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-5 rounded-[1.5rem] flex-shrink-0 transition-all duration-300">
-                                        <Image src={service.image} alt={service.name} width={72} height={72} className="group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500" />
+                                    <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-5 rounded-[1.5rem] flex-shrink-0 transition-all duration-300 flex items-center justify-center w-[112px] h-[112px]">
+                                        {isValidImage(service.image) ? (
+                                            <Image src={service.image} alt={service.name} width={72} height={72} className="group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 object-contain" />
+                                        ) : (
+                                            <Settings className="w-14 h-14 text-primary/20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
+                                        )}
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-2xl md:text-3xl font-doto2 font-bold text-gray-900 mb-2">

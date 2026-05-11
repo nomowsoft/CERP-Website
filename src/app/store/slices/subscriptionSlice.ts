@@ -4,16 +4,31 @@ import { subscriptionState } from '@/utils/types';
 
 
 const initialState: subscriptionState = {
-    subscriptionInfo: [],
+    subscriptionInfo: {
+        data: [],
+        pagination: {
+            total: 0,
+            page: 1,
+            limit: 10,
+            totalPages: 0
+        }
+    },
     loading: false,
     error: null,
 };
 
-export const getSubscription = createAsyncThunk<any, void, { rejectValue: string }>(
+export const getSubscription = createAsyncThunk<any, { page?: number, limit?: number, search?: string, status?: string } | void, { rejectValue: string }>(
     'Subscription',
-    async (_, { rejectWithValue }) => {
+    async (params, { rejectWithValue }) => {
         try {
-            const response = await axios.get<any>('/api/subscription');
+            const queryParams = new URLSearchParams();
+            if (params) {
+                if (params.page) queryParams.append('page', params.page.toString());
+                if (params.limit) queryParams.append('limit', params.limit.toString());
+                if (params.search) queryParams.append('search', params.search);
+                if (params.status && params.status !== 'ALL') queryParams.append('status', params.status);
+            }
+            const response = await axios.get<any>(`/api/subscription?${queryParams.toString()}`);
             return response.data;
         } catch (error: any) {
             if (axios.isAxiosError(error)) {
@@ -70,13 +85,17 @@ const SubscriptionSlice = createSlice({
                 state.error = action.payload as string;
             })
             .addCase(deleteSubscription.fulfilled, (state, action) => {
-                state.subscriptionInfo = state.subscriptionInfo.filter((item: any) => item.id !== action.payload);
+                const deletedId = action.payload;
+                state.subscriptionInfo.data = state.subscriptionInfo.data.filter((item: any) => item.id != deletedId);
+                state.subscriptionInfo.pagination.total -= 1;
             })
             .addCase(updateSubscription.fulfilled, (state, action) => {
                 const updatedSub = action.payload.subscription || action.payload;
-                state.subscriptionInfo = state.subscriptionInfo.map((item: any) =>
-                    item.id === updatedSub.id ? updatedSub : item
-                );
+                if (updatedSub && updatedSub.id) {
+                    state.subscriptionInfo.data = state.subscriptionInfo.data.map((item: any) =>
+                        item.id == updatedSub.id ? { ...item, ...updatedSub } : item
+                    );
+                }
             });
     },
 });

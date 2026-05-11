@@ -46,7 +46,7 @@ export default function RenewalForm() {
         dispatch(getSubscription());
     }, [dispatch]);
 
-    const mySubscription = subscriptionInfo?.find((s: any) => s.userId === userInfo?.id);
+    const mySubscription = subscriptionInfo?.data?.find((s: any) => s.userId === userInfo?.id);
 
     const fileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {

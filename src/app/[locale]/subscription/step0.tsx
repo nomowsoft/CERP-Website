@@ -5,6 +5,8 @@ import { ServiceDTO } from "@/utils/types";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { isValidImage } from "@/utils/imageUtils";
+import { Settings, Server } from "lucide-react";
 
 interface ServicesSelectionStepProps {
     data: SubscriptionFormData;
@@ -88,18 +90,46 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                 </p>
 
                 {selectedPackage && (
-                    <div className="mb-8 inline-flex items-center gap-6 bg-primary/5 border border-primary/20 px-8 py-4 rounded-[2rem] shadow-sm">
-                        <div className="flex flex-col items-center border-e border-primary/20 pe-6">
-                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "الباقة المختارة" : "Selected Package"}</span>
-                            <span className="text-xl font-black text-gray-800">{isAr ? selectedPackage.name_ar : selectedPackage.name_en}</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "السعر" : "Price"}</span>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-xl font-black text-secondary">{Number(selectedPackage.price)}</span>
-                                <span className="text-xs font-bold text-gray-500">{selectedPackage.currency || (isAr ? 'ر.س' : 'SAR')}</span>
+                    <div className="mb-8 flex flex-col items-center gap-6 bg-primary/5 border border-primary/20 p-8 rounded-[2.5rem] shadow-sm max-w-2xl mx-auto">
+                        <div className="flex items-center gap-8 border-b border-primary/10 pb-6 w-full justify-center">
+                            <div className="flex flex-col items-center border-e border-primary/20 pe-8">
+                                <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "الباقة المختارة" : "Selected Package"}</span>
+                                <span className="text-2xl font-black text-gray-800">{isAr ? selectedPackage.name_ar : selectedPackage.name_en}</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "السعر" : "Price"}</span>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-2xl font-black text-secondary">{Number(selectedPackage.price)}</span>
+                                    <span className="text-xs font-bold text-gray-500">{selectedPackage.currency || (isAr ? 'ر.س' : 'SAR')}</span>
+                                </div>
                             </div>
                         </div>
+                        
+                        {selectedPackage.systems && selectedPackage.systems.length > 0 && (
+                            <div className="w-full space-y-4">
+                                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest text-center">
+                                    {isAr ? "الأنظمة والوحدات المشمولة" : "Included Systems & Modules"}
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {selectedPackage.systems.map((sys: any, idx: number) => (
+                                        <div key={idx} className="bg-white/50 p-3 rounded-2xl border border-primary/10">
+                                            <p className="text-xs font-bold text-gray-700 mb-2">
+                                                {isAr ? sys.name_ar || sys.name : sys.name_en || sys.name}
+                                            </p>
+                                            {sys.modules && sys.modules.length > 0 && (
+                                                <div className="flex flex-wrap gap-1">
+                                                    {sys.modules.map((mod: string, mIdx: number) => (
+                                                        <span key={mIdx} className="text-[8px] bg-primary/5 text-primary px-1.5 py-0.5 rounded-md font-mono">
+                                                            {mod}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -124,15 +154,18 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                 </div>
                             )}
 
-                            {/* Service Image */}
-                            <div className="mb-4">
-                                <Image
-                                    src={service.image}
-                                    alt={service.name}
-                                    width={80}
-                                    height={80}
-                                    className="object-contain"
-                                />
+                            <div className="mb-4 w-20 h-20 flex items-center justify-center">
+                                {isValidImage(service.image) ? (
+                                    <Image
+                                        src={service.image}
+                                        alt={service.name}
+                                        width={80}
+                                        height={80}
+                                        className="object-contain"
+                                    />
+                                ) : (
+                                    <Settings className="w-12 h-12 text-primary/20" />
+                                )}
                             </div>
 
                             {/* Service Name */}
@@ -191,13 +224,12 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                         </div>
                                     )}
 
-                                    {/* System Icon */}
                                     <div className="mb-4">
-                                        {system.icon && (system.icon.startsWith('http') || system.icon.startsWith('data:image')) ? (
+                                        {isValidImage(system.icon) ? (
                                             <Image src={system.icon} alt={system.name} width={48} height={48} className="w-12 h-12 object-contain" />
                                         ) : (
-                                            <div className="w-12 h-12 flex items-center justify-center text-primary font-bold text-lg bg-white rounded-xl shadow-sm">
-                                                {system.name ? system.name.substring(0, 2).toUpperCase() : 'SY'}
+                                            <div className="w-12 h-12 flex items-center justify-center text-primary/40 font-bold text-lg bg-white rounded-xl shadow-sm border border-primary/10">
+                                                <Server className="w-6 h-6" />
                                             </div>
                                         )}
                                     </div>
@@ -218,9 +250,23 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                     </div>
 
                                     {/* System Description */}
-                                    <p className="text-xs text-gray-400 line-clamp-2">
+                                    <p className="text-xs text-gray-400 line-clamp-2 mb-3">
                                         {isAr ? system.description_ar || system.description : system.description_en || system.description}
                                     </p>
+
+                                    {/* System Modules */}
+                                    {system.modules && system.modules.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-auto pt-3 border-t border-gray-100">
+                                            {system.modules.slice(0, 3).map((mod: string, mIdx: number) => (
+                                                <span key={mIdx} className="text-[8px] bg-primary/5 text-primary px-1.5 py-0.5 rounded-md font-mono">
+                                                    {mod}
+                                                </span>
+                                            ))}
+                                            {system.modules.length > 3 && (
+                                                <span className="text-[8px] text-gray-400">+{system.modules.length - 3}</span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}

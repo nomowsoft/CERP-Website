@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Backages } from './backages'
 import { Service } from './service'
 import { Program } from '../Home/program'
@@ -66,10 +67,12 @@ export default function BackagesService() {
       </section>
       
       {/* 1. Packages Section */}
-      <Backages />
+      <Suspense fallback={<div className="container mx-auto py-10 text-center">Loading...</div>}>
+        <Backages />
+      </Suspense>
       
       {/* 2. Systems Section */}
-      <Program />
+      {/* <Program /> */}
       
       {/* 3. Additional Services Section */}
       <Service />

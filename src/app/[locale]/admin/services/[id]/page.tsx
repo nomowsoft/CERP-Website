@@ -21,6 +21,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -49,6 +50,7 @@ export default function ServiceFormPage({
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [allServices, setAllServices] = useState<any[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchAllServices = async () => {
     try {
@@ -497,21 +499,36 @@ export default function ServiceFormPage({
             </div>
             <button
               type="button"
-              onClick={() => {
-                if (confirm(isAr ? "هل أنت متأكد من حذف هذه الخدمة؟" : "Are you sure you want to delete this service?")) {
-                  axios.delete(`/api/services/${id}`).then(() => {
-                    toast.success(isAr ? "تم حذف الخدمة بنجاح" : "Service deleted successfully");
-                    router.push(`/${locale}/admin/services`);
-                  });
-                }
-              }}
+              onClick={() => setShowDeleteModal(true)}
               className="px-6 py-3 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition-all font-bold"
             >
-              {isAr ? "حذف الخدمة" : "Delete Service"}
+              {t("delete")}
             </button>
           </div>
         )}
       </form>
+
+      <ConfirmDialog
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={async () => {
+          try {
+            await axios.delete(`/api/services/${id}`);
+            toast.success(isAr ? "تم حذف الخدمة بنجاح" : "Service deleted successfully");
+            router.push(`/${locale}/admin/services`);
+          } catch (err) {
+            toast.error(isAr ? "فشل حذف الخدمة" : "Failed to delete service");
+          } finally {
+            setShowDeleteModal(false);
+          }
+        }}
+        title={t("deleteConfirm")}
+        message={t("deleteWarning")}
+        confirmText={t("delete")}
+        cancelText={t("cancel")}
+        variant="danger"
+        locale={locale}
+      />
     </div>
   );
 }

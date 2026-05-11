@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        console.log("DEBUG: HyperPay Checkout Body Received:", JSON.stringify(body, null, 2));
 
         const {
             amount,
@@ -58,11 +57,6 @@ export async function POST(req: NextRequest) {
         data.append('customer.givenName', customerGivenName || "Guest");
         data.append('customer.surname', customerSurname || "User");
 
-        console.log("HyperPay POST Request Prepared:", {
-            amount: finalAmount,
-            email: customerEmail || "customer@example.com",
-            entityId: entityId.substring(0, 5) + "..."
-        });
 
         const response = await axios.post('https://eu-test.oppwa.com/v1/checkouts', data, {
             headers: {
