@@ -395,6 +395,7 @@
       "packages": "الباقات",
       "services": "الخدمات",
       "systems": "الأنظمة",
+      "servers": "السيرفرات",
       "availableSystems": "الأنظمة الإضافية",
       "systemRequests": "طلبات الأنظمة"
     },

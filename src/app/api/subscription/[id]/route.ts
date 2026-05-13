@@ -432,26 +432,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 include: { package: true, services: true, payments: true } 
             });
 
-            // Trigger provisioning ONLY if the provision flag is explicitly true
-            const shouldProvision = body.provision === true && (body.status === 'DONE' || subscription.status === 'DONE');
-            
-            if (shouldProvision) {
-                provisioningResult = await ServerManager.provisionServer(subId);
-                
-                if (!provisioningResult.success) {
-                    // If provisioning failed, we return the error but the metadata is already saved.
-                    // This allows the admin to use the "Provision Server" button to retry.
-                    return NextResponse.json({ 
-                        message: provisioningResult.message,
-                        message_ar: provisioningResult.message,
-                        provisioning: provisioningResult,
-                        success: false,
-                        subscription: updatedSub
-                    }, { status: 400 });
-                }
-            }
-
-            // Refetch to get the latest data including instanceUrl from provisioning
+            // Refetch to get the latest data
             const finalSub = await prisma.subscription.findUnique({ 
                 where: { id: subId }, 
                 include: { package: true, services: true, payments: true } 
@@ -467,14 +448,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
             };
 
             return NextResponse.json({ 
-                message: provisioningResult && !provisioningResult.success 
-                    ? provisioningResult.message 
-                    : "Subscription approved and system provisioned successfully.",
-                message_ar: provisioningResult && !provisioningResult.success 
-                    ? provisioningResult.message 
-                    : "تمت الموافقة على الاشتراك وتجهيز النظام بنجاح.",
-                provisioning: provisioningResult,
-                domain: finalSub?.instanceUrl || "Not applicable",
+                message: "Subscription information updated successfully.",
+                message_ar: "تم تحديث معلومات الاشتراك بنجاح.",
                 subscription: finalResponse 
             }, { status: 200 });
         }

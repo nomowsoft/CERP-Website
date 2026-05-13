@@ -1,4 +1,6 @@
 import prisma from './db';
+import { EmailService } from './emailService';
+
 
 // Define the response type for better TypeScript support
 export interface ProvisionResult {
@@ -107,54 +109,111 @@ export class ServerManager {
 
             // console.log(`[ServerManager] Sending webhook payload for subscription ${subscriptionId}:`, JSON.stringify(payload, null, 2));
 
-            // Use AbortController for a 25-second timeout to prevent 502 Bad Gateway
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 25000);
-
-            try {
-                const response = await fetch(this.WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': this.getAuthHeader()
-                    },
-                    body: JSON.stringify(payload),
-                    cache: 'no-store',
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                // Safely parse the response data
-                let data: any;
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    data = await response.json().catch(() => null);
-                } else {
-                    data = await response.text().catch(() => null);
-                }
-
-                if (!response.ok) {
-                    console.error(`[ServerManager] Webhook failed with status ${response.status}:`, data);
-                    const serverError = typeof data === 'string' ? data : 
-                        (data?.message || data?.error || data?.msg || data?.detail || JSON.stringify(data) || `HTTP Error: ${response.status}`);
-                    throw new Error(serverError);
-                }
-
-                // console.log(`[ServerManager] Webhook response:`, data);
-
-                // Update subscription with instance info
-                const instanceUrl = `https://${fullDomain}`;
-
-                await prisma.subscription.update({
-                    where: { id: subscriptionId },
-                    data: {
-                        instanceUrl: instanceUrl,
-                        status: 'DONE'
+                // Increased timeout to 5 minutes (300,000ms) to allow provisioning to complete
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 300000);
+    
+                try {
+                    const response = await fetch(this.WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': this.getAuthHeader()
+                        },
+                        body: JSON.stringify(payload),
+                        cache: 'no-store',
+                        signal: controller.signal
+                    });
+    
+                    clearTimeout(timeoutId);
+    
+                    // Safely parse the response data
+                    let data: any;
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        data = await response.json().catch(() => null);
+                    } else {
+                        data = await response.text().catch(() => null);
                     }
-                });
+    
+                    if (!response.ok) {
+                        console.error(`[ServerManager] Webhook failed with status ${response.status}:`, data);
+                        const serverError = typeof data === 'string' ? data : 
+                            (data?.message || data?.error || data?.msg || data?.detail || JSON.stringify(data) || `HTTP Error: ${response.status}`);
+                        throw new Error(serverError);
+                    }
+    
+                    // console.log(`[ServerManager] Webhook response:`, data);
+    
+                    // Update subscription with instance info
+                    const instanceUrl = `https://${fullDomain}`;
+    
+                    // Extract data from the response to save in the Server table
+                    const webhookData = data?.Data || data;
+                    const credentials = webhookData?.Credentials || {};
+                    
+                    const projectName = webhookData?.["Project Name"] || payload.PROJECT_NAME;
+                    const domain = webhookData?.Domain || fullDomain;
+                    const installedModules = Array.isArray(webhookData?.["Installed modules"]) 
+                        ? webhookData?.["Installed modules"].join(',') 
+                        : (webhookData?.["Installed modules"] || payload.ADDONS_LIST.join(','));
+                    const login = credentials.Login || "admin-cerp";
+                    const password = credentials.Password || "admin";
+    
+                    // Use a transaction to ensure both subscription and server data are updated
+                    await prisma.$transaction([
+                        prisma.subscription.update({
+                            where: { id: subscriptionId },
+                            data: {
+                                instanceUrl: instanceUrl,
+                                status: 'DONE'
+                            }
+                        }),
+                        prisma.server.upsert({
+                            where: { subscriptionId: subscriptionId },
+                            create: {
+                                subscriptionId: subscriptionId,
+                                projectName: projectName,
+                                domain: domain,
+                                installedModules: String(installedModules),
+                                login: login,
+                                password: password
+                            },
+                            update: {
+                                projectName: projectName,
+                                domain: domain,
+                                installedModules: String(installedModules),
+                                login: login,
+                                password: password
+                            }
+                        })
+                    ]);
+    
+                    // Send completion email to the user
+                    try {
+                        // Extract credentials from webhook response if available
+                        const webhookData = data?.Data || data;
+                        const credentials = webhookData?.Credentials || {};
+                        
+                        await EmailService.sendServerReadyEmail({
+                            to: subscription.user?.email || subscription.email,
+                            subject: 'تم تجهيز نظام CERP الخاص بك بنجاح',
+                            fullName: subscription.fullName,
+                            domain: instanceUrl,
+                            username: credentials.Login || "admin-cerp",
+                            password: credentials.Password || "admin",
+                            projectName: webhookData?.["Project Name"] || payload.PROJECT_NAME,
+                            installedModules: Array.isArray(webhookData?.["Installed modules"]) 
+                                ? webhookData?.["Installed modules"] 
+                                : (webhookData?.["Installed modules"] ? String(webhookData?.["Installed modules"]).split(',') : addonsList)
+                        });
+                    } catch (emailError) {
+                        console.error(`[ServerManager] Failed to send provisioning email:`, emailError);
+                        // We don't fail the whole process if email fails, but we log it
+                    }
+    
+                    return { success: true, data: data, domain: instanceUrl };
 
-                return { success: true, data: data, domain: instanceUrl };
 
             } catch (fetchError: any) {
                 clearTimeout(timeoutId);

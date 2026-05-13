@@ -18,6 +18,8 @@ model User {
   phone         String?        @unique
   role          Role           @default(ADMIN)
   charityName   String?
+  fcmToken      String?
+  Notification  Notification[]
   subscriptions Subscription[]
 }
 
@@ -42,21 +44,36 @@ model Subscription {
   status            Status
   approvalDate      DateTime?
   expiryDate        DateTime?
+  instanceUrl       String?
   packageId         Int?
+  instanceLogin     String?
+  instancePassword  String?
   payments          Payment[]
   package           Package?              @relation(fields: [packageId], references: [id])
   user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  instanceUrl       String?
+  requests          SubscriptionRequest[]
   services          Service[]             @relation("ServiceToSubscription")
   systems           System[]              @relation("SystemToSubscription")
-  requests          SubscriptionRequest[]
+  server            Server?
 
   @@index([userId])
 }
 
+model Server {
+  id               Int          @id @default(autoincrement())
+  subscriptionId   Int          @unique
+  projectName      String
+  domain           String
+  installedModules String
+  login            String
+  password         String
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  subscription     Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
 model Package {
   id             Int                   @id @default(autoincrement())
-  image          Bytes?
   name           String
   type           PackageType
   description    String
@@ -68,6 +85,7 @@ model Package {
   name_ar        String                @default("")
   name_en        String                @default("")
   price          Decimal               @default(0)
+  image          Bytes?
   features       PackageFeature[]
   subscriptions  Subscription[]
   requests       SubscriptionRequest[]
@@ -121,7 +139,6 @@ model PackageFeature {
 
 model Service {
   id             Int                   @id @default(autoincrement())
-  image          Bytes?
   name           String
   description    String
   createdAt      DateTime              @default(now())
@@ -132,6 +149,7 @@ model Service {
   name_ar        String                @default("")
   name_en        String                @default("")
   price          Decimal               @default(0)
+  image          Bytes?
   contents       ServiceType[]
   subscriptions  Subscription[]        @relation("ServiceToSubscription")
   requests       SubscriptionRequest[] @relation("ServiceToSubscriptionRequest")
@@ -147,21 +165,33 @@ model ServiceType {
 }
 
 model System {
-  id             Int       @id @default(autoincrement())
+  id             Int                   @id @default(autoincrement())
   name           String
-  name_ar        String    @default("")
-  name_en        String    @default("")
-  description    String    @default("")
-  description_ar String    @default("")
-  description_en String    @default("")
+  name_ar        String                @default("")
+  name_en        String                @default("")
+  description    String                @default("")
+  description_ar String                @default("")
+  description_en String                @default("")
   icon           Bytes?
-  price          Decimal   @default(0)
-  modules        String[]  @default([])
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  price          Decimal               @default(0)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  modules        String[]              @default([])
   packages       Package[]             @relation("PackageToSystem")
   subscriptions  Subscription[]        @relation("SystemToSubscription")
   requests       SubscriptionRequest[] @relation("SystemToSubscriptionRequest")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 enum Role {

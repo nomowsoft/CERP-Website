@@ -395,6 +395,7 @@
       "packages": "Packages",
       "services": "Services",
       "systems": "Systems",
+      "servers": "Servers",
       "availableSystems": "Additional Systems",
       "systemRequests": "System Requests"
     },
