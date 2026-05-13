@@ -10,7 +10,8 @@ import {
     Check,
     TrendingUp,
     Download,
-    Inbox
+    Inbox,
+    RefreshCcw
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -156,6 +157,28 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                     </div>
                 </div>
             </div>
+            
+            {subscription.status === 'PROGRES' && (
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-amber-50 border-2 border-amber-200 rounded-[2rem] p-6 mb-8 flex items-center gap-6 shadow-sm shadow-amber-100"
+                >
+                    <div className="bg-amber-100 p-4 rounded-2xl">
+                        <RefreshCcw className="w-8 h-8 text-amber-600 animate-spin" />
+                    </div>
+                    <div className="flex-1">
+                        <h4 className="text-xl font-black text-amber-900 mb-1">
+                            {isAr ? "جاري تهيئة نظامك الآن" : "System Provisioning in Progress"}
+                        </h4>
+                        <p className="text-amber-700/80 font-bold text-sm leading-relaxed">
+                            {isAr 
+                                ? "نحن نقوم حالياً بإعداد البيئة الخاصة بك وتثبيت الأنظمة المطلوبة. هذه العملية تتم آلياً وقد تستغرق بضع دقائق. لا داعي للبقاء في هذه الصفحة، سنقوم بتحديث الحالة فور الجاهزية." 
+                                : "We are currently setting up your environment and installing the required systems. This process is automated and may take a few minutes. You don't need to stay on this page; we will update the status once it's ready."}
+                        </p>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Active Package Card */}
             <motion.div

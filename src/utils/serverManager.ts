@@ -107,48 +107,75 @@ export class ServerManager {
 
             // console.log(`[ServerManager] Sending webhook payload for subscription ${subscriptionId}:`, JSON.stringify(payload, null, 2));
 
-            // Use native fetch API (recommended in Next.js App Router)
-            const response = await fetch(this.WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': this.getAuthHeader()
-                },
-                body: JSON.stringify(payload),
-                cache: 'no-store'
-            });
+            // Use AbortController for a 25-second timeout to prevent 502 Bad Gateway
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 25000);
 
-            // Safely parse the response data
-            let data: any;
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json().catch(() => null);
-            } else {
-                data = await response.text().catch(() => null);
-            }
+            try {
+                const response = await fetch(this.WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': this.getAuthHeader()
+                    },
+                    body: JSON.stringify(payload),
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
 
-            if (!response.ok) {
-                console.error(`[ServerManager] Webhook failed with status ${response.status}:`, data);
-                // Determine the exact error message from the response
-                const serverError = typeof data === 'string' ? data : 
-                    (data?.message || data?.error || data?.msg || data?.detail || JSON.stringify(data) || `HTTP Error: ${response.status}`);
-                throw new Error(serverError);
-            }
+                clearTimeout(timeoutId);
 
-            // console.log(`[ServerManager] Webhook response:`, data);
-
-            // Update subscription with instance info
-            const instanceUrl = `https://${fullDomain}`;
-
-            await prisma.subscription.update({
-                where: { id: subscriptionId },
-                data: {
-                    instanceUrl: instanceUrl,
-                    status: 'DONE'
+                // Safely parse the response data
+                let data: any;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json().catch(() => null);
+                } else {
+                    data = await response.text().catch(() => null);
                 }
-            });
 
-            return { success: true, data: data, domain: instanceUrl };
+                if (!response.ok) {
+                    console.error(`[ServerManager] Webhook failed with status ${response.status}:`, data);
+                    const serverError = typeof data === 'string' ? data : 
+                        (data?.message || data?.error || data?.msg || data?.detail || JSON.stringify(data) || `HTTP Error: ${response.status}`);
+                    throw new Error(serverError);
+                }
+
+                // console.log(`[ServerManager] Webhook response:`, data);
+
+                // Update subscription with instance info
+                const instanceUrl = `https://${fullDomain}`;
+
+                await prisma.subscription.update({
+                    where: { id: subscriptionId },
+                    data: {
+                        instanceUrl: instanceUrl,
+                        status: 'DONE'
+                    }
+                });
+
+                return { success: true, data: data, domain: instanceUrl };
+
+            } catch (fetchError: any) {
+                clearTimeout(timeoutId);
+                
+                if (fetchError.name === 'AbortError') {
+                    // This means the request is likely processing in the background but took > 25s
+                    console.log(`[ServerManager] Provisioning request timed out, assuming background processing for ${subscriptionId}`);
+                    
+                    await prisma.subscription.update({
+                        where: { id: subscriptionId },
+                        data: { status: 'PROGRES' }
+                    });
+
+                    return { 
+                        success: true, 
+                        message: "نظامك قيد التجهيز الآن! نقوم حالياً بإعداد البيئة التقنية والبيانات الخاصة بك. هذه العملية تتم آلياً في الخلفية وقد تستغرق بضع دقائق. سنقوم بإبلاغك فور جاهزية النظام، ويمكنك التحقق من الرابط بعد قليل.",
+                        domain: `https://${fullDomain}`
+                    };
+                }
+                throw fetchError;
+            }
 
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
@@ -164,6 +191,8 @@ export class ServerManager {
                 translatedMessage = "هذا النطاق مستخدم بالفعل، يرجى اختيار اسم نطاق آخر.";
             } else if (lowerError.includes('authorization') || lowerError.includes('401') || lowerError.includes('jwt')) {
                 translatedMessage = "فشل في المصادقة مع سيرفر التجهيز، يرجى التحقق من إعدادات التوكن (JWT).";
+            } else if (lowerError.includes('fetch failed')) {
+                translatedMessage = "تعذر الاتصال بسيرفر التجهيز حالياً، يرجى المحاولة لاحقاً.";
             }
 
             return { 
