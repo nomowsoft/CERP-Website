@@ -123,7 +123,7 @@ export default function SystemRequestsManagement() {
                                         <div className="flex flex-wrap gap-1">
                                             {request.systems?.map((sys: any) => (
                                                 <span key={sys.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                    {locale === 'en' ? sys.name_en || sys.name : sys.name_ar || sys.name}
+                                                    {locale === 'en' ? sys.name_en : sys.name_ar}
                                                 </span>
                                             ))}
                                         </div>
@@ -266,7 +266,7 @@ export default function SystemRequestsManagement() {
                                                         <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center">
                                                             <Building2 className="w-5 h-5 text-primary" />
                                                         </div>
-                                                        <span className="font-bold text-gray-900">{locale === 'en' ? sys.name_en || sys.name : sys.name_ar || sys.name}</span>
+                                                        <span className="font-bold text-gray-900">{locale === 'en' ? sys.name_en : sys.name_ar}</span>
                                                     </div>
                                                     <div className="text-primary font-bold">
                                                         {Number(sys.price)} {locale === 'ar' ? "ر.س" : "SAR"}

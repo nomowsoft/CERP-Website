@@ -149,7 +149,7 @@ export default function SystemsPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h3 className="text-xl font-bold text-gray-900 truncate">
-                                            {locale === 'ar' ? (system.name_ar || system.name) : (system.name_en || system.name)}
+                                            {locale === 'ar' ? system.name_ar : system.name_en}
                                         </h3>
                                         <p className="text-gray-500 text-sm line-clamp-2 mt-1">
                                             {locale === 'ar' ? system.description_ar : system.description_en}

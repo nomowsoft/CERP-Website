@@ -114,7 +114,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                     {selectedPackage.systems.map((sys: any, idx: number) => (
                                         <div key={idx} className="bg-white/50 p-3 rounded-2xl border border-primary/10">
                                             <p className="text-xs font-bold text-gray-700 mb-2">
-                                                {isAr ? sys.name_ar || sys.name : sys.name_en || sys.name}
+                                                {isAr ? sys.name_ar : sys.name_en}
                                             </p>
                                             {sys.modules && sys.modules.length > 0 && (
                                                 <div className="flex flex-wrap gap-1">
@@ -170,7 +170,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
 
                             {/* Service Name */}
                             <h3 className="text-xl font-bold font-doto2 mb-2">
-                                {isAr ? service.name_ar || service.name : service.name_en || service.name}
+                                {isAr ? service.name_ar : service.name_en}
                             </h3>
 
                             {/* Service Price */}
@@ -185,7 +185,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
 
                             {/* Service Description */}
                             <p className="text-sm text-gray-500 line-clamp-2">
-                                {isAr ? service.description_ar || service.description : service.description_en || service.description}
+                                {isAr ? service.description_ar : service.description_en}
                             </p>
                         </div>
                     );
@@ -236,7 +236,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
 
                                     {/* System Name */}
                                     <h3 className="text-lg font-bold font-doto2 mb-2">
-                                        {isAr ? system.name_ar || system.name : system.name_en || system.name}
+                                        {isAr ? system.name_ar : system.name_en}
                                     </h3>
 
                                     {/* System Price */}
@@ -251,7 +251,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
 
                                     {/* System Description */}
                                     <p className="text-xs text-gray-400 line-clamp-2 mb-3">
-                                        {isAr ? system.description_ar || system.description : system.description_en || system.description}
+                                        {isAr ? system.description_ar : system.description_en}
                                     </p>
 
                                     {/* System Modules */}

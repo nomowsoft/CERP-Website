@@ -109,9 +109,7 @@ export const generateInvoicePDF = async (invoice: any, subscription: any, locale
         }
 
         // --- Table Section ---
-        const packageName = isAr ?
-            (subscription.package?.name_ar || subscription.package?.name) :
-            (subscription.package?.name_en || subscription.package?.name);
+        const packageName = isAr ? subscription.package?.name_ar : subscription.package?.name_en;
 
         const tableHead = [
             isAr ? 'الوصف' : 'Description',

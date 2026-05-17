@@ -78,11 +78,11 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 data: {
                     name: body.name,
                     name_en: body.name_en,
-                    name_ar: body.name_ar,
+                    name_ar: body.name_ar !== undefined ? body.name_ar : body.name,
                     type: body.type as PackageType,
                     description: body.description,
                     description_en: body.description_en,
-                    description_ar: body.description_ar,
+                    description_ar: body.description_ar !== undefined ? body.description_ar : body.description,
                     image: imageBuffer,
                     price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
                     currency: body.currency,

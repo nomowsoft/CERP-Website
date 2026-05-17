@@ -10,7 +10,10 @@ import {
     X,
     ShoppingCart,
     Check,
-    Info
+    Info,
+    LockKeyhole,
+    LogIn,
+    UserPlus
 } from 'lucide-react';
 import Image from 'next/image';
 import type { AppDispatch } from '@/app/store/store';
@@ -57,14 +60,70 @@ export const Backages = () => {
     const [selectedSystem, setSelectedSystem] = useState<any>(null);
     const [selectedPkg, setSelectedPkg] = useState<number | null>(null);
     const [selectedSystems, setSelectedSystems] = useState<number[]>([]);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const saved = sessionStorage.getItem('pending_subscription_selection');
+            if (saved && userInfo?.id) {
+                try {
+                    const { selectedPkg: savedPkg, selectedSystems: savedSystems } = JSON.parse(saved);
+                    if (savedPkg) setSelectedPkg(savedPkg);
+                    if (savedSystems && savedSystems.length > 0) setSelectedSystems(savedSystems);
+                    sessionStorage.removeItem('pending_subscription_selection');
+                } catch (e) {
+                    console.error("Failed to restore pending subscription selection", e);
+                }
+            }
+        }
+    }, [userInfo]);
 
     const toggleSystem = (id: number) => {
+        if (!userInfo?.id) {
+            if (typeof window !== 'undefined') {
+                const selection = {
+                    selectedPkg,
+                    selectedSystems: selectedSystems.includes(id)
+                        ? selectedSystems.filter(sId => sId !== id)
+                        : [...selectedSystems, id]
+                };
+                sessionStorage.setItem('pending_subscription_selection', JSON.stringify(selection));
+            }
+            setShowAuthModal(true);
+            return;
+        }
         setSelectedSystems(prev => 
             prev.includes(id) ? prev.filter(sId => sId !== id) : [...prev, id]
         );
     };
 
+    const handleSelectPkg = (packageId: number) => {
+        if (!userInfo?.id) {
+            if (typeof window !== 'undefined') {
+                const selection = {
+                    selectedPkg: packageId,
+                    selectedSystems
+                };
+                sessionStorage.setItem('pending_subscription_selection', JSON.stringify(selection));
+            }
+            setShowAuthModal(true);
+            return;
+        }
+        setSelectedPkg(packageId);
+    };
+
     const handleCheckout = () => {
+        if (!userInfo?.id) {
+            if (typeof window !== 'undefined') {
+                const selection = {
+                    selectedPkg,
+                    selectedSystems
+                };
+                sessionStorage.setItem('pending_subscription_selection', JSON.stringify(selection));
+            }
+            setShowAuthModal(true);
+            return;
+        }
         const params = new URLSearchParams();
         if (selectedPkg) params.append('packageId', selectedPkg.toString());
         selectedSystems.forEach(id => params.append('systemId', id.toString()));
@@ -141,10 +200,10 @@ export const Backages = () => {
                                         )}
                                     </div>
                                     <h3 className="font-doto2 font-bold text-2xl text-gray-900 mb-1">
-                                        {locale === 'en' ? packege.name_en || packege.name : packege.name_ar || packege.name}
+                                        {locale === 'en' ? packege.name_en : packege.name_ar}
                                     </h3>
                                     <p className="text-gray-500 text-sm leading-relaxed min-h-[2.5rem] line-clamp-2">
-                                        {locale === 'en' ? packege.description_en || packege.description : packege.description_ar || packege.description}
+                                        {locale === 'en' ? packege.description_en : packege.description_ar}
                                     </p>
 
                                     {packege.systems && packege.systems.length > 0 && (
@@ -167,7 +226,7 @@ export const Backages = () => {
                                                             )}
                                                         </div>
                                                         <span className="text-[9px] font-bold text-gray-500 group-hover/system:text-primary transition-colors">
-                                                            {locale === 'ar' ? system.name_ar || system.name : system.name_en || system.name}
+                                                            {locale === 'ar' ? system.name_ar : system.name_en}
                                                         </span>
                                                     </div>
                                                 ))}
@@ -186,7 +245,7 @@ export const Backages = () => {
                             
                             <div className="relative z-10 w-full mt-auto space-y-2 pt-2">
                                 <button 
-                                    onClick={() => setSelectedPkg(packege.id)}
+                                    onClick={() => handleSelectPkg(packege.id)}
                                     className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${selectedPkg === packege.id ? 'bg-secondary text-white shadow-lg' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
                                 >
                                     {selectedPkg === packege.id ? (
@@ -246,8 +305,8 @@ export const Backages = () => {
                                                     <Settings2 className="w-10 h-10 text-primary/50" />
                                                 )}
                                             </div>
-                                            <h3 className="font-doto2 font-bold text-xl text-gray-900 mb-1">{locale === 'en' ? system.name_en || system.name : system.name_ar || system.name}</h3>
-                                            <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en || system.description : system.description_ar || system.description}</p>
+                                            <h3 className="font-doto2 font-bold text-xl text-gray-900 mb-1">{locale === 'en' ? system.name_en : system.name_ar}</h3>
+                                            <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p>
                                             
                                             <div className="flex items-center justify-center gap-1 mt-4">
                                                 <span className={`font-doto2 font-bold ${Number(system.price) === 0 ? 'text-xl text-primary' : 'text-2xl text-gray-900'}`}>
@@ -333,11 +392,11 @@ export const Backages = () => {
                                         )}
                                     </div>
                                     <h3 className="text-3xl font-black text-gray-900 font-doto2 mb-4">
-                                        {locale === 'ar' ? selectedSystem.name_ar || selectedSystem.name : selectedSystem.name_en || selectedSystem.name}
+                                        {locale === 'ar' ? selectedSystem.name_ar : selectedSystem.name_en}
                                     </h3>
                                     <div className="w-12 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-8"></div>
                                     <p className="text-lg text-gray-600 leading-relaxed text-justify" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-                                        {locale === 'ar' ? selectedSystem.description_ar || selectedSystem.description : selectedSystem.description_en || selectedSystem.description}
+                                        {locale === 'ar' ? selectedSystem.description_ar : selectedSystem.description_en}
                                     </p>
                                 </div>
                             </div>
@@ -349,6 +408,81 @@ export const Backages = () => {
                                 >
                                     {locale === 'ar' ? 'إغلاق' : 'Close'}
                                 </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Beautiful, Premium Auth Prompt Modal */}
+            <AnimatePresence>
+                {showAuthModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowAuthModal(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                        />
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-xl bg-white border border-gray-100 rounded-[3rem] shadow-[0_30px_70px_rgba(0,0,0,0.15)] overflow-hidden z-10"
+                        >
+                            {/* Ambient Background Glows */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full blur-[40px] pointer-events-none"></div>
+                            
+                            <button 
+                                onClick={() => setShowAuthModal(false)}
+                                className="absolute top-6 right-6 p-2.5 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors z-20"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+
+                            <div className="p-8 md:p-12 text-center relative z-10 flex flex-col items-center">
+                                {/* Premium Lock Icon Container */}
+                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 flex items-center justify-center mb-6 relative group">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <LockKeyhole className="w-9 h-9 text-primary animate-[pulse_2s_infinite]" />
+                                </div>
+                                
+                                <h3 className="text-2xl md:text-3xl font-black text-gray-900 font-doto2 mb-4">
+                                    {locale === 'ar' ? 'تأكيد الحساب والاشتراك' : 'Confirm Account & Subscription'}
+                                </h3>
+                                
+                                <div className="w-12 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-6"></div>
+                                
+                                <p className="text-gray-500 text-base md:text-lg leading-relaxed mb-10 max-w-md">
+                                    {locale === 'ar' 
+                                        ? 'يرجى تسجيل الدخول أو إنشاء حساب جديد لإتمام طلبك والبدء في تهيئة الأنظمة المخصصة لجمعيتكم.'
+                                        : 'Please log in or register a new account to complete your order and start configuring the customized systems for your organization.'}
+                                </p>
+
+                                <div className="flex flex-col sm:flex-row gap-4 w-full">
+                                    <button 
+                                        onClick={() => {
+                                            setShowAuthModal(false);
+                                            router.push(`/${locale}/login?redirect=backages_service`);
+                                        }}
+                                        className="flex-grow py-4 px-6 bg-gradient-to-l from-primary/95 to-primary text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-[0_12px_24px_rgba(var(--primary-rgb),0.25)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                                    >
+                                        <LogIn className="w-5 h-5" />
+                                        <span>{locale === 'ar' ? 'تسجيل الدخول' : 'Log In'}</span>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => {
+                                            setShowAuthModal(false);
+                                            router.push(`/${locale}/register?redirect=backages_service`);
+                                        }}
+                                        className="flex-grow py-4 px-6 bg-white border-2 border-gray-200 text-gray-700 hover:text-primary hover:border-primary/50 font-bold text-lg rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                                    >
+                                        <UserPlus className="w-5 h-5" />
+                                        <span>{locale === 'ar' ? 'تسجيل حساب جديد' : 'Register'}</span>
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>

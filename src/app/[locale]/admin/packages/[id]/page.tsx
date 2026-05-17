@@ -370,7 +370,7 @@ export default function PackageFormPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className={`text-sm font-black truncate ${formData.systemIds.includes(system.id) ? 'text-primary' : 'text-gray-700'}`}>
-                                            {isAr ? system.name_ar || system.name : system.name_en || system.name}
+                                            {isAr ? system.name_ar : system.name_en}
                                         </p>
                                     </div>
                                 </label>

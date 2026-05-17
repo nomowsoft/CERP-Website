@@ -18,7 +18,15 @@ export default function proxy(request: NextRequest) {
     if (pathname.startsWith("/api")) {
         // Skip auth check for public routes
         const isPublicRoute = PUBLIC_API_ROUTES.some(route => pathname.startsWith(route));
-        if (!isPublicRoute) {
+        
+        // Skip auth check for public GET endpoints (packages, systems, services)
+        const isPublicGetApi = request.method === 'GET' && (
+            pathname.startsWith('/api/packages') ||
+            pathname.startsWith('/api/systems') ||
+            pathname.startsWith('/api/services')
+        );
+
+        if (!isPublicRoute && !isPublicGetApi) {
             const jwtToken = request.cookies.get("jwtToken")?.value;
             if (!jwtToken) {
                 return NextResponse.json(

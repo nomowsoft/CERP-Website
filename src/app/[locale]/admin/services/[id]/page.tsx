@@ -212,7 +212,7 @@ export default function ServiceFormPage({
                   )}
                 </div>
                 <span className="font-medium truncate flex-1 text-sm">
-                  {isAr ? s.name : s.name_en || s.name}
+                  {isAr ? s.name_ar : s.name_en}
                 </span>
                 {isAr ? (
                   <ChevronLeft className="w-4 h-4 opacity-30" />

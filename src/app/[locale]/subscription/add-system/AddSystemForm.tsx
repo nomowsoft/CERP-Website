@@ -185,7 +185,7 @@ export default function AddSystemForm() {
                                             )}
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="text-xl font-black text-gray-900 mb-1">{isAr ? system.name_ar || system.name : system.name_en || system.name}</h3>
+                                            <h3 className="text-xl font-black text-gray-900 mb-1">{isAr ? system.name_ar : system.name_en}</h3>
                                             <p className="text-sm text-gray-500 line-clamp-2 mb-4">{isAr ? system.description_ar : system.description_en}</p>
                                             <div className="text-xl font-black text-primary">
                                                 {Number(system.price).toLocaleString()} {isAr ? "ر.س" : "SAR"}

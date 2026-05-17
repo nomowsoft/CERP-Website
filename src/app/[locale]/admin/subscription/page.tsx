@@ -519,12 +519,12 @@ export default function Subscription() {
                                                     <div className="flex flex-wrap gap-1 max-w-[200px]">
                                                         {req.systems?.map((s: any) => (
                                                             <Badge key={s.id} variant="outline" className="text-[10px] py-0">
-                                                                {isAr ? (s.name_ar || s.name) : (s.name_en || s.name)}
+                                                                {isAr ? s.name_ar : s.name_en}
                                                             </Badge>
                                                         ))}
                                                     </div>
                                                 ) : (
-                                                    isAr ? (req.package?.name_ar || req.package?.name) : (req.package?.name_en || req.package?.name)
+                                                    isAr ? req.package?.name_ar : req.package?.name_en
                                                 )}
                                             </td>
                                             <td className="py-5 px-6">

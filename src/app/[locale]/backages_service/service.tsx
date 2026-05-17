@@ -5,14 +5,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getServices } from '@/app/store/slices/servicesSlice';
 import { useEffect } from 'react';
 import { ServiceDTO, ServiceTypeDto } from '@/utils/types';
-import { ArrowLeft, ArrowRight, Settings, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Settings, CheckCircle2, LockKeyhole, LogIn, UserPlus, X } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { isValidImage } from '@/utils/imageUtils';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Service = () => {
     const locale = useLocale();
     const t = useTranslations("programs");
     const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
+    const { userInfo } = useSelector((state: any) => state.user);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     
     useEffect(() => {
         dispatch(getServices());
@@ -63,10 +69,10 @@ export const Service = () => {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-2xl md:text-3xl font-doto2 font-bold text-gray-900 mb-2">
-                                            {locale === 'en' ? service.name_en || service.name : service.name_ar || service.name}
+                                            {locale === 'en' ? service.name_en : service.name_ar}
                                         </h3>
                                         <p className="text-gray-500 leading-relaxed mb-4">
-                                            {locale === 'en' ? service.description_en || service.description : service.description_ar || service.description}
+                                            {locale === 'en' ? service.description_en : service.description_ar}
                                         </p>
                                         <div className="flex items-baseline justify-center md:justify-start gap-1 pb-4 border-b border-gray-100">
                                             <span className={`text-4xl font-bold font-doto2 ${Number(service.price) === 0 ? 'text-secondary' : 'text-primary'}`}>
@@ -86,7 +92,7 @@ export const Service = () => {
                                         <div key={content.id} className="flex items-center gap-2 bg-gray-50 border border-gray-100 group-hover:border-primary/10 group-hover:bg-white p-3 rounded-xl transition-colors">
                                             <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                                             <span className="text-gray-700 text-xs md:text-sm font-medium">
-                                                {locale === 'en' ? content.name_en || content.name : content.name_ar || content.name}
+                                                {locale === 'en' ? content.name_en : content.name_ar}
                                             </span>
                                         </div>
                                     ))}
@@ -94,8 +100,14 @@ export const Service = () => {
                             </div>
                             
                             <div className="relative z-10 w-full mt-auto">
-                                <a 
-                                    href={`/${locale}/subscription`} 
+                                <button 
+                                    onClick={() => {
+                                        if (!userInfo?.id) {
+                                            setShowAuthModal(true);
+                                        } else {
+                                            router.push(`/${locale}/subscription`);
+                                        }
+                                    }}
                                     className="flex items-center justify-center w-full py-4 text-lg font-bold rounded-2xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300"
                                 >
                                     <span>{t('subscribeNow')}</span>
@@ -104,12 +116,87 @@ export const Service = () => {
                                     ) : (
                                         <ArrowRight className="mx-2 w-5 h-5" />
                                     )}
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Beautiful, Premium Auth Prompt Modal for Services */}
+            <AnimatePresence>
+                {showAuthModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowAuthModal(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                        />
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-xl bg-white border border-gray-100 rounded-[3rem] shadow-[0_30px_70px_rgba(0,0,0,0.15)] overflow-hidden z-10"
+                        >
+                            {/* Ambient Background Glows */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full blur-[40px] pointer-events-none"></div>
+                            
+                            <button 
+                                onClick={() => setShowAuthModal(false)}
+                                className="absolute top-6 right-6 p-2.5 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors z-20"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+
+                            <div className="p-8 md:p-12 text-center relative z-10 flex flex-col items-center">
+                                {/* Premium Lock Icon Container */}
+                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 flex items-center justify-center mb-6 relative group">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <LockKeyhole className="w-9 h-9 text-primary animate-[pulse_2s_infinite]" />
+                                </div>
+                                
+                                <h3 className="text-2xl md:text-3xl font-black text-gray-900 font-doto2 mb-4">
+                                    {locale === 'ar' ? 'تأكيد الحساب والاشتراك' : 'Confirm Account & Subscription'}
+                                </h3>
+                                
+                                <div className="w-12 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-6"></div>
+                                
+                                <p className="text-gray-500 text-base md:text-lg leading-relaxed mb-10 max-w-md">
+                                    {locale === 'ar' 
+                                        ? 'يرجى تسجيل الدخول أو إنشاء حساب جديد لإتمام طلبك والبدء في تهيئة الخدمات المخصصة لجمعيتكم.'
+                                        : 'Please log in or register a new account to complete your order and start configuring the customized services for your organization.'}
+                                </p>
+
+                                <div className="flex flex-col sm:flex-row gap-4 w-full">
+                                    <button 
+                                        onClick={() => {
+                                            setShowAuthModal(false);
+                                            router.push(`/${locale}/login?redirect=backages_service`);
+                                        }}
+                                        className="flex-grow py-4 px-6 bg-gradient-to-l from-primary/95 to-primary text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-[0_12px_24px_rgba(var(--primary-rgb),0.25)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                                    >
+                                        <LogIn className="w-5 h-5" />
+                                        <span>{locale === 'ar' ? 'تسجيل الدخول' : 'Log In'}</span>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => {
+                                            setShowAuthModal(false);
+                                            router.push(`/${locale}/register?redirect=backages_service`);
+                                        }}
+                                        className="flex-grow py-4 px-6 bg-white border-2 border-gray-200 text-gray-700 hover:text-primary hover:border-primary/50 font-bold text-lg rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                                    >
+                                        <UserPlus className="w-5 h-5" />
+                                        <span>{locale === 'ar' ? 'تسجيل حساب جديد' : 'Register'}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </section>
     );
 };

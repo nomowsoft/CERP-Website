@@ -56,7 +56,7 @@ const StepPackage = ({ packages, selectedPackageId, onSelect }: StepPackageProps
                                     )}
                                 </div>
                                 <h3 className="text-xl font-bold font-doto2 text-center mb-1">
-                                    {isAr ? pkg.name_ar || pkg.name : pkg.name_en || pkg.name}
+                                    {isAr ? pkg.name_ar : pkg.name_en}
                                 </h3>
                                 <div className="text-center text-sm text-gray-500 mb-4">{pkg.type}</div>
 
@@ -70,7 +70,7 @@ const StepPackage = ({ packages, selectedPackageId, onSelect }: StepPackageProps
                                 </div>
 
                                 <p className="text-sm text-gray-500 text-center line-clamp-3 mb-6">
-                                    {isAr ? pkg.description_ar || pkg.description : pkg.description_en || pkg.description}
+                                    {isAr ? pkg.description_ar : pkg.description_en}
                                 </p>
                             </div>
 
@@ -78,7 +78,7 @@ const StepPackage = ({ packages, selectedPackageId, onSelect }: StepPackageProps
                                 {(pkg.features as any)?.slice(0, 3).map((feature: any) => (
                                     <li key={feature.id} className="flex items-center gap-2 text-xs text-gray-600">
                                         <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
-                                        {isAr ? feature.text_ar || feature.text : feature.text_en || feature.text}
+                                        {isAr ? feature.text_ar : feature.text_en}
                                     </li>
                                 ))}
                             </ul>

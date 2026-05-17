@@ -115,8 +115,8 @@ export default function PackagesManagement() {
                             </div>
                             
                             <div className="p-8 flex flex-col flex-1 relative bg-white">
-                                <h3 className="text-2xl font-black text-gray-900 mb-3 group-hover:text-primary transition-colors">{pkg.name}</h3>
-                                <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed">{pkg.description}</p>
+                                <h3 className="text-2xl font-black text-gray-900 mb-3 group-hover:text-primary transition-colors">{isAr ? pkg.name_ar : pkg.name_en}</h3>
+                                <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed">{isAr ? pkg.description_ar : pkg.description_en}</p>
 
                                 <div className="space-y-4 mb-8 flex-1">
                                     {pkg.features.slice(0, 3).map((f) => (
@@ -124,7 +124,7 @@ export default function PackagesManagement() {
                                             <div className="p-1.5 bg-green-50 rounded-full mt-0.5 group-hover:bg-green-100 transition-colors shrink-0">
                                                 <Check className="w-3.5 h-3.5 text-green-600" />
                                             </div>
-                                            <span className="font-semibold leading-snug">{f.text}</span>
+                                            <span className="font-semibold leading-snug">{isAr ? f.text : f.text_en}</span>
                                         </div>
                                     ))}
                                     {pkg.features.length > 3 && (

@@ -1,13 +1,15 @@
+"use client";
 import { Suspense } from 'react'
 import { Backages } from './backages'
 import { Service } from './service'
-import { Program } from '../Home/program'
 import { useLocale } from 'next-intl'
 import Image from 'next/image';
 import { HeartHandshake, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
 
 export default function BackagesService() {
   const locale = useLocale();
+  const isAr = locale === "ar";
+
   return (
     <section dir={`${locale === "ar" ? "rtl" : "ltr"}`} className="bg-gray-50/20 min-h-screen">
       <section className="pt-32 pb-48 relative overflow-hidden bg-gradient-to-b from-gray-50 to-primary/5">
@@ -18,7 +20,9 @@ export default function BackagesService() {
         <div className="flex justify-center relative z-10" data-aos="fade-down">
           <span className="flex items-center gap-2 mb-6 border border-primary/20 rounded-full px-5 py-2 bg-white shadow-sm">
             <Image src="/backage_service/Component.svg" height={24} width={24} alt="icon" />
-            <span className="text-primary font-bold">الخدمات والباقات والأنظمة</span>
+            <span className="text-primary font-bold">
+              {isAr ? "الخدمات والباقات والأنظمة" : "Services, Packages & Systems"}
+            </span>
           </span>
         </div>
 
@@ -55,26 +59,27 @@ export default function BackagesService() {
         
         <div className="max-w-4xl mx-auto text-center relative z-10" data-aos="fade-up">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-doto2 font-bold mb-6 text-gray-900 leading-tight">
-             <span>اختر </span>
-             <span className="bg-gradient-to-l from-secondary to-primary bg-clip-text text-transparent font-bold px-2 inline-block pb-2">الباقة المناسبة</span>
+             <span>{isAr ? "اختر " : "Choose "}</span>
+             <span className="bg-gradient-to-l from-secondary to-primary bg-clip-text text-transparent font-bold px-2 inline-block pb-2">
+               {isAr ? "الباقة المناسبة" : "the Suitable Package"}
+             </span>
              <br className="hidden md:block" />
-             <span> لاحتياجاتك</span>
+             <span> {isAr ? "لاحتياجاتك" : "for Your Needs"}</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-500 mb-8 max-w-2xl mx-auto leading-relaxed">
-            نقدم لك منظومة متكاملة من الأنظمة والباقات والخدمات المصممة باحترافية لتلبية احتياجات مؤسستك
+            {isAr 
+              ? "نقدم لك منظومة متكاملة من الأنظمة والباقات والخدمات المصممة باحترافية لتلبية احتياجات مؤسستك"
+              : "We offer you an integrated suite of systems, packages, and services professionally designed to meet your organization's needs"}
           </p>
         </div>
       </section>
-      
-      {/* 1. Packages Section */}
+
+      {/* 1. Packages & Systems Section */}
       <Suspense fallback={<div className="container mx-auto py-10 text-center">Loading...</div>}>
         <Backages />
       </Suspense>
       
-      {/* 2. Systems Section */}
-      {/* <Program /> */}
-      
-      {/* 3. Additional Services Section */}
+      {/* 2. Additional Services Section */}
       <Service />
     </section>
   )

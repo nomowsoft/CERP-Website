@@ -360,8 +360,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
                 <>اشترك في <span className="text-primary">{selectedPkg.name_ar}</span></>
               ) : formData.selectedSystems && formData.selectedSystems.length > 0 ? (
                 <>اشترك في <span className="text-primary">
-                  {allSystems.find(s => s.id === formData.selectedSystems![0])?.name_ar || 
-                   allSystems.find(s => s.id === formData.selectedSystems![0])?.name}
+                  {allSystems.find(s => s.id === formData.selectedSystems![0])?.name_ar}
                 </span></>
               ) : (
                 <>اشترك في <span className="text-primary">CERP</span></>
@@ -373,8 +372,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
                 <>Subscribe to <span className="text-primary">{selectedPkg.name_en}</span></>
               ) : formData.selectedSystems && formData.selectedSystems.length > 0 ? (
                 <>Subscribe to <span className="text-primary">
-                  {allSystems.find(s => s.id === formData.selectedSystems![0])?.name_en || 
-                   allSystems.find(s => s.id === formData.selectedSystems![0])?.name}
+                  {allSystems.find(s => s.id === formData.selectedSystems![0])?.name_en}
                 </span></>
               ) : (
                 <>Subscribe to <span className="text-primary">CERP</span></>
@@ -465,7 +463,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
                     if (!s) return null;
                     return (
                       <div key={id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">• {isAr ? s.name_ar || s.name : s.name_en || s.name}</span>
+                        <span className="text-gray-600">• {isAr ? s.name_ar : s.name_en}</span>
                         <span className="font-medium">{Number(s.price)} {currency}</span>
                       </div>
                     );

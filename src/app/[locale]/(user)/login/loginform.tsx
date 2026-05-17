@@ -1,12 +1,14 @@
 "use client";
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { useTranslations, useLocale } from 'next-intl';
 
 const LoginForm = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectParam = searchParams.get('redirect');
     const DOMAIN = process.env.NEXT_PUBLIC_API_URL;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -23,7 +25,10 @@ const LoginForm = () => {
         try {
             setLoading(true);
             await axios.post(`${DOMAIN}/api/users/login`, { email, password });
-            router.replace(`/${locale}/admin`);
+            
+            // Check if there is a redirect parameter, else default to /admin
+            const targetPath = redirectParam ? `/${locale}/${redirectParam}` : `/${locale}/admin`;
+            router.replace(targetPath);
             setLoading(false);
             router.refresh();
         } catch (error: any) {

@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 
 const RegisterForm = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectParam = searchParams.get('redirect');
     const locale = useLocale();
     const t = useTranslations("contact.register");
     const tCommon = useTranslations("dashboard.common");
@@ -35,7 +37,10 @@ const RegisterForm = () => {
                 charityName: charityName,
                 confirmPassword: confirmPassword
             });
-            router.replace(`/${locale}/admin`);
+            
+            // Check if there is a redirect parameter, else default to /admin
+            const targetPath = redirectParam ? `/${locale}/${redirectParam}` : `/${locale}/admin`;
+            router.replace(targetPath);
             setLoading(false);
             router.refresh();
         } catch (error: any) {

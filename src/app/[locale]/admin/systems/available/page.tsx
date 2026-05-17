@@ -162,10 +162,10 @@ export default function AvailableSystems() {
                                 {/* Content */}
                                 <div className="flex-1">
                                     <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors">
-                                        {locale === 'en' ? system.name_en || system.name : system.name_ar || system.name}
+                                        {locale === 'en' ? system.name_en : system.name_ar}
                                     </h3>
                                     <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-6">
-                                        {locale === 'en' ? system.description_en || system.description : system.description_ar || system.description}
+                                        {locale === 'en' ? system.description_en : system.description_ar}
                                     </p>
                                 </div>
 
@@ -241,7 +241,7 @@ export default function AvailableSystems() {
                                 </div>
                                 
                                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                                    {locale === 'en' ? selectedSystem.name_en || selectedSystem.name : selectedSystem.name_ar || selectedSystem.name}
+                                    {locale === 'en' ? selectedSystem.name_en : selectedSystem.name_ar}
                                 </h2>
                                 
                                 <div className="space-y-6">
@@ -250,7 +250,7 @@ export default function AvailableSystems() {
                                             {locale === 'ar' ? "عن النظام" : "About System"}
                                         </h4>
                                         <p className="text-gray-600 leading-relaxed text-lg">
-                                            {locale === 'en' ? selectedSystem.description_en || selectedSystem.description : selectedSystem.description_ar || selectedSystem.description}
+                                            {locale === 'en' ? selectedSystem.description_en : selectedSystem.description_ar}
                                         </p>
                                     </div>
                                     
@@ -328,7 +328,7 @@ export default function AvailableSystems() {
                                             )}
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-gray-900">{locale === 'en' ? buySystem.name_en || buySystem.name : buySystem.name_ar || buySystem.name}</h4>
+                                            <h4 className="font-bold text-gray-900">{locale === 'en' ? buySystem.name_en : buySystem.name_ar}</h4>
                                             <p className="text-primary font-bold">{Number(buySystem.price)} {locale === 'ar' ? "ر.س" : "SAR"}</p>
                                         </div>
                                     </div>

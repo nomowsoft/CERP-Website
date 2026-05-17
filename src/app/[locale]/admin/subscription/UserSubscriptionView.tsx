@@ -69,9 +69,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
 
     const packageName = useMemo(() => {
         if (!subscription || !subscription.package) return isAr ? "الباقة الأساسية" : "Basic Package";
-        return isAr ?
-            (subscription.package.name_ar || subscription.package.name) :
-            (subscription.package.name_en || subscription.package.name);
+        return isAr ? subscription.package.name_ar : subscription.package.name_en;
     }, [subscription, isAr]);
 
     const features = useMemo(() => {
@@ -292,7 +290,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                             <div key={service.id} className="p-6 bg-purple-50/30 rounded-3xl border border-purple-100 flex flex-col gap-4">
                                 <div className="flex justify-between items-center">
                                     <h4 className="font-black text-gray-800 text-lg">
-                                        {isAr ? (service.name_ar || service.name) : (service.name_en || service.name)}
+                                        {isAr ? service.name_ar : service.name_en}
                                     </h4>
                                     <span className="bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
                                         {isAr ? "نشط" : "Active"}
@@ -306,7 +304,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                             {service.contents.map((content: any, idx: number) => (
                                                 <span key={idx} className="bg-white px-3 py-1 rounded-lg text-xs font-bold text-gray-600 border border-purple-100/50 flex items-center gap-1.5 shadow-sm">
                                                     <CheckCircle2 className="w-3 h-3 text-purple-500" />
-                                                    {isAr ? (content.name_ar || content.name) : (content.name_en || content.name)}
+                                                    {isAr ? content.name_ar : content.name_en}
                                                 </span>
                                             ))}
                                         </div>
@@ -349,7 +347,7 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="text-lg font-black text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
-                                                {isAr ? (system.name_ar || system.name) : (system.name_en || system.name)}
+                                                {isAr ? system.name_ar : system.name_en}
                                             </h4>
                                             <span className="text-[9px] font-black text-primary/60 uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-full inline-block mt-1">
                                                 {isAr ? "نظام مفعل" : "Active System"}

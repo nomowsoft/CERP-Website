@@ -646,7 +646,7 @@ export default function SubscriptionFormPage({
                                             </div>
                                             <div>
                                                 <h5 className="font-black text-gray-900 text-lg">
-                                                    {isAr ? system.name_ar || system.name : system.name_en || system.name}
+                                                    {isAr ? system.name_ar : system.name_en}
                                                 </h5>
                                                 <p className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-full w-fit">
                                                     {isAr ? "نظام مفعل" : "Active System"}

@@ -78,11 +78,11 @@ export async function POST(request: NextRequest) {
         data: {
             name: body.name,
             name_en: body.name_en,
-            name_ar: body.name_ar,
+            name_ar: body.name_ar || body.name,
             type: body.type as PackageType,
             description: body.description,
             description_en: body.description_en,
-            description_ar: body.description_ar,
+            description_ar: body.description_ar || body.description,
             image: imageBuffer as any,
             price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
             currency: body.currency,

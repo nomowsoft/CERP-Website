@@ -258,7 +258,7 @@ export default function UpgradeForm() {
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-400 font-bold">{isAr ? "الباقة" : "Package"}</span>
                                 <span className="font-bold text-gray-800">
-                                    {isAr ? (selectedPkg?.name_ar || selectedPkg?.name) : (selectedPkg?.name_en || selectedPkg?.name)}
+                                    {isAr ? selectedPkg?.name_ar : selectedPkg?.name_en}
                                 </span>
                             </div>
 
@@ -267,7 +267,7 @@ export default function UpgradeForm() {
                                     <p className="text-xs font-bold text-gray-400 px-1">{isAr ? "الخدمات المضافة" : "Added Services"}</p>
                                     {services.filter(s => selectedServiceIds.includes(s.id)).map(s => (
                                         <div key={s.id} className="flex justify-between items-center p-2 bg-purple-50/50 rounded-lg">
-                                            <span className="text-xs font-bold text-gray-600">{isAr ? (s.name_ar || s.name) : (s.name_en || s.name)}</span>
+                                            <span className="text-xs font-bold text-gray-600">{isAr ? s.name_ar : s.name_en}</span>
                                             <span className="text-xs font-black text-purple-600">+{s.price}</span>
                                         </div>
                                     ))}
@@ -327,7 +327,7 @@ export default function UpgradeForm() {
                                         </div>
                                     )}
                                     <span className="text-lg font-black text-gray-800 mb-1">
-                                        {isAr ? (pkg.name_ar || pkg.name) : (pkg.name_en || pkg.name)}
+                                        {isAr ? pkg.name_ar : pkg.name_en}
                                     </span>
                                     <div className="flex items-baseline gap-1 mb-4">
                                         <span className="text-2xl font-black text-primary">{pkg.price}</span>
@@ -364,7 +364,7 @@ export default function UpgradeForm() {
                                                 <CheckCircle2 className="w-4 h-4" />
                                             </div>
                                             <div className="text-right">
-                                                <span className="block font-bold text-gray-800">{isAr ? (svc.name_ar || svc.name) : (svc.name_en || svc.name)}</span>
+                                                <span className="block font-bold text-gray-800">{isAr ? svc.name_ar : svc.name_en}</span>
                                                 <span className="text-xs text-purple-600 font-bold">{svc.price} {svc.currency || "SAR"}</span>
                                             </div>
                                         </div>

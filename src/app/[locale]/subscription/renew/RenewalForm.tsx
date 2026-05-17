@@ -189,8 +189,8 @@ export default function RenewalForm() {
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                     {isAr
-                        ? `تجديد باقة ${mySubscription.package?.name_ar || mySubscription.package?.name} (${mySubscription.package?.price} ريال)`
-                        : `Renew ${mySubscription.package?.name_en || mySubscription.package?.name} Plan (${mySubscription.package?.price} SAR)`}
+                        ? `تجديد باقة ${mySubscription.package?.name_ar} (${mySubscription.package?.price} ريال)`
+                        : `Renew ${mySubscription.package?.name_en} Plan (${mySubscription.package?.price} SAR)`}
                 </h1>
             </motion.div>
 
@@ -211,7 +211,7 @@ export default function RenewalForm() {
                                     {isAr ? "الباقة الحالية" : "Current Plan"}
                                 </span>
                                 <p className="text-lg font-black text-gray-800">
-                                    {isAr ? (mySubscription.package?.name_ar || mySubscription.package?.name) : (mySubscription.package?.name_en || mySubscription.package?.name)}
+                                    {isAr ? mySubscription.package?.name_ar : mySubscription.package?.name_en}
                                 </p>
                             </div>
 

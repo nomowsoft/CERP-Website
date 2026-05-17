@@ -65,7 +65,7 @@ export const Program = () => {
     if (systems.length === 0) return null;
 
     const data = systems;
-    const getName = (item: any) => locale === 'ar' ? (item.name_ar || item.name) : (item.name_en || item.name);
+    const getName = (item: any) => locale === 'ar' ? item.name_ar : item.name_en;
     const getDesc = (item: any) => locale === 'ar' ? item.description_ar : item.description_en;
 
     return (

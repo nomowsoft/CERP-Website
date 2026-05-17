@@ -180,7 +180,7 @@ export default function SystemFormPage({
                   )}
                 </div>
                 <span className="font-medium truncate flex-1 text-sm">
-                  {locale === "ar" ? s.name_ar || s.name : s.name_en || s.name}
+                  {locale === "ar" ? s.name_ar : s.name_en}
                 </span>
                 {locale === "ar" ? (
                   <ChevronLeft className="w-4 h-4 opacity-30" />
@@ -274,6 +274,22 @@ export default function SystemFormPage({
                       }
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       placeholder="System Name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      <span className="w-6 h-4 bg-blue-600 rounded-sm"></span>
+                      {locale === 'ar' ? 'الاسم بالإنجليزية' : 'Name (English)'}
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={formData.name_en}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name_en: e.target.value })
+                      }
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="System English Name"
                     />
                   </div>
                 </div>
