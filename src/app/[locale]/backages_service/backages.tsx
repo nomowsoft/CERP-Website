@@ -13,7 +13,8 @@ import {
     Info,
     LockKeyhole,
     LogIn,
-    UserPlus
+    UserPlus,
+    ChevronDown
 } from 'lucide-react';
 import Image from 'next/image';
 import type { AppDispatch } from '@/app/store/store';
@@ -58,6 +59,7 @@ export const Backages = () => {
     const { subscriptionInfo } = useSelector((state: any) => state.subscription);
     const mySubscription = subscriptionInfo?.data?.find((s: any) => s.userId === userInfo?.id);
     const [selectedSystem, setSelectedSystem] = useState<any>(null);
+    const [expandedSystemId, setExpandedSystemId] = useState<string | null>(null);
     const [selectedPkg, setSelectedPkg] = useState<number | null>(null);
     const [selectedSystems, setSelectedSystems] = useState<number[]>([]);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -208,28 +210,56 @@ export const Backages = () => {
 
                                     {packege.systems && packege.systems.length > 0 && (
                                         <div className="mt-6 pt-4 border-t border-gray-100/60 w-full">
-                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 text-start px-1">
                                                 {locale === 'ar' ? 'الأنظمة المشمولة:' : 'Included Systems:'}
                                             </p>
-                                            <div className="flex flex-wrap justify-center gap-3">
-                                                {packege.systems.map((system: any) => (
-                                                    <div 
-                                                        key={system.id} 
-                                                        onMouseEnter={() => setSelectedSystem(system)}
-                                                        className="group/system relative flex flex-col items-center gap-1 cursor-pointer"
-                                                    >
-                                                        <div className="w-10 h-10 rounded-xl bg-gray-50 group-hover/system:bg-primary/5 border border-gray-100 group-hover/system:border-primary/20 flex items-center justify-center p-2 transition-all duration-300">
-                                                            {isValidImage(system.icon) ? (
-                                                                <Image src={system.icon} alt="" width={24} height={24} className="object-contain transition-transform group-hover/system:scale-110" />
-                                                            ) : (
-                                                                <Settings2 className="w-5 h-5 text-gray-300 group-hover/system:text-primary/40" />
-                                                            )}
+                                            <div className="max-h-[178px] overflow-y-auto custom-scrollbar flex flex-col gap-2 px-1 py-0.5">
+                                                {packege.systems.map((system: any) => {
+                                                    const fullSystem = allSystems?.find((s: any) => s.id === system.id) || system;
+                                                    const systemKey = `${packege.id}-${system.id}`;
+                                                    const isExpanded = expandedSystemId === systemKey;
+                                                    return (
+                                                        <div 
+                                                            key={system.id} 
+                                                            className={`group/system flex flex-col border border-gray-100 hover:border-primary/20 bg-gray-50/50 hover:bg-primary/[0.01] rounded-xl transition-all duration-300 p-2.5 cursor-pointer ${isExpanded ? 'border-primary/20 bg-primary/[0.01]' : ''}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setExpandedSystemId(isExpanded ? null : systemKey);
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center justify-between gap-3">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-100 group-hover/system:border-primary/20 flex items-center justify-center p-1.5 transition-all duration-300 shrink-0">
+                                                                        {isValidImage(system.icon) ? (
+                                                                            <Image src={system.icon} alt="" width={20} height={20} className="object-contain transition-transform group-hover/system:scale-110" />
+                                                                        ) : (
+                                                                            <Settings2 className="w-4 h-4 text-gray-300 group-hover/system:text-primary/40" />
+                                                                        )}
+                                                                    </div>
+                                                                    <span className="text-xs font-bold text-gray-700 group-hover/system:text-primary transition-colors text-start">
+                                                                        {locale === 'ar' ? system.name_ar : system.name_en}
+                                                                    </span>
+                                                                </div>
+                                                                <ChevronDown className={`w-4 h-4 text-gray-400 group-hover/system:text-primary transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180 text-primary' : ''}`} />
+                                                            </div>
+                                                            <AnimatePresence initial={false}>
+                                                                {isExpanded && (
+                                                                    <motion.div
+                                                                        initial={{ height: 0, opacity: 0 }}
+                                                                        animate={{ height: "auto", opacity: 1 }}
+                                                                        exit={{ height: 0, opacity: 0 }}
+                                                                        transition={{ duration: 0.2 }}
+                                                                        className="overflow-hidden"
+                                                                    >
+                                                                        <p className="text-[10px] md:text-[11px] text-gray-500 mt-2 text-justify leading-relaxed border-t border-gray-100/60 pt-2 px-1">
+                                                                            {locale === 'ar' ? (fullSystem.description_ar || system.description_ar) : (fullSystem.description_en || system.description_en)}
+                                                                        </p>
+                                                                    </motion.div>
+                                                                )}
+                                                            </AnimatePresence>
                                                         </div>
-                                                        <span className="text-[9px] font-bold text-gray-500 group-hover/system:text-primary transition-colors">
-                                                            {locale === 'ar' ? system.name_ar : system.name_en}
-                                                        </span>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -291,7 +321,7 @@ export const Backages = () => {
                             <div key={system.id} data-aos="fade-up" data-aos-delay={index * 100} className="h-full">
                                 <div className={`group h-full bg-white rounded-[2rem] p-6 border border-gray-100 shadow-lg transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${selectedSystems.includes(system.id) ? 'border-secondary' : 'hover:border-primary/30'}`}>
                                     <button 
-                                        onMouseEnter={() => setSelectedSystem(system)}
+                                        onClick={() => setSelectedSystem(system)}
                                         className="absolute top-6 right-6 p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all duration-300 z-20"
                                     >
                                         <Info className="w-4 h-4" />
@@ -383,7 +413,6 @@ export const Backages = () => {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            onMouseLeave={() => setSelectedSystem(null)}
                             className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
                         >
                             <button 
