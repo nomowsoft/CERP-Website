@@ -4,6 +4,8 @@ import { verifyToken } from "@/utils/verifyToken";
 import { PackageType } from "@/generated/prisma";
 import { formatImage } from "@/utils/imageUtils";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
     try {
         const packages = await prisma.package.findMany({
@@ -27,7 +29,10 @@ export async function GET(request: NextRequest) {
                         name_en: true,
                         name_ar: true,
                         icon: true,
-                        price: true
+                        price: true,
+                        description: true,
+                        description_en: true,
+                        description_ar: true
                     }
                 }
             },
