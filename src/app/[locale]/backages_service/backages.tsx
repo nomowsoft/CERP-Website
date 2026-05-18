@@ -308,22 +308,33 @@ export const Backages = () => {
                                             <h3 className="font-doto2 font-bold text-xl text-gray-900 mb-1">{locale === 'en' ? system.name_en : system.name_ar}</h3>
                                             <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p>
                                             
-                                            <div className="flex items-center justify-center gap-1 mt-4">
-                                                <span className={`font-doto2 font-bold ${Number(system.price) === 0 ? 'text-xl text-primary' : 'text-2xl text-gray-900'}`}>
-                                                    {Number(system.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(system.price)}
-                                                </span>
-                                                {Number(system.price) > 0 && <span className="text-xs text-gray-500 font-medium">{system.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>}
-                                            </div>
+                                            {Number(system.price) > 0 && (
+                                                <div className="flex items-center justify-center gap-1 mt-4">
+                                                    <span className="font-doto2 font-bold text-2xl text-gray-900">
+                                                        {Number(system.price)}
+                                                    </span>
+                                                    <span className="text-xs text-gray-500 font-medium">{system.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     
                                     <div className="relative z-10 w-full mt-auto pt-2">
-                                        <button 
-                                            onClick={() => toggleSystem(system.id)}
-                                            className={`w-full py-3 rounded-xl font-bold transition-all duration-300 ${selectedSystems.includes(system.id) ? 'bg-secondary text-white' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
-                                        >
-                                            {selectedSystems.includes(system.id) ? (locale === 'ar' ? 'تمت الإضافة' : 'Added') : (locale === 'ar' ? 'إضافة النظام' : 'Add System')}
-                                        </button>
+                                        {Number(system.price) === 0 ? (
+                                            <a 
+                                                href={`/${locale}/contact-us`}
+                                                className="w-full py-3 rounded-xl font-bold transition-all duration-300 bg-primary text-white hover:bg-primary/95 flex items-center justify-center"
+                                            >
+                                                {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
+                                            </a>
+                                        ) : (
+                                            <button 
+                                                onClick={() => toggleSystem(system.id)}
+                                                className={`w-full py-3 rounded-xl font-bold transition-all duration-300 ${selectedSystems.includes(system.id) ? 'bg-secondary text-white' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
+                                            >
+                                                {selectedSystems.includes(system.id) ? (locale === 'ar' ? 'تمت الإضافة' : 'Added') : (locale === 'ar' ? 'إضافة النظام' : 'Add System')}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
