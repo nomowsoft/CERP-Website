@@ -126,17 +126,26 @@ export const Program = () => {
                                             {getDesc(system)}
                                         </p>
                                         
-                                        <div className="flex items-center justify-center gap-1 mt-4">
-                                            <span className={`font-doto2 font-bold ${Number(system.price) === 0 ? 'text-xl text-primary' : 'text-2xl text-gray-900'}`}>
-                                                {Number(system.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(system.price)}
-                                            </span>
-                                            {Number(system.price) > 0 && <span className="text-xs text-gray-500 font-medium">{system.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>}
-                                        </div>
+                                        {Number(system.price) > 0 && (
+                                            <div className="flex items-center justify-center gap-1 mt-4">
+                                                <span className="font-doto2 font-bold text-2xl text-gray-900">
+                                                    {Number(system.price)}
+                                                </span>
+                                                <span className="text-xs text-gray-500 font-medium">{system.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 
                                 <div className="relative z-10 w-full mt-auto pt-2">
-                                    {isSubscribed(system.id) ? (
+                                    {Number(system.price) === 0 ? (
+                                        <a 
+                                            href={`/${locale}/contact-us`} 
+                                            className="w-full py-3 rounded-xl font-bold transition-all duration-300 bg-primary text-white hover:bg-primary/95 flex items-center justify-center"
+                                        >
+                                            {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
+                                        </a>
+                                    ) : isSubscribed(system.id) ? (
                                         <div className="w-full py-3 rounded-xl font-bold bg-green-50 text-green-600 flex items-center justify-center gap-2 border border-green-100">
                                             <CheckCircle2 className="w-5 h-5" />
                                             {locale === 'ar' ? 'مشترك بالفعل' : 'Already Subscribed'}
