@@ -17,7 +17,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Eye,
-    EyeOff
+    EyeOff,
+    Trash2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "react-toastify";
 import axios from 'axios';
 import { cn } from "@/lib/utils";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 export default function ServersPage() {
     const t = useTranslations('dashboard');
@@ -46,6 +48,9 @@ export default function ServersPage() {
         totalPages: 0
     });
     const [showPassword, setShowPassword] = useState<Record<string, boolean>>({});
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [serverToDelete, setServerToDelete] = useState<{ id: string, projectName: string } | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchServers = async () => {
         setLoading(true);
@@ -79,6 +84,28 @@ export default function ServersPage() {
             ...prev,
             [id]: !prev[id]
         }));
+    };
+
+    const handleDeleteServer = (id: string, projectName: string) => {
+        setServerToDelete({ id, projectName });
+        setIsConfirmOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!serverToDelete) return;
+        setIsDeleting(true);
+        try {
+            await axios.delete(`/api/servers/${serverToDelete.id}`);
+            toast.success(isAr ? "تم حذف السيرفر بنجاح" : "Server deleted successfully");
+            setIsConfirmOpen(false);
+            setServerToDelete(null);
+            fetchServers();
+        } catch (error) {
+            console.error("Failed to delete server", error);
+            toast.error(isAr ? "فشل في حذف السيرفر" : "Failed to delete server");
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -154,9 +181,18 @@ export default function ServersPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <Badge className="bg-green-50 text-green-600 border-green-100 shadow-none px-3 py-1 rounded-full font-bold text-[10px]">
-                                        {isAr ? "نشط" : "ACTIVE"}
-                                    </Badge>
+                                    <div className="flex items-center gap-2">
+                                        <Badge className="bg-green-50 text-green-600 border-green-100 shadow-none px-3 py-1 rounded-full font-bold text-[10px]">
+                                            {isAr ? "نشط" : "ACTIVE"}
+                                        </Badge>
+                                        <button 
+                                            onClick={() => handleDeleteServer(server.id, server.projectName)}
+                                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors border border-transparent hover:border-red-100"
+                                            title={isAr ? "حذف السيرفر" : "Delete Server"}
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mb-8">
@@ -290,6 +326,19 @@ export default function ServersPage() {
                     </Button>
                 </div>
             )}
+
+            <ConfirmDialog 
+                isOpen={isConfirmOpen}
+                onClose={() => setIsConfirmOpen(false)}
+                onConfirm={confirmDelete}
+                title={isAr ? "تأكيد حذف السيرفر" : "Confirm Server Deletion"}
+                message={isAr ? `هل أنت متأكد من حذف السيرفر "${serverToDelete?.projectName}"؟ سيتم حذفه من المنصة ومن النظام.` : `Are you sure you want to delete server "${serverToDelete?.projectName}"? It will be deleted from the platform and the system.`}
+                confirmText={isAr ? "حذف السيرفر" : "Delete Server"}
+                cancelText={isAr ? "إلغاء" : "Cancel"}
+                variant="danger"
+                locale={locale}
+                isLoading={isDeleting}
+            />
         </section>
     );
 }
