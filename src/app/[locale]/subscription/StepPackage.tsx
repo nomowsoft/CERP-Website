@@ -4,6 +4,7 @@ import { PackageDTO } from "@/utils/types";
 import Image from "next/image";
 import { Check, Package } from "lucide-react";
 import { isValidImage } from "@/utils/imageUtils";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 interface StepPackageProps {
     packages: PackageDTO[];
@@ -60,13 +61,22 @@ const StepPackage = ({ packages, selectedPackageId, onSelect }: StepPackageProps
                                 </h3>
                                 <div className="text-center text-sm text-gray-500 mb-4">{pkg.type}</div>
 
-                                <div className="flex justify-center items-baseline gap-1 mb-6">
-                                    <span className="text-3xl font-black text-primary">
-                                        {Number(pkg.price)}
-                                    </span>
-                                    <span className="text-sm text-gray-500 font-medium">
-                                        {pkg.currency || (isAr ? 'ر.س' : 'SAR')}
-                                    </span>
+                                <div className="text-center mb-6 flex flex-col items-center justify-center">
+                                    <div className="whitespace-nowrap">
+                                         <span className="text-3xl font-black text-primary align-middle">
+                                             {Number(pkg.price)}
+                                         </span>
+                                         <span className="text-sm text-gray-500 font-medium align-middle inline-block mx-1">
+                                             {isAr ? <SaudiRiyalIcon size={16} className="inline-block" /> : (pkg.currency || 'SAR')}
+                                         </span>
+                                    </div>
+                                    {pkg.renewalPrice !== undefined && pkg.renewalPrice !== null && Number(pkg.renewalPrice) > 0 && (
+                                        <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                            <span>{isAr ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                            <span className="font-bold text-primary">{Number(pkg.renewalPrice)}</span>
+                                            <span>{isAr ? <SaudiRiyalIcon size={10} className="inline-block" /> : (pkg.currency || 'SAR')}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <p className="text-sm text-gray-500 text-center line-clamp-3 mb-6">

@@ -23,6 +23,8 @@ export async function GET(request: NextRequest) {
         // Convert Buffer images to Base64 strings
         const formattedServices = services.map(service => ({
             ...service,
+            price: Number(service.price),
+            renewalPrice: Number(service.renewalPrice),
             image: formatImage(service.image)
         }));
 
@@ -58,6 +60,7 @@ export async function POST(request: NextRequest) {
                 name_en: body.name_en,
                 name_ar: body.name_ar,
                 price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+                renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                 currency: body.currency || 'SAR',
                 description: body.description,
                 description_en: body.description_en,
@@ -77,6 +80,8 @@ export async function POST(request: NextRequest) {
         // Convert back for response
         const responseService = {
             ...newService,
+            price: Number(newService.price),
+            renewalPrice: Number(newService.renewalPrice),
             image: formatImage(newService.image)
         };
 

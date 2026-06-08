@@ -16,6 +16,7 @@ import {
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
+import { SaudiRiyalIcon } from '@/components/ui/SaudiRiyalIcon';
 import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { generateInvoicePDF } from '@/utils/invoicePdf';
@@ -231,7 +232,10 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         </div>
                         <div>
                             <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('monthlyAmount')}</p>
-                            <p className="font-bold text-gray-700">{subscription.package?.price || '150.00'} ر.س.</p>
+                            <p className="font-bold text-gray-700 flex items-center gap-1">
+                                <span>{subscription.package?.price || '150.00'}</span>
+                                {isAr ? <SaudiRiyalIcon size={12} /> : <span className="text-xs font-bold text-gray-400">SAR</span>}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -417,8 +421,10 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                         </div>
                         <h3 className="text-xl font-bold text-gray-800">{t('invoiceHistory')}</h3>
                     </div>
-                    <div className="text-gray-500 font-bold text-sm bg-gray-50 px-4 py-2 rounded-xl">
-                        {t('totalPayments')}: <span className="text-primary text-lg">{totalPaid.toFixed(2)} ر.س.</span>
+                    <div className="text-gray-500 font-bold text-sm bg-gray-50 px-4 py-2 rounded-xl flex items-center gap-1">
+                        <span>{t('totalPayments')}:</span>
+                        <span className="text-primary text-lg font-mono">{totalPaid.toFixed(2)}</span>
+                        {isAr ? <SaudiRiyalIcon size={12} className="text-primary" /> : <span className="text-xs font-bold text-gray-400">SAR</span>}
                     </div>
                 </div>
 
@@ -438,7 +444,12 @@ export const UserSubscriptionView = ({ subscription }: { subscription: any }) =>
                                 <tr key={idx} className="group hover:bg-gray-50/5 transition-colors">
                                     <td className="py-6 px-2 font-bold text-gray-700">{invoice.id}</td>
                                     <td className="py-6 px-2 font-medium text-gray-500">{invoice.date}</td>
-                                    <td className="py-6 px-2 font-bold text-gray-700">{invoice.amount} ر.س.</td>
+                                    <td className="py-6 px-2 font-bold text-gray-700">
+                                        <div className="flex items-center gap-1">
+                                            <span>{invoice.amount}</span>
+                                            {isAr ? <SaudiRiyalIcon size={12} /> : <span className="text-xs font-bold text-gray-400">SAR</span>}
+                                        </div>
+                                    </td>
                                     <td className="py-6 px-2">
                                         <span className="bg-green-50 text-green-600 px-4 py-1.5 rounded-full text-xs font-bold border border-green-100 flex items-center w-fit gap-1.5">
                                             <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />

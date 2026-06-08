@@ -24,6 +24,7 @@ import axios from "axios";
 import { Schemastep1, Schemastep2, Schemastep3Subdomain, Schemastep3customdomain, Schemastep4bank, Schemastep4electronic } from "@/utils/validiton";
 import { toast } from 'react-toastify';
 import HyperPayWidget from "@/components/payment/HyperPayWidget";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 interface SubscriptionWizardProps {
   onSubmit?: (data: SubscriptionFormData) => Promise<void>;
@@ -346,7 +347,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const isLastStep = currentStep === steps.length;
   const isFirstStep = currentStep === 1;
   const { packagePrice, servicesTotal, grandTotal } = getPriceBreakdown();
-  const currency = selectedPkg?.currency || (isAr ? 'ر.س' : 'SAR');
+  const currency = isAr ? <SaudiRiyalIcon size={14} className="inline-block" /> : (selectedPkg?.currency || 'SAR');
 
   if (loading) return <div className="flex h-[50vh] items-center justify-center animate-pulse"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
 

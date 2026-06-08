@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 export default function PackagesManagement() {
     const t = useTranslations('admin.packages');
@@ -110,7 +111,7 @@ export default function PackagesManagement() {
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 <div className="absolute bottom-5 left-5 bg-white/95 backdrop-blur-md text-gray-900 px-5 py-2.5 rounded-2xl text-sm font-black shadow-lg transform group-hover:-translate-y-1 transition-transform duration-500">
-                                    <span className="text-primary mr-1">{pkg.currency}</span> {pkg.price}
+                                    <span className="text-primary mr-1 flex items-center gap-1">{isAr ? <SaudiRiyalIcon size={12} /> : pkg.currency}</span> {pkg.price}
                                 </div>
                             </div>
                             

@@ -25,6 +25,7 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from "framer-motion";
 import HyperPayWidget from "@/components/payment/HyperPayWidget";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 export default function UpgradeForm() {
     const router = useRouter();
@@ -279,7 +280,7 @@ export default function UpgradeForm() {
                                     <span className="text-gray-800 font-black text-lg">{isAr ? "إجمالي المبلغ" : "Total Amount"}</span>
                                     <div className="text-right">
                                         <span className="text-2xl font-black text-primary font-doto">{calculateTotal()}</span>
-                                        <span className="text-xs font-bold text-primary ml-1">SAR</span>
+                                        <span className="text-xs font-bold text-primary ml-1 flex items-center">{isAr ? <SaudiRiyalIcon size={12} /> : "SAR"}</span>
                                     </div>
                                 </div>
                                 <div className="flex gap-2 p-3 bg-yellow-50 rounded-xl border border-yellow-101/50 mt-4">
@@ -329,9 +330,18 @@ export default function UpgradeForm() {
                                     <span className="text-lg font-black text-gray-800 mb-1">
                                         {isAr ? pkg.name_ar : pkg.name_en}
                                     </span>
-                                    <div className="flex items-baseline gap-1 mb-4">
-                                        <span className="text-2xl font-black text-primary">{pkg.price}</span>
-                                        <span className="text-xs font-bold text-gray-400">{pkg.currency || "SAR"}</span>
+                                    <div className="flex flex-col gap-1 mb-4">
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-2xl font-black text-primary">{pkg.price}</span>
+                                            <span className="text-xs font-bold text-gray-400 flex items-center gap-1">{isAr ? <SaudiRiyalIcon size={12} /> : (pkg.currency || "SAR")}</span>
+                                        </div>
+                                        {pkg.renewalPrice !== undefined && pkg.renewalPrice !== null && Number(pkg.renewalPrice) > 0 && (
+                                            <div className="text-[10px] text-gray-500 flex items-center gap-1 font-semibold">
+                                                <span>{isAr ? 'التجديد:' : 'Renewal:'}</span>
+                                                <span className="font-bold text-primary">{Number(pkg.renewalPrice)}</span>
+                                                <span>{isAr ? <SaudiRiyalIcon size={8} /> : "SAR"}</span>
+                                            </div>
+                                        )}
                                     </div>
                                     {mySubscription?.packageId === pkg.id && (
                                         <div className="mt-auto">
@@ -363,9 +373,14 @@ export default function UpgradeForm() {
                                             <div className={`p-2 rounded-lg transition-colors ${selectedServiceIds.includes(svc.id) ? 'bg-purple-500 text-white' : 'bg-white text-gray-300 border'}`}>
                                                 <CheckCircle2 className="w-4 h-4" />
                                             </div>
-                                            <div className="text-right">
+                                            <div className="text-right flex flex-col gap-0.5">
                                                 <span className="block font-bold text-gray-800">{isAr ? svc.name_ar : svc.name_en}</span>
-                                                <span className="text-xs text-purple-600 font-bold">{svc.price} {svc.currency || "SAR"}</span>
+                                                <span className="text-sm text-purple-600 font-bold flex items-center gap-1">{svc.price} {isAr ? <SaudiRiyalIcon size={12} /> : (svc.currency || "SAR")}</span>
+                                                {svc.renewalPrice !== undefined && svc.renewalPrice !== null && Number(svc.renewalPrice) > 0 && (
+                                                    <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1">
+                                                        {isAr ? 'التجديد السنوي:' : 'Annual Renewal:'} <span className="font-bold text-primary">{Number(svc.renewalPrice)}</span> {isAr ? <SaudiRiyalIcon size={8} /> : "SAR"}
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

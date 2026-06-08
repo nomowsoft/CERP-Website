@@ -85,6 +85,7 @@ model Package {
   name_ar        String                @default("")
   name_en        String                @default("")
   price          Decimal               @default(0)
+  renewalPrice   Decimal               @default(0)
   image          Bytes?
   features       PackageFeature[]
   subscriptions  Subscription[]
@@ -149,6 +150,7 @@ model Service {
   name_ar        String                @default("")
   name_en        String                @default("")
   price          Decimal               @default(0)
+  renewalPrice   Decimal               @default(0)
   image          Bytes?
   contents       ServiceType[]
   subscriptions  Subscription[]        @relation("ServiceToSubscription")
@@ -174,6 +176,7 @@ model System {
   description_en String                @default("")
   icon           Bytes?
   price          Decimal               @default(0)
+  renewalPrice   Decimal               @default(0)
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
   modules        String[]              @default([])

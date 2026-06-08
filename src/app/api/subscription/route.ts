@@ -342,21 +342,25 @@ export async function GET(request: NextRequest) {
                     package: sub.package ? {
                         ...sub.package,
                         price: sub.package.price?.toString(),
+                        renewalPrice: sub.package.renewalPrice?.toString(),
                         image: formatImage(sub.package.image),
                         systems: sub.package.systems?.map((sys: any) => ({
                             ...sys,
                             price: sys.price?.toString(),
+                            renewalPrice: sys.renewalPrice?.toString(),
                             icon: formatImage(sys.icon)
                         }))
                     } : null,
                     systems: sub.systems?.map((sys: any) => ({
                         ...sys,
                         price: sys.price?.toString(),
+                        renewalPrice: sys.renewalPrice?.toString(),
                         icon: formatImage(sys.icon)
                     })),
                     services: sub.services?.map((ser: any) => ({
                         ...ser,
                         price: ser.price?.toString(),
+                        renewalPrice: ser.renewalPrice?.toString(),
                         image: formatImage(ser.image)
                     })),
                     payments: sub.payments?.map((pay: any) => ({

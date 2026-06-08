@@ -11,6 +11,7 @@ export interface System {
     description_ar: string;
     icon: string;
     price: number | string;
+    renewalPrice?: number | string;
     createdAt: string;
 }
 
