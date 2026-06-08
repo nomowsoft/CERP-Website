@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { getSubscription } from "@/app/store/slices/subscriptionSlice";
 import { useParams } from "next/navigation";
 import { generateInvoicePDF } from "@/utils/invoicePdf";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 export default function Invoice() {
     const dispatch = useDispatch<any>();
@@ -148,7 +149,10 @@ export default function Invoice() {
                                     </td>
                                     <td className="py-5 px-6 text-gray-500 text-center">{inv.formattedDate}</td>
                                     <td className="py-5 px-6 text-gray-700 font-mono text-center">
-                                        {Number(inv.amount).toFixed(2)} ر.س.
+                                        <div className="flex items-center justify-center gap-1">
+                                            <span>{Number(inv.amount).toFixed(2)}</span>
+                                            {isAr ? <SaudiRiyalIcon size={12} /> : <span className="text-xs font-bold text-gray-500">SAR</span>}
+                                        </div>
                                     </td>
                                     <td className="py-5 px-6 text-center">
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold inline-block

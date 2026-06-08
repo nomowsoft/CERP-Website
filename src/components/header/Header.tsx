@@ -44,10 +44,15 @@ export default function Header() {
     };
   }, [open]);
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   return (
-    <header>
-      <nav className={`top-0 left-0 right-0 z-50 ${['/ar', '/en'].includes(pathname) ? 'fixed bg-info' : 'bg-info'} ${pathname.includes('/admin') ? 'hidden' : ''} shadow-md`}>
-        <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-2">
+    <>
+      <header className={`fixed top-0 left-0 right-0 z-50 bg-info ${pathname.includes('/admin') ? 'hidden' : ''} shadow-md`}>
+        <nav className="w-full">
+          <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-2">
           <Link href="/" className="flex items-center px-5 lg:px-0">
             <Image
               height={40}
@@ -120,28 +125,40 @@ export default function Header() {
 
           {/* Mobile menu */}
           {open && (
-            <div className="inset-0 z-[999] h-screen flex justify-center bg-success/20 backdrop-blur-sm lg:hidden mb-20 w-full">
-              <nav className="py-4">
-                <div className="mt-4 text-center text-success text-2xl font-bold">
-                  <Navlink />
+            <div className="fixed inset-0 z-[999] h-screen flex flex-col items-center justify-center bg-white/98 backdrop-blur-lg lg:hidden w-full px-6 py-20">
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 transition-colors text-primary"
+              >
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <nav className="flex flex-col items-center gap-8 w-full max-w-sm">
+                <div className="text-center text-primary text-2xl font-bold w-full">
+                  <Navlink closeMenu={() => setOpen(false)} />
                 </div>
-                <div className="mt-8 flex justify-center gap-4">
+                <div className="flex justify-center gap-4 w-full">
                   <LanguageSwitcher />
                 </div>
-                <div className="mt-10">
+                <div className="w-full flex justify-center mt-4">
                   <Link
                     href={`/${local}/contact-us`}
-                    className="mx-2 bg-gradient-to-r from-primary to-emerald-600 text-info py-3 px-8 rounded-xl text-xl font-extrabold"
+                    onClick={() => setOpen(false)}
+                    className="w-full text-center bg-gradient-to-r from-primary to-secondary text-info py-4 px-8 rounded-2xl text-xl font-bold shadow-lg hover:shadow-primary/20 transition-all duration-300"
                   >
                     {t('contact')}
                   </Link>
                 </div>
-
               </nav>
             </div>
           )}
         </div>
       </nav>
     </header>
+    {!pathname.includes('/admin') && (
+      <div className="h-16 lg:h-20" />
+    )}
+  </>
   );
 }

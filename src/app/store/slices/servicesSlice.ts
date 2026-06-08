@@ -8,6 +8,7 @@ export interface Service {
     name_en: string;
     name_ar: string;
     price: number | string;
+    renewalPrice?: number | string;
     currency: string;
     description: string;
     description_en: string;

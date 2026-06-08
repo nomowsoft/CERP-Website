@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 import { 
     Check, 
     Plus, 
@@ -174,7 +175,7 @@ export default function AvailableSystems() {
                                     <div className="flex items-center justify-between mb-6">
                                         <div className="flex items-baseline gap-1">
                                             <span className="text-2xl font-bold text-gray-900">{Number(system.price)}</span>
-                                            <span className="text-sm text-gray-400 font-medium">{locale === 'ar' ? "ر.س" : "SAR"}</span>
+                                            <span className="text-sm text-gray-400 font-medium flex items-center gap-1">{locale === 'ar' ? <SaudiRiyalIcon size={12} /> : "SAR"}</span>
                                         </div>
                                         <button 
                                             onClick={() => setSelectedSystem(system)}
@@ -259,7 +260,7 @@ export default function AvailableSystems() {
                                             <span className="font-bold text-gray-900">{locale === 'ar' ? "تكلفة الاشتراك الإضافي" : "Additional Subscription Cost"}</span>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-2xl font-bold text-primary">{Number(selectedSystem.price)}</span>
-                                                <span className="text-sm text-primary/60 font-medium">{locale === 'ar' ? "ر.س" : "SAR"}</span>
+                                                <span className="text-sm text-primary/60 font-medium flex items-center gap-1">{locale === 'ar' ? <SaudiRiyalIcon size={12} /> : "SAR"}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -329,7 +330,7 @@ export default function AvailableSystems() {
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-gray-900">{locale === 'en' ? buySystem.name_en : buySystem.name_ar}</h4>
-                                            <p className="text-primary font-bold">{Number(buySystem.price)} {locale === 'ar' ? "ر.س" : "SAR"}</p>
+                                            <p className="text-primary font-bold flex items-center gap-1">{Number(buySystem.price)} {locale === 'ar' ? <SaudiRiyalIcon size={14} /> : "SAR"}</p>
                                         </div>
                                     </div>
                                     <div className="text-sm text-gray-500 flex items-start gap-2">

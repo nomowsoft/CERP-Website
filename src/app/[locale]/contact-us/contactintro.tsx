@@ -31,9 +31,6 @@ const ContactInfo = () => {
                     <span className="text-foreground">{t('titlePart1')} </span>
                     <span className="bg-gradient-to-l from-primary to-primary/50 bg-clip-text text-transparent font-bold leading-tight py-1 inline-block">{t('titlePart2')}</span>
                 </h1>
-                <p className="text-muted-foreground leading-relaxed">
-                    {t('description')}
-                </p>
             </div>
 
             <div className="space-y-6">

@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import type { AppDispatch } from '@/app/store/store';
 import { useDispatch, useSelector } from 'react-redux';
+import { SaudiRiyalIcon } from '@/components/ui/SaudiRiyalIcon';
 import { getServices } from '@/app/store/slices/servicesSlice';
 import { useEffect } from 'react';
 import { ServiceDTO, ServiceTypeDto } from '@/utils/types';
@@ -74,14 +75,23 @@ export const Service = () => {
                                         <p className="text-gray-500 leading-relaxed mb-4">
                                             {locale === 'en' ? service.description_en : service.description_ar}
                                         </p>
-                                        <div className="flex items-baseline justify-center md:justify-start gap-1 pb-4 border-b border-gray-100">
-                                            <span className={`text-4xl font-bold font-doto2 ${Number(service.price) === 0 ? 'text-secondary' : 'text-primary'}`}>
-                                                {Number(service.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(service.price)}
-                                            </span>
-                                            {Number(service.price) > 0 && (
-                                                <span className="text-base text-gray-500 font-medium">
-                                                    {service.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}
+                                        <div className="flex flex-col items-center md:items-start pb-4 border-b border-gray-100">
+                                            <div className="flex flex-nowrap items-baseline justify-center md:justify-start gap-1">
+                                                <span className={`text-4xl font-bold font-doto2 ${Number(service.price) === 0 ? 'text-secondary' : 'text-primary'}`}>
+                                                    {Number(service.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(service.price)}
                                                 </span>
+                                                {Number(service.price) > 0 && (
+                                                    <span className="text-base text-gray-500 font-medium inline-flex items-center gap-1">
+                                                        {locale === 'ar' ? <SaudiRiyalIcon size={14} /> : (service.currency || 'SAR')}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {service.renewalPrice !== undefined && service.renewalPrice !== null && Number(service.renewalPrice) > 0 && (
+                                                <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                                    <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                    <span className="font-bold text-primary">{Number(service.renewalPrice)}</span>
+                                                    <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (service.currency || 'SAR')}</span>
+                                                </div>
                                             )}
                                         </div>
                                     </div>

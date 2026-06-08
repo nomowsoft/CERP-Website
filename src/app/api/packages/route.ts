@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
                 description_ar: true,
                 image: true,
                 price: true,
+                renewalPrice: true,
                 currency: true,
                 features: true,
                 systems: {
@@ -30,6 +31,7 @@ export async function GET(request: NextRequest) {
                         name_ar: true,
                         icon: true,
                         price: true,
+                        renewalPrice: true,
                         description: true,
                         description_en: true,
                         description_ar: true
@@ -43,10 +45,12 @@ export async function GET(request: NextRequest) {
         const formattedPackages = packages.map(pkg => ({
             ...pkg,
             price: Number(pkg.price),
+            renewalPrice: Number(pkg.renewalPrice),
             image: formatImage(pkg.image),
             systems: pkg.systems?.map(system => ({
                 ...system,
                 price: Number(system.price),
+                renewalPrice: Number(system.renewalPrice),
                 icon: formatImage(system.icon)
             })) || []
         }));
@@ -90,6 +94,7 @@ export async function POST(request: NextRequest) {
             description_ar: body.description_ar || body.description,
             image: imageBuffer as any,
             price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+            renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
             currency: body.currency,
             features: {
                 create: body.features?.map((f: any) => ({
@@ -112,10 +117,12 @@ export async function POST(request: NextRequest) {
     const responsePackage = {
         ...newPackage,
         price: Number(newPackage.price),
+        renewalPrice: Number(newPackage.renewalPrice),
         image: formatImage(newPackage.image),
         systems: newPackage.systems?.map(system => ({
             ...system,
             price: Number(system.price),
+            renewalPrice: Number(system.renewalPrice),
             icon: formatImage(system.icon)
         })) || []
     };

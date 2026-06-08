@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 export default function SystemFormPage({
   params,
@@ -39,6 +40,7 @@ export default function SystemFormPage({
     description_en: "",
     icon: "",
     price: 0,
+    renewalPrice: 0,
     modules: [] as string[],
   });
   const [loading, setLoading] = useState(!isNew);
@@ -435,13 +437,35 @@ export default function SystemFormPage({
                       step="0.01"
                       value={formData.price}
                       onChange={(e) =>
-                        setFormData({ ...formData, price: parseFloat(e.target.value) })
+                        setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
                       }
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       placeholder="0.00"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400 font-bold">
-                      {locale === 'ar' ? 'ر.س' : 'SAR'}
+                      {locale === 'ar' ? <SaudiRiyalIcon size={12} /> : 'SAR'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    {locale === 'ar' ? 'سعر التجديد السنوي' : 'Annual Renewal Price'}
+                  </label>
+                  <div className="relative">
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      value={formData.renewalPrice}
+                      onChange={(e) =>
+                        setFormData({ ...formData, renewalPrice: parseFloat(e.target.value) || 0 })
+                      }
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="0.00"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400 font-bold">
+                      {locale === 'ar' ? <SaudiRiyalIcon size={12} /> : 'SAR'}
                     </div>
                   </div>
                 </div>

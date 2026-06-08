@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { isValidImage } from "@/utils/imageUtils";
 import { Server } from "lucide-react";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 export default function AddSystemForm() {
     const router = useRouter();
@@ -187,8 +188,18 @@ export default function AddSystemForm() {
                                         <div className="flex-1">
                                             <h3 className="text-xl font-black text-gray-900 mb-1">{isAr ? system.name_ar : system.name_en}</h3>
                                             <p className="text-sm text-gray-500 line-clamp-2 mb-4">{isAr ? system.description_ar : system.description_en}</p>
-                                            <div className="text-xl font-black text-primary">
-                                                {Number(system.price).toLocaleString()} {isAr ? "ر.س" : "SAR"}
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-xl font-black text-primary flex items-center gap-1">
+                                                    <span>{Number(system.price).toLocaleString()}</span>
+                                                    {isAr ? <SaudiRiyalIcon size={14} /> : <span className="text-xs font-bold text-gray-400">SAR</span>}
+                                                </div>
+                                                {system.renewalPrice !== undefined && system.renewalPrice !== null && Number(system.renewalPrice) > 0 && (
+                                                    <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold">
+                                                        <span>{isAr ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                        <span className="font-bold text-primary">{Number(system.renewalPrice)}</span>
+                                                        <span>{isAr ? <SaudiRiyalIcon size={10} /> : <span className="text-[10px] font-bold text-gray-400">SAR</span>}</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         {selectedSystems.includes(system.id) && (
@@ -209,8 +220,12 @@ export default function AddSystemForm() {
                         )}
 
                         <div className="flex justify-between items-center pt-8 border-t border-gray-100">
-                            <div className="text-2xl font-black text-gray-900">
-                                {isAr ? "الإجمالي:" : "Total:"} <span className="text-primary">{totalPrice.toLocaleString()} {isAr ? "ر.س" : "SAR"}</span>
+                            <div className="text-2xl font-black text-gray-900 flex items-center gap-1">
+                                <span>{isAr ? "الإجمالي:" : "Total:"}</span>
+                                <span className="text-primary font-mono inline-flex items-center gap-1">
+                                    {totalPrice.toLocaleString()}
+                                    {isAr ? <SaudiRiyalIcon size={14} /> : <span className="text-xs font-bold text-gray-400">SAR</span>}
+                                </span>
                             </div>
                             <Button 
                                 onClick={() => setStep(2)}

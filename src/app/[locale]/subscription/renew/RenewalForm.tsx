@@ -48,6 +48,34 @@ export default function RenewalForm() {
 
     const mySubscription = subscriptionInfo?.data?.find((s: any) => s.userId === userInfo?.id);
 
+    const calculateTotalRenewalPrice = () => {
+        if (!mySubscription) return 0;
+        
+        let pkgPrice = 0;
+        if (mySubscription.package) {
+            const p = mySubscription.package;
+            pkgPrice = Number(p.renewalPrice) > 0 ? Number(p.renewalPrice) : Number(p.price || 0);
+        }
+        
+        let servicesPrice = 0;
+        if (mySubscription.services && mySubscription.services.length > 0) {
+            servicesPrice = mySubscription.services.reduce((sum: number, s: any) => {
+                const price = Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price || 0);
+                return sum + price;
+            }, 0);
+        }
+
+        let systemsPrice = 0;
+        if (mySubscription.systems && mySubscription.systems.length > 0) {
+            systemsPrice = mySubscription.systems.reduce((sum: number, s: any) => {
+                const price = Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price || 0);
+                return sum + price;
+            }, 0);
+        }
+
+        return pkgPrice + servicesPrice + systemsPrice;
+    };
+
     const fileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -66,7 +94,7 @@ export default function RenewalForm() {
 
         setIsSubmitting(true);
         try {
-            const amount = parseFloat(mySubscription.package?.price || "0").toFixed(2);
+            const amount = calculateTotalRenewalPrice().toFixed(2);
             const payload = {
                 amount,
                 customerEmail: userInfo?.email || "customer@example.com",
@@ -86,6 +114,8 @@ export default function RenewalForm() {
                     subscriptionId: mySubscription.id,
                     action: 'RENEW',
                     packageId: mySubscription.packageId,
+                    selectedServices: mySubscription.services?.map((s: any) => s.id) || [],
+                    selectedSystems: mySubscription.systems?.map((s: any) => s.id) || [],
                     licenseFile: await fileToBase64(licenseFile)
                 }));
 
@@ -129,6 +159,8 @@ export default function RenewalForm() {
                 action: 'RENEW',
                 paymentMethod: paymentMethod,
                 packageId: mySubscription.packageId,
+                selectedServices: mySubscription.services?.map((s: any) => s.id) || [],
+                selectedSystems: mySubscription.systems?.map((s: any) => s.id) || [],
                 licenseFile: await fileToBase64(licenseFile),
                 bankReceiptFile: bankReceiptFile ? await fileToBase64(bankReceiptFile) : null
             };
@@ -189,8 +221,8 @@ export default function RenewalForm() {
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                     {isAr
-                        ? `تجديد باقة ${mySubscription.package?.name_ar} (${mySubscription.package?.price} ريال)`
-                        : `Renew ${mySubscription.package?.name_en} Plan (${mySubscription.package?.price} SAR)`}
+                        ? `تجديد باقة ${mySubscription.package?.name_ar} (${calculateTotalRenewalPrice().toFixed(2)} ريال)`
+                        : `Renew ${mySubscription.package?.name_en} Plan (${calculateTotalRenewalPrice().toFixed(2)} SAR)`}
                 </h1>
             </motion.div>
 
@@ -206,21 +238,52 @@ export default function RenewalForm() {
                         </h3>
 
                         <div className="space-y-6 relative z-10">
-                            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">
-                                    {isAr ? "الباقة الحالية" : "Current Plan"}
-                                </span>
-                                <p className="text-lg font-black text-gray-800">
-                                    {isAr ? mySubscription.package?.name_ar : mySubscription.package?.name_en}
-                                </p>
+                            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
+                                <div>
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">
+                                        {isAr ? "الباقة" : "Plan"}
+                                    </span>
+                                    <div className="flex justify-between text-sm font-bold text-gray-800">
+                                        <span>{isAr ? mySubscription.package?.name_ar : mySubscription.package?.name_en}</span>
+                                        <span>{(Number(mySubscription.package?.renewalPrice) > 0 ? Number(mySubscription.package?.renewalPrice) : Number(mySubscription.package?.price || 0)).toFixed(2)} SAR</span>
+                                    </div>
+                                </div>
+
+                                {mySubscription.services && mySubscription.services.length > 0 && (
+                                    <div className="pt-2 border-t border-gray-200/50">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">
+                                            {isAr ? "الخدمات الإضافية" : "Additional Services"}
+                                        </span>
+                                        {mySubscription.services.map((s: any) => (
+                                            <div key={s.id} className="flex justify-between text-xs font-bold text-gray-600">
+                                                <span>{isAr ? s.name_ar : s.name_en}</span>
+                                                <span>{(Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price || 0)).toFixed(2)} SAR</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {mySubscription.systems && mySubscription.systems.length > 0 && (
+                                    <div className="pt-2 border-t border-gray-200/50">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">
+                                            {isAr ? "الأنظمة الإضافية" : "Additional Systems"}
+                                        </span>
+                                        {mySubscription.systems.map((s: any) => (
+                                            <div key={s.id} className="flex justify-between text-xs font-bold text-gray-600">
+                                                <span>{isAr ? s.name_ar : s.name_en}</span>
+                                                <span>{(Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price || 0)).toFixed(2)} SAR</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="pt-4 border-t border-dashed border-gray-200">
                                 <div className="flex justify-between items-end">
-                                    <span className="text-gray-600 font-bold">{isAr ? "التكلفة" : "Cost"}</span>
+                                    <span className="text-gray-600 font-bold">{isAr ? "التكلفة الكلية" : "Total Cost"}</span>
                                     <div className="text-right">
                                         <div className="flex items-baseline gap-1">
-                                            <span className="text-3xl font-black text-primary">{mySubscription.package?.price}</span>
+                                            <span className="text-3xl font-black text-primary">{calculateTotalRenewalPrice().toFixed(2)}</span>
                                             <span className="text-xs font-bold text-primary/60 uppercase">SAR</span>
                                         </div>
                                     </div>

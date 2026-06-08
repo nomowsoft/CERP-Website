@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { isValidImage } from "@/utils/imageUtils";
 import { Settings, Server } from "lucide-react";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 interface ServicesSelectionStepProps {
     data: SubscriptionFormData;
@@ -100,7 +101,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                 <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-1">{isAr ? "السعر" : "Price"}</span>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-2xl font-black text-secondary">{Number(selectedPackage.price)}</span>
-                                    <span className="text-xs font-bold text-gray-500">{selectedPackage.currency || (isAr ? 'ر.س' : 'SAR')}</span>
+                                    <span className="text-xs font-bold text-gray-500 flex items-center gap-1">{isAr ? <SaudiRiyalIcon size={12} /> : (selectedPackage.currency || 'SAR')}</span>
                                 </div>
                             </div>
                         </div>
@@ -178,8 +179,8 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                 <span className="text-2xl font-bold text-primary">
                                     {Number(service.price)}
                                 </span>
-                                <span className="text-sm text-gray-500 font-medium">
-                                    {service.currency || (isAr ? 'ر.س' : 'SAR')}
+                                <span className="text-sm text-gray-500 font-medium flex items-center gap-1">
+                                    {isAr ? <SaudiRiyalIcon size={14} /> : (service.currency || 'SAR')}
                                 </span>
                             </div>
 
@@ -240,12 +241,12 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                     </h3>
 
                                     {/* System Price */}
-                                    <div className="flex items-baseline gap-1 mb-3">
-                                        <span className="text-xl font-bold text-secondary">
+                                    <div className="text-start mb-3 whitespace-nowrap">
+                                        <span className="text-xl font-bold text-secondary align-middle">
                                             {Number(system.price || 0)}
                                         </span>
-                                        <span className="text-xs text-gray-500 font-medium">
-                                            {isAr ? 'ر.س' : 'SAR'}
+                                        <span className="text-xs text-gray-500 font-medium align-middle inline-block mx-1">
+                                            {isAr ? <SaudiRiyalIcon size={14} className="inline-block" /> : 'SAR'}
                                         </span>
                                     </div>
 

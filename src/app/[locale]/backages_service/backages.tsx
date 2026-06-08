@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import type { AppDispatch } from '@/app/store/store';
+import { SaudiRiyalIcon } from '@/components/ui/SaudiRiyalIcon';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPackages } from '@/app/store/slices/packagesSlice';
 import { getSystems } from '@/app/store/slices/systemsSlice';
@@ -264,12 +265,25 @@ export const Backages = () => {
                                         </div>
                                     )}
                                 </div>
-
-                                <div className="flex justify-center items-end gap-1 mb-6 pb-6 border-b border-gray-100">
-                                    <span className={`font-doto2 font-bold leading-none ${Number(packege.price) === 0 ? 'text-4xl text-primary' : 'text-4xl text-gray-900'}`}>
-                                        {Number(packege.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(packege.price)}
-                                    </span>
-                                    {Number(packege.price) > 0 && <span className="text-sm text-gray-500 font-medium mb-1">{packege.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>}
+                                
+                                <div className="text-center mb-6 pb-6 border-b border-gray-100 flex flex-col items-center justify-center">
+                                    <div className="whitespace-nowrap">
+                                        <span className={`font-doto2 font-bold align-middle ${Number(packege.price) === 0 ? 'text-4xl text-primary' : 'text-4xl text-gray-900'}`}>
+                                            {Number(packege.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(packege.price)}
+                                        </span>
+                                        {Number(packege.price) > 0 && (
+                                            <span className="text-sm text-gray-500 font-medium align-middle inline-block mx-1">
+                                                {locale === 'ar' ? <SaudiRiyalIcon size={16} className="inline-block" /> : (packege.currency || 'SAR')}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {packege.renewalPrice !== undefined && packege.renewalPrice !== null && Number(packege.renewalPrice) > 0 && (
+                                        <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                            <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                            <span className="font-bold text-primary">{Number(packege.renewalPrice)}</span>
+                                            <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (packege.currency || 'SAR')}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             
@@ -339,11 +353,22 @@ export const Backages = () => {
                                             <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p>
                                             
                                             {Number(system.price) > 0 && (
-                                                <div className="flex items-center justify-center gap-1 mt-4">
-                                                    <span className="font-doto2 font-bold text-2xl text-gray-900">
-                                                        {Number(system.price)}
-                                                    </span>
-                                                    <span className="text-xs text-gray-500 font-medium">{system.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+                                                <div className="text-center mt-4 flex flex-col items-center justify-center">
+                                                    <div className="whitespace-nowrap">
+                                                        <span className="font-doto2 font-bold text-2xl text-gray-900 align-middle">
+                                                            {Number(system.price)}
+                                                        </span>
+                                                        <span className="text-xs text-gray-500 font-medium align-middle inline-block mx-1">
+                                                            {locale === 'ar' ? <SaudiRiyalIcon size={14} className="inline-block" /> : (system.currency || 'SAR')}
+                                                        </span>
+                                                    </div>
+                                                    {system.renewalPrice !== undefined && system.renewalPrice !== null && Number(system.renewalPrice) > 0 && (
+                                                        <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                                            <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                            <span className="font-bold text-primary">{Number(system.renewalPrice)}</span>
+                                                            <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (system.currency || 'SAR')}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -386,7 +411,7 @@ export const Backages = () => {
                                 <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white"><ShoppingCart className="w-6 h-6" /></div>
                                 <div className="text-start">
                                     <h4 className="text-white font-bold">{selectedPkg ? (locale === 'ar' ? "باقة + " : "Package + ") : ""}{selectedSystems.length} {locale === 'ar' ? "أنظمة" : "Systems"}</h4>
-                                    <p className="text-white/60 text-sm">{locale === 'ar' ? "الإجمالي:" : "Total:"} <span className="text-secondary font-bold mx-1">{totalPrice} {locale === 'ar' ? "ر.س" : "SAR"}</span></p>
+                                    <p className="text-white/60 text-sm">{locale === 'ar' ? "الإجمالي:" : "Total:"} <span className="text-secondary font-bold mx-1 inline-flex items-center gap-1">{totalPrice} {locale === 'ar' ? <SaudiRiyalIcon size={12} /> : "SAR"}</span></p>
                                 </div>
                             </div>
                             <button onClick={handleCheckout} className="w-full md:w-auto px-8 py-4 bg-secondary text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-all">

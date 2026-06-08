@@ -20,6 +20,7 @@ export type SystemDTO = {
     description_en?: string;
     icon?: string;
     price: number | string;
+    renewalPrice?: number | string | null;
     modules?: string[];
     createdAt: string;
     updatedAt: string;
@@ -156,6 +157,7 @@ export type PackageDTO = {
     name_ar: string
     type: string
     price: number
+    renewalPrice?: number | string | null
     currency: string
     description: string
     description_en: string
@@ -181,6 +183,7 @@ export type ServiceDTO = {
     name_en: string
     name_ar: string
     price: number | string
+    renewalPrice?: number | string | null
     currency: string
     description: string
     description_en: string

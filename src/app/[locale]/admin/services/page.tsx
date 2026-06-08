@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 import { useRouter } from "next/navigation";
 
 export default function ServicesManagement() {
@@ -161,7 +162,7 @@ export default function ServicesManagement() {
                                                 {isAr ? "السعر" : "Price"}
                                             </span>
                                             <span className="text-lg font-black text-primary">
-                                                {Number(svc.price).toLocaleString()} <span className="text-xs font-bold opacity-70">{svc.currency || "SAR"}</span>
+                                                {Number(svc.price).toLocaleString()} <span className="text-xs font-bold opacity-70 flex items-center gap-1">{isAr ? <SaudiRiyalIcon size={12} /> : (svc.currency || "SAR")}</span>
                                             </span>
                                         </div>
                                         <button 

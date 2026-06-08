@@ -1,12 +1,25 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getPackages } from '@/app/store/slices/packagesSlice';
 
 export default function Footer() {
     const t = useTranslations('footer');
     const pathname = usePathname();
+    const locale = useLocale();
+    const dispatch = useDispatch<any>();
+    const packages = useSelector((state: any) => state.packages.packages);
+
+    useEffect(() => {
+        if (!packages || packages.length === 0) {
+            dispatch(getPackages());
+        }
+    }, [dispatch, packages]);
+
     return (
         <footer className={`bg-gray-100 pt-20 pb-10 border-t border-primary/2 ${pathname.includes('/admin') ? 'hidden' : ''}`}>
             <section className="mx-auto container ">
@@ -25,27 +38,17 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div className="text-center">
                         <h4 className="font-bold font-doto2 text-xl mb-4">{t('quickLinks')}</h4>
-                        <hr className="w-10 border border-primary/50 ms-8" />
+                        <hr className="w-10 border border-primary/50 ms-8 animate-pulse" />
                         <ul className="space-y-2">
                             <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
+                                <Link href={`/${locale}`} className="text-gray-500 hover:text-primary transition-colors text-sm">
                                     {t('home')}
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
-                                    {t('features')}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
+                                <Link href={`/${locale}/backages_service`} className="text-gray-500 hover:text-primary transition-colors text-sm">
                                     {t('systems')}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
-                                    {t('solutions')}
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -53,23 +56,30 @@ export default function Footer() {
                     {/* Solutions */}
                     <div className="text-center">
                         <h4 className="font-bold text-xl font-doto2 mb-4">{t('solutions')}</h4>
-                        <hr className="w-10 border border-primary/50 ms-8" />
+                        <hr className="w-10 border border-primary/50 ms-8 animate-pulse" />
                         <ul className="space-y-2">
-                            <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
-                                    {t('healthAssociations')}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
-                                    {t('quranAssociations')}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
-                                    {t('coreSystems')}
-                                </a>
-                            </li>
+                            {packages && packages.length > 0 ? (
+                                packages.map((pkg: any) => (
+                                    <li key={pkg.id}>
+                                        <Link href={`/${locale}/backages_service?packageId=${pkg.id}`} className="text-gray-500 hover:text-primary transition-colors text-sm">
+                                            {locale === 'ar' ? pkg.name_ar : pkg.name_en}
+                                        </Link>
+                                    </li>
+                                ))
+                            ) : (
+                                <>
+                                    <li>
+                                        <Link href={`/${locale}/backages_service`} className="text-gray-500 hover:text-primary transition-colors text-sm">
+                                            {locale === 'ar' ? 'باقة الأنطلاقة' : 'Starter Package'}
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href={`/${locale}/backages_service`} className="text-gray-500 hover:text-primary transition-colors text-sm">
+                                            {locale === 'ar' ? 'باقة الترقية' : 'Upgrade Package'}
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
 

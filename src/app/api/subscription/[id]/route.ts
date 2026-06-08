@@ -125,21 +125,25 @@ export async function GET(request: NextRequest, { params }: Props) {
                 package: other.package ? {
                     ...other.package,
                     price: Number(other.package.price),
+                    renewalPrice: other.package.renewalPrice ? Number(other.package.renewalPrice) : 0,
                     image: formatImage(other.package.image),
                     systems: other.package.systems?.map((sys: any) => ({
                         ...sys,
                         price: Number(sys.price),
+                        renewalPrice: sys.renewalPrice ? Number(sys.renewalPrice) : 0,
                         icon: formatImage(sys.icon)
                     }))
                 } : null,
                 systems: other.systems?.map((sys: any) => ({
                     ...sys,
                     price: Number(sys.price),
+                    renewalPrice: sys.renewalPrice ? Number(sys.renewalPrice) : 0,
                     icon: formatImage(sys.icon)
                 })),
                 services: other.services?.map((ser: any) => ({
                     ...ser,
                     price: Number(ser.price),
+                    renewalPrice: ser.renewalPrice ? Number(ser.renewalPrice) : 0,
                     image: formatImage(ser.image)
                 })),
                 payments: other.payments?.map((pay: any) => ({
@@ -273,9 +277,17 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     const dbServices = await prisma.service.findMany({
                         where: { id: { in: newServiceIds } }
                     });
-                    servicesTotal = dbServices.reduce((sum, s) => sum + Number(s.price), 0);
+                    servicesTotal = dbServices.reduce((sum, s) => {
+                        const price = action === 'RENEW' && Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price);
+                        return sum + price;
+                    }, 0);
                 }
-                const totalPrice = (pkg ? Number(pkg.price) : 0) + servicesTotal;
+                
+                let pkgPrice = pkg ? Number(pkg.price) : 0;
+                if (action === 'RENEW' && pkg && Number(pkg.renewalPrice) > 0) {
+                    pkgPrice = Number(pkg.renewalPrice);
+                }
+                const totalPrice = pkgPrice + servicesTotal;
                 
                 let finalPrice = totalPrice;
                 const newSystemIds = body.selectedSystems || [];
@@ -286,6 +298,17 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     });
                     const systemsTotal = dbSystems.reduce((sum, s) => sum + Number(s.price), 0);
                     finalPrice = systemsTotal + servicesTotal;
+                } else if (action === 'RENEW') {
+                    if (newSystemIds.length > 0) {
+                        const dbSystems = await prisma.system.findMany({
+                            where: { id: { in: newSystemIds } }
+                        });
+                        const systemsTotal = dbSystems.reduce((sum, s) => {
+                            const price = Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price);
+                            return sum + price;
+                        }, 0);
+                        finalPrice = totalPrice + systemsTotal;
+                    }
                 }
 
                 if (isOnline) {

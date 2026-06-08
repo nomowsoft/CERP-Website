@@ -41,6 +41,7 @@ export default function ServiceFormPage({
     name: "",
     name_en: "",
     price: "",
+    renewalPrice: "",
     currency: "SAR",
     description: "",
     description_en: "",
@@ -69,6 +70,7 @@ export default function ServiceFormPage({
         name: data.name || "",
         name_en: data.name_en || "",
         price: data.price ? data.price.toString() : "",
+        renewalPrice: data.renewalPrice ? data.renewalPrice.toString() : "",
         currency: data.currency || "SAR",
         description: data.description || "",
         description_en: data.description_en || "",
@@ -352,7 +354,7 @@ export default function ServiceFormPage({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-50">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-50">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700">
                     {isAr ? "السعر" : "Price"}
@@ -364,6 +366,24 @@ export default function ServiceFormPage({
                       step="0.01"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      className="w-full px-4 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold"
+                    />
+                    <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center pointer-events-none text-gray-400 font-bold`}>
+                      {formData.currency}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    {isAr ? "سعر التجديد السنوي" : "Annual Renewal Price"}
+                  </label>
+                  <div className="relative">
+                    <Input
+                      required
+                      type="number"
+                      step="0.01"
+                      value={formData.renewalPrice}
+                      onChange={(e) => setFormData({ ...formData, renewalPrice: e.target.value })}
                       className="w-full px-4 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold"
                     />
                     <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center pointer-events-none text-gray-400 font-bold`}>

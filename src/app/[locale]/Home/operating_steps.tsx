@@ -37,7 +37,7 @@ export const OperatingSteps = () => {
     ];
 
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section className="pt-12 pb-24 bg-white relative overflow-hidden">
             {/* Background elements for UI enrichment */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>

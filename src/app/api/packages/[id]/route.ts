@@ -34,10 +34,12 @@ export async function GET(request: NextRequest, { params }: Props) {
         const formattedPackage = {
             ...pkg,
             price: Number(pkg.price),
+            renewalPrice: Number(pkg.renewalPrice),
             image: formatImage(pkg.image),
             systems: pkg.systems?.map(system => ({
                 ...system,
                 price: Number(system.price),
+                renewalPrice: Number(system.renewalPrice),
                 icon: formatImage(system.icon)
             })) || []
         };
@@ -85,6 +87,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description_ar: body.description_ar !== undefined ? body.description_ar : body.description,
                     image: imageBuffer,
                     price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+                    renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                     currency: body.currency,
                 }
             });
@@ -130,10 +133,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
         const responsePackage = {
             ...updatedPackage,
             price: Number(updatedPackage?.price),
+            renewalPrice: Number(updatedPackage?.renewalPrice),
             image: updatedPackage ? formatImage(updatedPackage.image) : null,
             systems: updatedPackage?.systems?.map(system => ({
                 ...system,
                 price: Number(system.price),
+                renewalPrice: Number(system.renewalPrice),
                 icon: formatImage(system.icon)
             })) || []
         };

@@ -175,14 +175,26 @@ export default function SystemsPage() {
                                     </div>
                                 </div>
                                 
-                                <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                                            {locale === 'ar' ? "السعر" : "Price"}
-                                        </span>
-                                        <span className="text-lg font-black text-primary">
-                                            {Number(system.price).toLocaleString()} <span className="text-xs font-bold opacity-70">SAR</span>
-                                        </span>
+                                <div className="mt-6 pt-6 border-t border-gray-50 flex items-end justify-between">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                                                {locale === 'ar' ? "السعر" : "Price"}
+                                            </span>
+                                            <span className="text-lg font-black text-primary">
+                                                {Number(system.price).toLocaleString()} <span className="text-xs font-bold opacity-70">SAR</span>
+                                            </span>
+                                        </div>
+                                        {system.renewalPrice !== undefined && system.renewalPrice !== null && Number(system.renewalPrice) > 0 && (
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">
+                                                    {locale === 'ar' ? "التجديد السنوي" : "Annual Renewal"}
+                                                </span>
+                                                <span className="text-sm font-bold text-gray-600">
+                                                    {Number(system.renewalPrice).toLocaleString()} <span className="text-[10px] font-bold opacity-70">SAR</span>
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                     <button 
                                         onClick={() => router.push(`/${locale}/admin/systems/${system.id}`)}

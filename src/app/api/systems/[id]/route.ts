@@ -36,6 +36,7 @@ export async function GET(request: NextRequest, { params }: any) {
         const formattedSystem = {
             ...system,
             price: Number(system.price),
+            renewalPrice: Number(system.renewalPrice),
             icon: formatIcon(system.icon)
         };
         
@@ -79,6 +80,7 @@ export async function PUT(request: NextRequest, { params }: any) {
                 description_ar: body.description_ar,
                 icon: iconBuffer,
                 price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+                renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                 modules: body.modules,
             }
         });
@@ -87,6 +89,7 @@ export async function PUT(request: NextRequest, { params }: any) {
         const responseSystem = {
             ...updatedSystem,
             price: Number(updatedSystem.price),
+            renewalPrice: Number(updatedSystem.renewalPrice),
             icon: formatIcon(updatedSystem.icon)
         };
 

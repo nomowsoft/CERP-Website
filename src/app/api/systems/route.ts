@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
                 description_ar: true,
                 icon: true,
                 price: true,
+                renewalPrice: true,
                 modules: true,
             },
             orderBy: { createdAt: 'desc' }
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest) {
         const formattedSystems = systems.map(system => ({
             ...system,
             price: Number(system.price),
+            renewalPrice: Number(system.renewalPrice),
             icon: formatImage(system.icon)
         }));
 
@@ -66,6 +68,7 @@ export async function POST(request: NextRequest) {
                 description_ar: body.description_ar || "",
                 icon: iconBuffer as any,
                 price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+                renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                 modules: body.modules || [],
             }
         });
@@ -73,6 +76,8 @@ export async function POST(request: NextRequest) {
         // Convert back for response
         const responseSystem = {
             ...newSystem,
+            price: Number(newSystem.price),
+            renewalPrice: Number(newSystem.renewalPrice),
             icon: formatImage(newSystem.icon)
         };
 

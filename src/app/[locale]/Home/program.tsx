@@ -9,6 +9,7 @@ import { getSystems } from "@/app/store/slices/systemsSlice";
 import { AppDispatch } from "@/app/store/store";
 import { Link } from "@/i18n/navigation";
 import { Settings2, CheckCircle2 } from "lucide-react";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { isValidImage } from "@/utils/imageUtils";
@@ -127,11 +128,20 @@ export const Program = () => {
                                         </p>
                                         
                                         {Number(system.price) > 0 && (
-                                            <div className="flex items-center justify-center gap-1 mt-4">
-                                                <span className="font-doto2 font-bold text-2xl text-gray-900">
-                                                    {Number(system.price)}
-                                                </span>
-                                                <span className="text-xs text-gray-500 font-medium">{system.currency || (locale === 'ar' ? 'ر.س' : 'SAR')}</span>
+                                            <div className="flex flex-col items-center gap-1 mt-4">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <span className="font-doto2 font-bold text-2xl text-gray-900">
+                                                        {Number(system.price)}
+                                                    </span>
+                                                    <span className="text-xs text-gray-500 font-medium flex items-center gap-1">{locale === 'ar' ? <SaudiRiyalIcon size={12} /> : (system.currency || 'SAR')}</span>
+                                                </div>
+                                                {system.renewalPrice !== undefined && system.renewalPrice !== null && Number(system.renewalPrice) > 0 && (
+                                                    <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold">
+                                                        <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                        <span className="font-bold text-primary">{Number(system.renewalPrice)}</span>
+                                                        <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} /> : (system.currency || 'SAR')}</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>

@@ -40,10 +40,6 @@ const ContactForm = () => {
 
     return (
         <div className="bg-info rounded-2xl p-8 shadow-xl">
-            <h2 className="text-2xl font-bold font-doto2 mb-8">
-                {t('title')}
-            </h2>
-
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-2">

@@ -29,6 +29,8 @@ export async function GET(request: NextRequest, { params }: Props) {
         // Convert Buffer image to Base64 string
         const formattedService = {
             ...service,
+            price: Number(service.price),
+            renewalPrice: Number(service.renewalPrice),
             image: formatImage(service.image)
         };
 
@@ -69,6 +71,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     name_en: body.name_en,
                     name_ar: body.name_ar,
                     price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
+                    renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                     currency: body.currency || 'SAR',
                     description: body.description,
                     description_en: body.description_en,
@@ -101,6 +104,8 @@ export async function PUT(request: NextRequest, { params }: Props) {
         // Convert back for response
         const responseService = {
             ...updatedService,
+            price: Number(updatedService?.price),
+            renewalPrice: Number(updatedService?.renewalPrice),
             image: updatedService ? formatImage(updatedService.image) : null
         };
 

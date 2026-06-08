@@ -1,5 +1,6 @@
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import path from 'path';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -9,6 +10,9 @@ const hyperPayDomain = isProduction
     : 'https://eu-test.oppwa.com https://test.oppwa.com';
 
 const nextConfig: NextConfig = {
+    turbopack: {
+        root: path.resolve(__dirname),
+    },
     env: {
         NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
     },

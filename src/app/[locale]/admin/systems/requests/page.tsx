@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
+import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
 
 export default function SystemRequestsManagement() {
     const locale = useLocale();
@@ -268,9 +269,10 @@ export default function SystemRequestsManagement() {
                                                         </div>
                                                         <span className="font-bold text-gray-900">{locale === 'en' ? sys.name_en : sys.name_ar}</span>
                                                     </div>
-                                                    <div className="text-primary font-bold">
-                                                        {Number(sys.price)} {locale === 'ar' ? "ر.س" : "SAR"}
-                                                    </div>
+                                                     <div className="text-primary font-bold flex items-center gap-1">
+                                                         <span>{Number(sys.price)}</span>
+                                                         {locale === 'ar' ? <SaudiRiyalIcon size={12} /> : <span className="text-xs">SAR</span>}
+                                                     </div>
                                                 </div>
                                             ))}
                                         </div>

@@ -152,9 +152,23 @@ export class SubscriptionService {
         */
 
         // Also create a payment record
-        if (pkg || (request.systems && request.systems.length > 0)) {
-            const systemsPrice = request.systems?.reduce((sum, s) => sum + Number(s.price), 0) || 0;
-            const amount = pkg ? pkg.price : systemsPrice;
+        if (pkg || (request.systems && request.systems.length > 0) || (request.services && request.services.length > 0)) {
+            let pkgPrice = pkg ? Number(pkg.price) : 0;
+            if (request.type === 'RENEW' && pkg && Number(pkg.renewalPrice) > 0) {
+                pkgPrice = Number(pkg.renewalPrice);
+            }
+
+            const servicesPrice = request.services?.reduce((sum, s) => {
+                const price = request.type === 'RENEW' && Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price);
+                return sum + price;
+            }, 0) || 0;
+
+            const systemsPrice = request.systems?.reduce((sum, s) => {
+                const price = request.type === 'RENEW' && Number(s.renewalPrice) > 0 ? Number(s.renewalPrice) : Number(s.price);
+                return sum + price;
+            }, 0) || 0;
+
+            const amount = pkgPrice + servicesPrice + systemsPrice;
             
             await prisma.payment.create({
                 data: {
