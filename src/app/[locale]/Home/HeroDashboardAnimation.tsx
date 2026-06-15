@@ -14,7 +14,6 @@ import { useState, useEffect } from "react";
 const slides = [
     { id: 1, image: "/hero/cerp.png", name: "Slide 1" },
     { id: 2, image: "/hero/1.png", name: "Slide 2" },
-    { id: 3, image: "/hero/3.png", name: "Slide 3" },
 ];
 
 export const HeroDashboardAnimation = () => {
