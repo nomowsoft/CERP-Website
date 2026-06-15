@@ -25,7 +25,7 @@ export default function Footer() {
             <section className="mx-auto container ">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Logo & Description */}
-                    <div className="">
+                    <div className="text-center md:text-start">
                         <div className="relative">
                             <div className="absolute -top-30 right-10 w-40 h-40 sm:w-60 sm:h-60 md:w-60 md:h-50 bg-primary/20 rounded-full blur-3xl animate-float" />
                             <Link href="/" className="flex justify-center md:justify-start">
@@ -36,9 +36,9 @@ export default function Footer() {
                     </div>
 
                     {/* Quick Links */}
-                    <div className="text-center">
+                    <div className="text-center md:text-start">
                         <h4 className="font-bold font-doto2 text-xl mb-4">{t('quickLinks')}</h4>
-                        <hr className="w-10 border border-primary/50 ms-8 animate-pulse" />
+                        <hr className="w-10 border border-primary/50 mx-auto md:ms-0 animate-pulse mb-4" />
                         <ul className="space-y-2">
                             <li>
                                 <Link href={`/${locale}`} className="text-gray-500 hover:text-primary transition-colors text-sm">
@@ -54,9 +54,9 @@ export default function Footer() {
                     </div>
 
                     {/* Solutions */}
-                    <div className="text-center">
+                    <div className="text-center md:text-start">
                         <h4 className="font-bold text-xl font-doto2 mb-4">{t('solutions')}</h4>
-                        <hr className="w-10 border border-primary/50 ms-8 animate-pulse" />
+                        <hr className="w-10 border border-primary/50 mx-auto md:ms-0 animate-pulse mb-4" />
                         <ul className="space-y-2">
                             {packages && packages.length > 0 ? (
                                 packages.map((pkg: any) => (
@@ -84,9 +84,9 @@ export default function Footer() {
                     </div>
 
                     {/* Contact */}
-                    <div className="text-center">
+                    <div className="text-center md:text-start">
                         <h4 className="font-bold text-xl font-doto2 mb-4">{t('contactUs')}</h4>
-                        <hr className="w-10 border border-primary/50 ms-8" />
+                        <hr className="w-10 border border-primary/50 mx-auto md:ms-0 mb-4" />
                         <ul className="space-y-2">
                             <li className="text-gray-500 text-sm" dir="ltr">info.cerp@masa.sa</li>
                             <li className="text-gray-500 text-sm" dir="ltr">+966 53 780 2802</li>

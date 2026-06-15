@@ -41,9 +41,9 @@ export const Hero = () => {
     const t = useTranslations('hero');
     const locale = useLocale();
     return (
-        <section className="bg-gray-100  lg:pt-16 relative">
+        <section className="bg-gray-100 pt-10 lg:pt-16 relative">
             <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
-                <div className="flex flex-col lg:flex-row gap-10 items-center">
+                <div className="flex flex-col-reverse lg:flex-row gap-10 items-center">
                     {/* Right side: Text & Buttons */}
                     <div className="w-full lg:w-1/2">
                         <div className="text-primary flex items-center gap-2 w-fit mx-auto lg:mx-0 mb-4 justify-center  border border-primary rounded-3xl px-2 py-2 bg-gradient-to-l from-primary/20 font-bold from-5% via-primary/50 via-50% to-primary/20 to-90%">
