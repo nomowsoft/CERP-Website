@@ -41,8 +41,8 @@ export const Hero = () => {
     const t = useTranslations('hero');
     const locale = useLocale();
     return (
-        <section className="bg-gray-100 pt-10 lg:pt-16 relative">
-            <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
+        <section className="bg-gray-100 pt-24 md:pt-28 lg:pt-32 relative">
+            <div className="container mx-auto px-4 md:px-8 lg:px-20 xl:px-20 2xl:px-0">
                 <div className="flex flex-col-reverse lg:flex-row gap-10 items-center">
                     {/* Right side: Text & Buttons */}
                     <div className="w-full lg:w-1/2">
@@ -50,16 +50,16 @@ export const Hero = () => {
                             <Image src="/hero/Vector.svg" height={40} width={20} alt="..." />
                             <div>{t('integratedSystem')}</div>
                         </div>
-                        <h1 className={`font-doto text-4xl text-center lg:text-start ${locale === 'ar' ? 'md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-4xl' : 'md:text-2xl lg:text-4xl xl:text-4xl 2xl:text-4xl'} font-bold mb-4 leading-snug`}>
+                        <h1 className={`font-doto text-3xl sm:text-4xl text-center lg:text-start ${locale === 'ar' ? 'md:text-3xl lg:text-4xl xl:text-5xl' : 'md:text-3xl lg:text-5xl xl:text-6xl'} font-bold mb-4 leading-snug`}>
                             {t.rich('erpSystemTitle', {
                                 highlight: (chunks) => <span className={`${locale === 'ar' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-secondary to-primary bg-clip-text text-transparent font-bold`}>{chunks}</span>
                             })}
                         </h1>
-                        <p className="text-lg md:text-xl font-bold mb-8 text-gray-500 mt-10 text-center lg:text-start">
+                        <p className="text-lg md:text-xl font-bold mb-8 text-gray-500 mt-6 lg:mt-10 text-center lg:text-start">
                             {t('erpDescription')}
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-center pt-4 w-full">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center lg:justify-start pt-4 w-full">
                             {/* Primary Button */}
                             <Link href={`/${locale}/backages_service`} className="w-full sm:w-auto">
                                 <Button
