@@ -41,26 +41,16 @@ export const Hero = () => {
     const t = useTranslations('hero');
     const locale = useLocale();
     return (
-        <section className="bg-gray-100 flex items-center pt-12 pb-12 lg:pt-24 lg:pb-20 relative">
-            {/* <video
-                className="absolute inset-0 w-full h-full object-cover opacity-5"
-                autoPlay
-                loop
-                muted
-                playsInline
-            >
-                <source src="/hero/video1.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-            </video> */}
+        <section className="bg-gray-100  lg:pt-16 relative">
             <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0">
-                <div className="flex flex-col lg:flex-row gap-10">
+                <div className="flex flex-col lg:flex-row gap-10 items-center">
                     {/* Right side: Text & Buttons */}
                     <div className="w-full lg:w-1/2">
                         <div className="text-primary flex items-center gap-2 w-fit mx-auto lg:mx-0 mb-4 justify-center  border border-primary rounded-3xl px-2 py-2 bg-gradient-to-l from-primary/20 font-bold from-5% via-primary/50 via-50% to-primary/20 to-90%">
                             <Image src="/hero/Vector.svg" height={40} width={20} alt="..." />
                             <div>{t('integratedSystem')}</div>
                         </div>
-                        <h1 className={`font-doto text-4xl text-center lg:text-start ${locale === 'ar' ? 'md:text-7xl lg:text-5xl xl:text-6xl 2xl:text-7xl' : 'md:text-7xl lg:text-4xl xl:text-5xl 2xl:text-6xl'} font-bold mb-4 leading-snug`}>
+                        <h1 className={`font-doto text-4xl text-center lg:text-start ${locale === 'ar' ? 'md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-4xl' : 'md:text-2xl lg:text-4xl xl:text-4xl 2xl:text-4xl'} font-bold mb-4 leading-snug`}>
                             {t.rich('erpSystemTitle', {
                                 highlight: (chunks) => <span className={`${locale === 'ar' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-secondary to-primary bg-clip-text text-transparent font-bold`}>{chunks}</span>
                             })}
@@ -92,26 +82,6 @@ export const Hero = () => {
                                 {t('watchDemo')}
                             </Button>
                         </div>
-                        {/* <div className="mt-6">
-                            <p className="text-sm text-gray-500">
-                                {t('trustedBy')}
-                            </p>
-                        </div>
-                        <div>
-                            <div className="flex flex-wrap gap-6 mt-6">
-                                {data.map((item) => (
-                                    <div key={item.id} className="flex items-center">
-                                        <div className="flex items-center">
-                                            <Image src={item.src} height={60} width={70} alt={t(item.altKey)} />
-                                        </div>
-                                        <div>
-                                            {item.number && <p className="text-xl text-primary font-bold">{item.number}</p>}
-                                            {item.nameKey && <p className="text-gray-600">{t(item.nameKey)}</p>}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div> */}
                     </div>
                     {/* Left side: Demo */}
                     <div className="w-full lg:w-1/2 mb-8 lg:mb-0 flex justify-center items-center">

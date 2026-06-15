@@ -25,7 +25,7 @@ const Navitem = ({
       transition={{ duration: 0.3 }}
     >
       <Link
-        className={`block pt-5 text-xl transition-colors duration-300 ${
+        className={`block pt-3 text-xl transition-colors duration-300 ${
           isActive ? "text-primary" : "text-gray-500 hover:text-primary"
         }`}
         href={`/${locale}${href}`}

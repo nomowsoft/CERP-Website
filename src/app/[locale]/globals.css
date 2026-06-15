@@ -46,3 +46,22 @@ main{
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
 }
+
+/* Swiper Custom Pagination */
+.swiper-pagination {
+  bottom: -32px !important;
+}
+.swiper-pagination-bullet {
+  background: #1B1464 !important;
+  opacity: 0.25 !important;
+  width: 8px !important;
+  height: 8px !important;
+  margin: 0 6px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.swiper-pagination-bullet-active {
+  background: #FF4500 !important;
+  opacity: 1 !important;
+  width: 24px !important;
+  border-radius: 9999px !important;
+}

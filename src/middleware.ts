@@ -23,7 +23,8 @@ export default function proxy(request: NextRequest) {
         const isPublicGetApi = request.method === 'GET' && (
             pathname.startsWith('/api/packages') ||
             pathname.startsWith('/api/systems') ||
-            pathname.startsWith('/api/services')
+            pathname.startsWith('/api/services') ||
+            pathname.startsWith('/api/clients')
         );
 
         if (!isPublicRoute && !isPublicGetApi) {

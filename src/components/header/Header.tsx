@@ -52,11 +52,11 @@ export default function Header() {
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 bg-info ${pathname.includes('/admin') ? 'hidden' : ''} shadow-md`}>
         <nav className="w-full">
-          <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20 py-2">
+          <div className="flex flex-wrap justify-between items-center lg:mx-10 xl:mx-20">
           <Link href="/" className="flex items-center px-5 lg:px-0">
             <Image
-              height={40}
-              width={140}
+              height={30}
+              width={110}
               src="/cerp-logo.png"
               alt="CERP Logo"
               className="object-contain"
@@ -157,7 +157,7 @@ export default function Header() {
       </nav>
     </header>
     {!pathname.includes('/admin') && (
-      <div className="h-16 lg:h-20" />
+      <div className="" />
     )}
   </>
   );

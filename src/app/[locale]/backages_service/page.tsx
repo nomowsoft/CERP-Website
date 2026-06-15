@@ -12,7 +12,7 @@ export default function BackagesService() {
 
   return (
     <section dir={`${locale === "ar" ? "rtl" : "ltr"}`} className="bg-gray-50/20 min-h-screen">
-      <section className="pt-20 pb-32 relative overflow-hidden bg-gradient-to-b from-gray-50 to-primary/5">
+      <section className="pt-32 pb-32 relative overflow-hidden bg-gradient-to-b from-gray-50 to-primary/5">
         {/* Glow effect */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
@@ -27,7 +27,7 @@ export default function BackagesService() {
         </div>
 
         {/* Floating Trust Badges for Charitable Orgs (Hidden on screens smaller than xl) */}
-        <div className="hidden xl:flex absolute top-16 right-8 xl:right-24 items-center gap-4 bg-white/80 backdrop-blur-md px-6 py-4 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-white z-10 animate-[bounce_6s_infinite]" data-aos="fade-left" data-aos-delay="200">
+        <div className="hidden xl:flex absolute top-32 right-8 xl:right-24 items-center gap-4 bg-white/80 backdrop-blur-md px-6 py-4 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-white z-10 animate-[bounce_6s_infinite]" data-aos="fade-left" data-aos-delay="200">
           <div className="bg-primary/10 p-3 rounded-2xl text-primary">
             <HeartHandshake className="w-7 h-7" />
           </div>
@@ -37,7 +37,7 @@ export default function BackagesService() {
           </div>
         </div>
 
-        <div className="hidden xl:flex absolute top-16 left-8 xl:left-24 items-center gap-4 bg-white/80 backdrop-blur-md px-6 py-4 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-white z-10 animate-[bounce_7s_infinite_0.5s]" data-aos="fade-right" data-aos-delay="400">
+        <div className="hidden xl:flex absolute top-32 left-8 xl:left-24 items-center gap-4 bg-white/80 backdrop-blur-md px-6 py-4 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-white z-10 animate-[bounce_7s_infinite_0.5s]" data-aos="fade-right" data-aos-delay="400">
           <div className="bg-secondary/10 p-3 rounded-2xl text-secondary">
             <ShieldCheck className="w-7 h-7" />
           </div>
