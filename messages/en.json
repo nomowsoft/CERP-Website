@@ -39,7 +39,7 @@
     "step3Desc": "Activate the system and launch operations management"
   },
   "whyCerp": {
-    "title": "Why CERP?",
+    "title": "Why System CERP?",
     "description": "An integrated platform designed according to the requirements of the non-profit sector in the Kingdom, enabling associations to manage their operations efficiently within a reliable environment that combines governance, security, and operational continuity.",
     "feature1Title": "Hosting inside the Kingdom",
     "feature1Desc": "Local infrastructure ensuring compliance and high reliability",
@@ -396,6 +396,7 @@
       "services": "Services",
       "systems": "Systems",
       "servers": "Servers",
+      "clients": "Clients",
       "availableSystems": "Additional Systems",
       "systemRequests": "System Requests"
     },

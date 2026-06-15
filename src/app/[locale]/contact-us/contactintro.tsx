@@ -15,7 +15,7 @@ const ContactItem = ({ icon, label, value, subValue }: ContactItemProps) => (
         </div>
         <div>
             <p className="text-primary mb-1">{label}</p>
-            <p>{value}</p>
+            <p dir="ltr">{value}</p>
             {subValue && <p className="text-primary text-sm">{subValue}</p>}
         </div>
     </div>

@@ -37,7 +37,7 @@ export const OperatingSteps = () => {
     ];
 
     return (
-        <section className="pt-12 pb-24 bg-white relative overflow-hidden">
+        <section className="pt-12 pb-10 bg-white relative overflow-hidden">
             {/* Background elements for UI enrichment */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
@@ -47,7 +47,7 @@ export const OperatingSteps = () => {
 
             <div className="container mx-auto px-4 lg:px-20 xl:px-20 2xl:px-0 relative z-10">
                 <div className="text-center mb-20" data-aos="fade-up">
-                    <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 inline-block relative">
+                    <h2 className="text-3xl md:text-4xl font-bold font-doto text-gray-800 mb-4 inline-block relative">
                         <span className="relative z-10">{t('title')}</span>
                     </h2>
                 </div>

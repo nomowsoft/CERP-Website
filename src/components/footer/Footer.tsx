@@ -21,7 +21,7 @@ export default function Footer() {
     }, [dispatch, packages]);
 
     return (
-        <footer className={`bg-gray-100 pt-20 pb-10 border-t border-primary/2 ${pathname.includes('/admin') ? 'hidden' : ''}`}>
+        <footer className={`bg-gray-100 py-10 border-t border-primary/2 ${pathname.includes('/admin') ? 'hidden' : ''}`}>
             <section className="mx-auto container ">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Logo & Description */}
@@ -32,7 +32,7 @@ export default function Footer() {
                                 <Image height={50} width={180} src="/cerp-logo.png" alt="CERP Logo" className="object-contain" />
                             </Link>
                         </div>
-                        <p className="text-center text-gray-500">{t('tagline')}</p>
+                        <p className="text-gray-500">{t('tagline')}</p>
                     </div>
 
                     {/* Quick Links */}

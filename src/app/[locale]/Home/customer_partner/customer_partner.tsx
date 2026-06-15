@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
@@ -11,6 +12,40 @@ import { useTranslations } from 'next-intl';
 
 const CustomerPartner = () => {
     const t = useTranslations('customerPartner');
+    const [clients, setClients] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchClients = async () => {
+            try {
+                const res = await fetch("/api/clients");
+                if (res.ok) {
+                    const data = await res.json();
+                    setClients(data);
+                }
+            } catch (error) {
+                console.error("Error fetching clients:", error);
+            }
+        };
+        fetchClients();
+    }, []);
+
+    // Fallback to static list if database is empty
+    const rawClients = (clients && clients.length > 0) ? clients : cutomerpartner;
+
+    // Ensure loop works smoothly by duplicating items if count is small (e.g. less than 12)
+    const displayClients = (() => {
+        if (!rawClients || rawClients.length === 0) return [];
+        let list = [...rawClients];
+        // Swiper loop needs at least enough slides to fill slidesPerView * 2
+        // Max slidesPerView is 5, so we need at least 10 items for a smooth loop.
+        while (list.length > 0 && list.length < 12) {
+            list = [...list, ...rawClients.map((item, idx) => ({
+                ...item,
+                id: `${item.id}-dup-${list.length}-${idx}`
+            }))];
+        }
+        return list;
+    })();
     
     return (
         <section className="py-24 bg-white relative overflow-hidden">
@@ -64,14 +99,14 @@ const CustomerPartner = () => {
                             1280: { slidesPerView: 5 },
                         }}
                     >
-                        {cutomerpartner?.map((cp) => (
+                        {displayClients?.map((cp) => (
                             <SwiperSlide key={cp.id}>
                                 <div className="group bg-white p-3 md:p-4 rounded-[2rem] border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(var(--primary-rgb),0.12)] hover:-translate-y-1 transition-all duration-300 h-40 md:h-48 flex items-center justify-center cursor-pointer overflow-hidden relative">
                                     <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                     <div className="relative w-[95%] h-[95%] flex items-center justify-center">
                                         <Image 
-                                            src={cp.image} 
-                                            alt={`Partner ${cp.id}`} 
+                                            src={cp.image || "/customer_partner/Feature (1).png"} 
+                                            alt={cp.name || `Partner ${cp.id}`} 
                                             fill
                                             className="object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
                                         />

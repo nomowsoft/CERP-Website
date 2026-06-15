@@ -52,6 +52,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         { id: "systems", label: t('nav.systems' as any), href: '/admin/systems', icon: Settings2, adminOnly: true },
         { id: "servers", label: t('nav.servers' as any), href: '/admin/servers', icon: ShoppingBag, adminOnly: true },
         { id: "users", label: t('nav.users' as any), href: '/admin/users', icon: Users, adminOnly: true },
+        { id: "clients", label: t('nav.clients' as any), href: '/admin/clients', icon: Users, adminOnly: true },
         { id: "settings", label: t('nav.settings'), href: '/admin/settings', icon: Settings },
     ];
 
