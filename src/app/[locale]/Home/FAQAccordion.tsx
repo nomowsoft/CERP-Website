@@ -7,22 +7,38 @@ import {
 } from "@/components/ui/accordion";
 import { useTranslations, useLocale } from "next-intl";
 import { HelpCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-type FaqData = {
-    id: string,
-    qKey: string,
-    aKey: string
-}
-const faqData: FaqData[] = [
-    { id: "1", qKey: "q1", aKey: "a1" },
-    { id: "2", qKey: "q2", aKey: "a2" },
-    { id: "3", qKey: "q3", aKey: "a3" },
-    { id: "4", qKey: "q4", aKey: "a4" },
-];
+type Faq = {
+    id: number;
+    question_ar: string;
+    question_en: string;
+    answer_ar: string;
+    answer_en: string;
+    order: number;
+};
 
 export const FAQAccordion = () => {
     const t = useTranslations('faq');
     const locale = useLocale();
+    const isAr = locale === 'ar';
+    const [faqs, setFaqs] = useState<Faq[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchFaqs = async () => {
+            try {
+                const response = await axios.get('/api/faqs');
+                setFaqs(response.data);
+            } catch (error) {
+                console.error("Error fetching FAQs:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFaqs();
+    }, []);
 
     return (
         <section className="py-24 relative overflow-hidden bg-white z-0">
@@ -73,10 +89,16 @@ export const FAQAccordion = () => {
                             className="space-y-5"
                             dir={locale === 'ar' ? "rtl" : "ltr"}
                         >
-                            {faqData.map((item) => (
+                            {loading ? (
+                                <div className="space-y-4">
+                                    {[1, 2, 3, 4].map(i => (
+                                        <div key={i} className="h-20 bg-gray-100/50 animate-pulse rounded-3xl" />
+                                    ))}
+                                </div>
+                            ) : faqs.length > 0 ? faqs.map((item) => (
                                 <AccordionItem
-                                    key={item.id}
-                                    value={item.id}
+                                    key={item.id.toString()}
+                                    value={item.id.toString()}
                                     className="
                                         group bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)]
                                         data-[state=open]:shadow-[0_8px_30px_rgb(var(--primary-rgb),0.08)] 
@@ -93,17 +115,21 @@ export const FAQAccordion = () => {
                                         "
                                     >
                                         <span className={`text-start group-data-[state=open]:text-primary transition-colors duration-300 leading-snug ${locale === 'ar' ? 'pl-4' : 'pr-4'}`}>
-                                            {t(item.qKey)}
+                                            {isAr ? item.question_ar : item.question_en}
                                         </span>
                                     </AccordionTrigger>
 
                                     <AccordionContent className="text-base md:text-lg leading-relaxed pb-8 px-6 md:px-8 text-gray-500">
                                         <div className="pt-2 border-t border-gray-50 mt-2">
-                                            {t(item.aKey)}
+                                            {isAr ? item.answer_ar : item.answer_en}
                                         </div>
                                     </AccordionContent>
                                 </AccordionItem>
-                            ))}
+                            )) : (
+                                <div className="text-center text-gray-500 p-8 border border-dashed rounded-3xl">
+                                    {isAr ? 'لا توجد أسئلة شائعة حالياً.' : 'No FAQs currently available.'}
+                                </div>
+                            )}
                         </Accordion>
                     </div>
                 </div>

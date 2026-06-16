@@ -251,3 +251,14 @@ model Client {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Faq {
+  id          Int      @id @default(autoincrement())
+  question_ar String   @db.Text
+  question_en String   @db.Text
+  answer_ar   String   @db.Text
+  answer_en   String   @db.Text
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

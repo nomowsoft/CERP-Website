@@ -12,7 +12,8 @@ import {
     Layers,
     Settings2,
     ShoppingBag,
-    ClipboardList
+    ClipboardList,
+    HelpCircle
 } from 'lucide-react';
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from 'next-intl';
@@ -53,6 +54,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         { id: "servers", label: t('nav.servers' as any), href: '/admin/servers', icon: ShoppingBag, adminOnly: true },
         { id: "users", label: t('nav.users' as any), href: '/admin/users', icon: Users, adminOnly: true },
         { id: "clients", label: t('nav.clients' as any), href: '/admin/clients', icon: Users, adminOnly: true },
+        { id: "faqs", label: locale === 'ar' ? 'الأسئلة الشائعة' : 'FAQs', href: '/admin/faqs', icon: HelpCircle, adminOnly: true },
         { id: "settings", label: t('nav.settings'), href: '/admin/settings', icon: Settings },
     ];
 

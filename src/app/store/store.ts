@@ -7,6 +7,7 @@ import { packagesReducer } from './slices/packagesSlice';
 import { servicesReducer } from './slices/servicesSlice';
 import { systemsReducer } from './slices/systemsSlice';
 import { clientsReducer } from './slices/clientsSlice';
+import { faqsReducer } from './slices/faqsSlice';
 
 export const store = configureStore({
     reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
         services: servicesReducer,
         systems: systemsReducer,
         clients: clientsReducer,
+        faqs: faqsReducer,
     },
 });
 export type RootState = ReturnType<typeof store.getState>;
