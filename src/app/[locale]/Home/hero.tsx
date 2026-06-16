@@ -50,7 +50,7 @@ export const Hero = () => {
                             <Image src="/hero/Vector.svg" height={40} width={20} alt="..." />
                             <div>{t('integratedSystem')}</div>
                         </div>
-                        <h1 className={`font-doto text-3xl sm:text-4xl text-center lg:text-start ${locale === 'ar' ? 'md:text-3xl lg:text-4xl xl:text-5xl' : 'md:text-3xl lg:text-5xl xl:text-6xl'} font-bold mb-4 leading-snug`}>
+                        <h1 className={`font-doto text-3xl sm:text-4xl text-center lg:text-start ${locale === 'ar' ? 'md:text-3xl lg:text-4xl xl:text-4xl' : 'md:text-3xl lg:text-4xl xl:text-4xl'} font-bold mb-4 leading-snug`}>
                             {t.rich('erpSystemTitle', {
                                 highlight: (chunks) => <span className={`${locale === 'ar' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-secondary to-primary bg-clip-text text-transparent font-bold`}>{chunks}</span>
                             })}

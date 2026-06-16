@@ -12,7 +12,7 @@ import "swiper/css/pagination";
 import { useState, useEffect } from "react";
 
 const slides = [
-    { id: 1, image: "/hero/cerp.png", name: "Slide 1" },
+    { id: 1, image: "/hero/2.png", name: "Slide 1" },
     { id: 2, image: "/hero/cerpnew.jpeg", name: "Slide 2" },
 ];
 
