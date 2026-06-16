@@ -24,7 +24,8 @@ export default function proxy(request: NextRequest) {
             pathname.startsWith('/api/packages') ||
             pathname.startsWith('/api/systems') ||
             pathname.startsWith('/api/services') ||
-            pathname.startsWith('/api/clients')
+            pathname.startsWith('/api/clients') ||
+            pathname.startsWith('/api/faqs')
         );
 
         if (!isPublicRoute && !isPublicGetApi) {
