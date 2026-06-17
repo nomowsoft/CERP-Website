@@ -362,10 +362,12 @@ export default function ServiceFormPage({
                   <div className="relative">
                     <Input
                       required
-                      type="number"
-                      step="0.01"
+                      type="text"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                        setFormData({ ...formData, price: val });
+                      }}
                       className="w-full px-4 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold"
                     />
                     <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center pointer-events-none text-gray-400 font-bold`}>
@@ -380,10 +382,12 @@ export default function ServiceFormPage({
                   <div className="relative">
                     <Input
                       required
-                      type="number"
-                      step="0.01"
+                      type="text"
                       value={formData.renewalPrice}
-                      onChange={(e) => setFormData({ ...formData, renewalPrice: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                        setFormData({ ...formData, renewalPrice: val });
+                      }}
                       className="w-full px-4 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold"
                     />
                     <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center pointer-events-none text-gray-400 font-bold`}>

@@ -448,9 +448,12 @@ export default function Subscription() {
                             </Label>
                             <div className="flex gap-4">
                                 <Input
-                                    type="number"
-                                    value={settings.nearExpiryDays || 30}
-                                    onChange={(e) => setSettings({ ...settings, nearExpiryDays: e.target.value })}
+                                    type="text"
+                                    value={settings.nearExpiryDays !== undefined && settings.nearExpiryDays !== null ? settings.nearExpiryDays : 30}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/[^0-9]/g, '');
+                                        setSettings({ ...settings, nearExpiryDays: val });
+                                    }}
                                     className="max-w-[200px] border-gray-200 py-6 rounded-2xl focus:ring-primary focus:border-primary"
                                 />
                                 <Button

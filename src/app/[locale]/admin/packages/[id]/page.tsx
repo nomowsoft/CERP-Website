@@ -192,11 +192,17 @@ export default function PackageFormPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
                                 <div className="space-y-2">
                                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "السعر" : "Price"}</label>
-                                    <Input type="number" step="0.01" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
+                                    <Input type="text" value={formData.price} onChange={e => {
+                                        const val = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                                        setFormData({ ...formData, price: val });
+                                    }} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "سعر التجديد السنوي" : "Annual Renewal Price"}</label>
-                                    <Input type="number" step="0.01" value={formData.renewalPrice} onChange={e => setFormData({ ...formData, renewalPrice: e.target.value })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
+                                    <Input type="text" value={formData.renewalPrice} onChange={e => {
+                                        const val = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                                        setFormData({ ...formData, renewalPrice: val });
+                                    }} className="py-6 rounded-2xl bg-gray-50 border-none font-bold" required />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "العملة" : "Currency"}</label>

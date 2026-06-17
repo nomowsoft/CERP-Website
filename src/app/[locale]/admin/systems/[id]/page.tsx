@@ -39,8 +39,8 @@ export default function SystemFormPage({
     description_ar: "",
     description_en: "",
     icon: "",
-    price: 0,
-    renewalPrice: 0,
+    price: "",
+    renewalPrice: "",
     modules: [] as string[],
   });
   const [loading, setLoading] = useState(!isNew);
@@ -60,7 +60,12 @@ export default function SystemFormPage({
   const fetchSystem = async () => {
     try {
       const resp = await axios.get(`/api/systems/${id}`);
-      setFormData(resp.data);
+      const data = resp.data;
+      setFormData({
+        ...data,
+        price: data.price !== undefined && data.price !== null ? data.price.toString() : "",
+        renewalPrice: data.renewalPrice !== undefined && data.renewalPrice !== null ? data.renewalPrice.toString() : "",
+      });
     } catch (err) {
       console.error("Failed to fetch system", err);
       toast.error("Failed to load system details");
@@ -80,12 +85,17 @@ export default function SystemFormPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    const payload = {
+      ...formData,
+      price: parseFloat(formData.price) || 0,
+      renewalPrice: parseFloat(formData.renewalPrice) || 0,
+    };
     try {
       if (isNew) {
-        await axios.post("/api/systems", formData);
+        await axios.post("/api/systems", payload);
         toast.success(t("createSuccess"));
       } else {
-        await axios.put(`/api/systems/${id}`, formData);
+        await axios.put(`/api/systems/${id}`, payload);
         toast.success(t("updateSuccess"));
       }
       router.push(`/${locale}/admin/systems`);
@@ -433,12 +443,12 @@ export default function SystemFormPage({
                   <div className="relative">
                     <input
                       required
-                      type="number"
-                      step="0.01"
+                      type="text"
                       value={formData.price}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
-                      }
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                        setFormData({ ...formData, price: val });
+                      }}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       placeholder="0.00"
                     />
@@ -455,12 +465,12 @@ export default function SystemFormPage({
                   <div className="relative">
                     <input
                       required
-                      type="number"
-                      step="0.01"
+                      type="text"
                       value={formData.renewalPrice}
-                      onChange={(e) =>
-                        setFormData({ ...formData, renewalPrice: parseFloat(e.target.value) || 0 })
-                      }
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                        setFormData({ ...formData, renewalPrice: val });
+                      }}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                       placeholder="0.00"
                     />

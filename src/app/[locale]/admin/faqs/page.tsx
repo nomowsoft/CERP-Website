@@ -156,7 +156,10 @@ export default function FaqsManagement() {
                             </div>
                             <div className="space-y-2 md:col-span-2">
                                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest px-2">{isAr ? "الترتيب" : "Order"}</label>
-                                <Input type="number" value={editingFaq.order || 0} onChange={e => setEditingFaq({ ...editingFaq, order: parseInt(e.target.value) })} className="py-6 rounded-2xl bg-gray-50 border-none font-bold focus:ring-2 focus:ring-primary/10 transition-all max-w-[200px]" />
+                                <Input type="text" value={editingFaq.order ?? ''} onChange={e => {
+                                    const val = e.target.value.replace(/[^0-9]/g, '');
+                                    setEditingFaq({ ...editingFaq, order: val ? parseInt(val) : 0 });
+                                }} className="py-6 rounded-2xl bg-gray-50 border-none font-bold focus:ring-2 focus:ring-primary/10 transition-all max-w-[200px]" />
                             </div>
                         </div>
 
