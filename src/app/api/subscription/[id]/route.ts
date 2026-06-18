@@ -5,6 +5,9 @@ import { SubscriptionService } from '@/utils/payment';
 import { PaymentGateway } from '@/utils/paymentGateway';
 import { ServerManager } from '@/utils/serverManager';
 
+export const maxDuration = 300; // Allow up to 5 minutes execution time on Vercel
+
+
 const formatImage = (image: any) => {
     if (!image) return null;
     

@@ -3,6 +3,9 @@ import prisma from '@/utils/db';
 import { verifyToken } from '@/utils/verifyToken';
 import { ServerManager } from '@/utils/serverManager';
 
+export const maxDuration = 300; // Allow up to 5 minutes execution time on Vercel
+
+
 type Props = {
     params: Promise<{ id: string }>;
 };
