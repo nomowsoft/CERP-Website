@@ -483,7 +483,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
     } catch (error: any) {
         console.error("PUT Error:", error);
         return NextResponse.json(
-            { message: 'Internal Server Error', ...(process.env.NODE_ENV !== 'production' && { error: error.message }) },
+            { message: 'Internal Server Error', error: error.message || error },
             { status: 500 }
         );
     }

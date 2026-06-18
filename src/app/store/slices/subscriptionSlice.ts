@@ -60,7 +60,13 @@ export const updateSubscription = createAsyncThunk<any, { id: number, data: any 
             const response = await axios.put(`/api/subscription/${id}`, data);
             return response.data;
         } catch (error: any) {
-            return rejectWithValue(error.response?.data?.message || 'Failed to update subscription');
+            if (axios.isAxiosError(error) && error.response?.data) {
+                const serverData = error.response.data;
+                const message = serverData.message || 'Failed to update subscription';
+                const details = serverData.error ? ` (${serverData.error})` : '';
+                return rejectWithValue(`${message}${details}`);
+            }
+            return rejectWithValue(error.message || 'Failed to update subscription');
         }
     }
 );
