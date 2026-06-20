@@ -9,6 +9,7 @@ import { getSubscription } from "@/app/store/slices/subscriptionSlice";
 import { useParams } from "next/navigation";
 import { generateInvoicePDF } from "@/utils/invoicePdf";
 import { SaudiRiyalIcon } from "@/components/ui/SaudiRiyalIcon";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function Invoice() {
     const dispatch = useDispatch<any>();
@@ -140,47 +141,77 @@ export default function Invoice() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {filteredInvoices.map((inv: any) => (
-                                <tr key={inv.id} className="hover:bg-gray-50/30 transition-colors">
-                                    <td className="py-5 px-6 text-gray-700 font-medium text-center">{inv.invoiceId}</td>
-                                    <td className="py-5 px-6 text-gray-700 text-center">
-                                        <div className="font-medium text-gray-900">{inv.subscription.fullName}</div>
-                                        <div className="text-sm text-gray-500">{inv.subscription.email}</div>
-                                    </td>
-                                    <td className="py-5 px-6 text-gray-500 text-center">{inv.formattedDate}</td>
-                                    <td className="py-5 px-6 text-gray-700 font-mono text-center">
-                                        <div className="flex items-center justify-center gap-1">
-                                            <span>{Number(inv.amount).toFixed(2)}</span>
-                                            {isAr ? <SaudiRiyalIcon size={12} /> : <span className="text-xs font-bold text-gray-500">SAR</span>}
-                                        </div>
-                                    </td>
-                                    <td className="py-5 px-6 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold inline-block
-                                            ${inv.status === 'SUCCESS' ? 'bg-green-100 text-green-600' :
-                                                inv.status === 'PENDING' ? 'bg-yellow-100 text-yellow-600' :
-                                                    'bg-red-100 text-red-600'
-                                            }`}>
-                                            {inv.status === 'SUCCESS' ? (isAr ? 'مدفوعة' : 'Paid') :
-                                                inv.status === 'PENDING' ? (isAr ? 'قيد الانتظار' : 'Pending') : (isAr ? 'ملغاة' : 'Cancelled')}
-                                        </span>
-                                    </td>
-                                    <td className="py-5 px-6 text-center">
-                                        {/* <button
-                                            onClick={() => handleDownload(inv)}
-                                            className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
-                                            title={isAr ? "تحميل PDF" : "Download PDF"}
-                                        >
-                                            <Download className="w-5 h-5" />
-                                        </button> */}
-                                    </td>
-                                </tr>
-                            ))}
-                            {filteredInvoices.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="py-8 text-center text-gray-400">
-                                        {isAr ? "لا توجد فواتير" : "No invoices found"}
-                                    </td>
-                                </tr>
+                            {loading ? (
+                                Array.from({ length: 5 }).map((_, index) => (
+                                    <tr key={`skeleton-${index}`} className="animate-pulse">
+                                        <td className="py-5 px-6 text-center">
+                                            <Skeleton className="h-5 w-20 bg-gray-100 mx-auto rounded-lg" />
+                                        </td>
+                                        <td className="py-5 px-6 text-center">
+                                            <div className="flex flex-col items-center gap-2">
+                                                <Skeleton className="h-5 w-32 bg-gray-100 rounded-lg" />
+                                                <Skeleton className="h-3 w-40 bg-gray-100 rounded-lg" />
+                                            </div>
+                                        </td>
+                                        <td className="py-5 px-6 text-center">
+                                            <Skeleton className="h-4 w-24 bg-gray-100 mx-auto rounded-lg" />
+                                        </td>
+                                        <td className="py-5 px-6 text-center">
+                                            <Skeleton className="h-5 w-16 bg-gray-100 mx-auto rounded-lg" />
+                                        </td>
+                                        <td className="py-5 px-6 text-center">
+                                            <Skeleton className="h-6 w-16 bg-gray-100 mx-auto rounded-full" />
+                                        </td>
+                                        <td className="py-5 px-6 text-center">
+                                            <Skeleton className="h-8 w-8 bg-gray-100 mx-auto rounded-lg" />
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <>
+                                    {filteredInvoices.map((inv: any) => (
+                                        <tr key={inv.id} className="hover:bg-gray-50/30 transition-colors">
+                                            <td className="py-5 px-6 text-gray-700 font-medium text-center">{inv.invoiceId}</td>
+                                            <td className="py-5 px-6 text-gray-700 text-center">
+                                                <div className="font-medium text-gray-900">{inv.subscription.fullName}</div>
+                                                <div className="text-sm text-gray-500">{inv.subscription.email}</div>
+                                            </td>
+                                            <td className="py-5 px-6 text-gray-500 text-center">{inv.formattedDate}</td>
+                                            <td className="py-5 px-6 text-gray-700 font-mono text-center">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <span>{Number(inv.amount).toFixed(2)}</span>
+                                                    {isAr ? <SaudiRiyalIcon size={12} /> : <span className="text-xs font-bold text-gray-500">SAR</span>}
+                                                </div>
+                                            </td>
+                                            <td className="py-5 px-6 text-center">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-bold inline-block
+                                                    ${inv.status === 'SUCCESS' ? 'bg-green-100 text-green-600' :
+                                                        inv.status === 'PENDING' ? 'bg-yellow-100 text-yellow-600' :
+                                                            'bg-red-100 text-red-600'
+                                                    }`}>
+                                                    {inv.status === 'SUCCESS' ? (isAr ? 'مدفوعة' : 'Paid') :
+                                                        inv.status === 'PENDING' ? (isAr ? 'قيد الانتظار' : 'Pending') : (isAr ? 'ملغاة' : 'Cancelled')}
+                                                </span>
+                                            </td>
+                                            <td className="py-5 px-6 text-center">
+                                                <button
+                                                    onClick={() => handleDownload(inv)}
+                                                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                                    title={isAr ? "تحميل PDF" : "Download PDF"}
+                                                >
+                                                    <Download className="w-5 h-5" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {filteredInvoices.length === 0 && (
+                                        <tr>
+                                            <td colSpan={6} className="py-8 text-center text-gray-400">
+                                                {isAr ? "لا توجد فواتير" : "No invoices found"}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </>
                             )}
                         </tbody>
                     </table>

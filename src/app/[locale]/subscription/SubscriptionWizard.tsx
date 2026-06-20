@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { AppDispatch } from "@/app/store/store";
 import { getSubscription, updateSubscription } from "@/app/store/slices/subscriptionSlice";
 import { getPackages } from "@/app/store/slices/packagesSlice";
@@ -43,6 +44,11 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const { services } = useSelector((state: RootState) => state.services);
   const { systems: allSystems } = useSelector((state: RootState) => state.systems);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const searchParams = useSearchParams();
   const packageId = searchParams.get('packageId');
@@ -349,7 +355,80 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const { packagePrice, servicesTotal, grandTotal } = getPriceBreakdown();
   const currency = isAr ? <SaudiRiyalIcon size={14} className="inline-block" /> : (selectedPkg?.currency || 'SAR');
 
-  if (loading) return <div className="flex h-[50vh] items-center justify-center animate-pulse"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
+  if (!mounted || loading) {
+    return (
+      <div className="w-full max-w-5xl mx-auto py-10" dir={isAr ? 'rtl' : 'ltr'}>
+        {/* Header Skeleton */}
+        <div className="text-center mb-10 space-y-4">
+          <Skeleton className="h-12 w-2/3 md:w-1/3 mx-auto" />
+          <Skeleton className="h-4 w-1/2 mx-auto" />
+        </div>
+
+        {/* Step Indicator Skeleton */}
+        <div className="flex justify-center items-center gap-4 md:gap-8 mb-12">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <React.Fragment key={i}>
+              <Skeleton className="w-10 h-10" variant="circular" />
+              {i < 4 && <Skeleton className="h-1 flex-1 max-w-[80px] hidden sm:block" />}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Grid Layout Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Wizard Form Skeleton */}
+          <div className="lg:col-span-3">
+            <div className="rounded-[2.5rem] border border-gray-100 p-8 bg-white space-y-8">
+              <Skeleton className="h-6 w-1/4" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              </div>
+              <div className="flex justify-between items-center pt-8 border-t border-gray-100">
+                <Skeleton className="h-12 w-24" />
+                <Skeleton className="h-12 w-28" />
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar Summary Skeleton */}
+          <div className="lg:col-span-1">
+            <div className="rounded-[2rem] border border-gray-100 p-6 bg-white space-y-6">
+              <Skeleton className="h-6 w-2/3" />
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <div className="pt-6 border-t border-gray-100 flex justify-between">
+                  <Skeleton className="h-6 w-1/3" />
+                  <Skeleton className="h-6 w-1/4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className="w-full max-w-5xl mx-auto" dir={`${locale === 'ar' ? 'rtl' : 'ltr'}`}>

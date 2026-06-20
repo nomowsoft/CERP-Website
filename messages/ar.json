@@ -398,7 +398,10 @@
       "servers": "السيرفرات",
       "clients": "العملاء",
       "availableSystems": "الأنظمة الإضافية",
-      "systemRequests": "طلبات الأنظمة"
+      "systemRequests": "طلبات الأنظمة",
+      "websiteSettings": "إعدادات الموقع",
+      "faqs": "الأسئلة الشائعة",
+      "heroImages": "صور قسم الهيرو أو البنر"
     },
     "stats": {
       "activeSubscriptions": "الأشتراكات النشطة",

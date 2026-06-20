@@ -19,6 +19,7 @@ import { UserSubscriptionView } from "./UserSubscriptionView";
 import FilePreviewModal from "@/components/FilePreviewModal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { getModuleFriendlyName } from "@/utils/moduleMapper";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 
 const fileToBase64 = (file: File): Promise<string> => {
@@ -44,6 +45,7 @@ export default function Subscription() {
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [activeTab, setActiveTab] = useState<'SUBSCRIPTIONS' | 'RENEWAL_REQUESTS' | 'UPGRADE_REQUESTS' | 'SYSTEM_REQUESTS' | 'SETTINGS'>(initialTab);
     const [requests, setRequests] = useState<any[]>([]);
+    const [loadingRequests, setLoadingRequests] = useState(false);
     const [provisioningResult, setProvisioningResult] = useState<any>(null);
     const [showProvisioningModal, setShowProvisioningModal] = useState(false);
     const [previewFile, setPreviewFile] = useState<{ url: string; type?: string; name?: string } | null>(null);
@@ -66,6 +68,7 @@ export default function Subscription() {
     });
 
     const fetchRequests = async () => {
+        setLoadingRequests(true);
         try {
             const type = activeTab === 'RENEWAL_REQUESTS' ? 'RENEW' : 
                          activeTab === 'UPGRADE_REQUESTS' ? 'UPGRADE' : 
@@ -76,6 +79,8 @@ export default function Subscription() {
             setRequestsPagination(resp.data.pagination);
         } catch (err) {
             console.error("Failed to fetch requests", err);
+        } finally {
+            setLoadingRequests(false);
         }
     };
 
@@ -294,9 +299,45 @@ export default function Subscription() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {filteredSubscriptions.length === 0 ? (
+                                    {loading ? (
+                                        Array.from({ length: 5 }).map((_, index) => (
+                                            <tr key={index} className="animate-pulse">
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-5 w-8 bg-gray-100" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <div className="space-y-2">
+                                                        <Skeleton className="h-5 w-32 bg-gray-100" />
+                                                        <Skeleton className="h-3 w-40 bg-gray-100" />
+                                                    </div>
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-5 w-24 bg-gray-100" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <div className="flex gap-1.5">
+                                                        <Skeleton className="h-5 w-16 bg-gray-100 rounded-lg" />
+                                                        <Skeleton className="h-5 w-16 bg-gray-100 rounded-lg" />
+                                                    </div>
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-6 w-16 bg-gray-100 rounded-full" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-4 w-20 bg-gray-100" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <div className="flex justify-center gap-2">
+                                                        <Skeleton className="h-9 w-9 bg-gray-100 rounded-lg" />
+                                                        <Skeleton className="h-9 w-9 bg-gray-100 rounded-lg" />
+                                                        <Skeleton className="h-9 w-9 bg-gray-100 rounded-lg" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : filteredSubscriptions.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6}>
+                                            <td colSpan={7}>
                                                 <div className="flex flex-col items-center justify-center py-20 text-center">
                                                     <div className="w-16 h-16 bg-gray-50 rounded-[2rem] flex items-center justify-center mb-4">
                                                         <Inbox className="w-8 h-8 text-gray-300" />
@@ -487,6 +528,39 @@ export default function Subscription() {
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {(() => {
+                                    if (loadingRequests) {
+                                        return Array.from({ length: 5 }).map((_, index) => (
+                                            <tr key={index} className="animate-pulse">
+                                                <td className="py-5 px-6">
+                                                    <div className="space-y-2">
+                                                        <Skeleton className="h-5 w-32 bg-gray-100" />
+                                                        <Skeleton className="h-3 w-40 bg-gray-100" />
+                                                    </div>
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-6 w-16 bg-gray-100 rounded-full" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-5 w-24 bg-gray-100" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-4 w-12 bg-gray-100" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-4 w-20 bg-gray-100" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <Skeleton className="h-6 w-16 bg-gray-100 rounded-full" />
+                                                </td>
+                                                <td className="py-5 px-6">
+                                                    <div className="flex justify-center gap-2">
+                                                        <Skeleton className="h-9 w-24 bg-gray-100 rounded-xl" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ));
+                                    }
+
                                     if (requests.length === 0) {
                                         return (
                                             <tr>

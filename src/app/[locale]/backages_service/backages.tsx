@@ -1,11 +1,7 @@
 "use client";
 import { 
-    Plus as PlusIcon, 
-    FileText, 
     Settings2, 
     ShieldCheck, 
-    CheckCircle2, 
-    ArrowLeft, 
     ArrowRight, 
     X,
     ShoppingCart,
@@ -24,11 +20,12 @@ import { getPackages } from '@/app/store/slices/packagesSlice';
 import { getSystems } from '@/app/store/slices/systemsSlice';
 import { getSubscription } from '@/app/store/slices/subscriptionSlice';
 import { useEffect, useState } from 'react';
-import { PackageDTO, PackageFeturesDto, SystemDTO } from '@/utils/types';
+import { PackageDTO } from '@/utils/types';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { isValidImage } from '@/utils/imageUtils';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export const Backages = () => {
     const locale = useLocale();
@@ -55,7 +52,9 @@ export const Backages = () => {
     }, [dispatch]);
 
     const Packeges = useSelector((state: any) => state.packages.packages);
+    const loadingPackages = useSelector((state: any) => state.packages.loading);
     const allSystems = useSelector((state: any) => state.systems.systems);
+    const loadingSystems = useSelector((state: any) => state.systems.loading);
     const { userInfo } = useSelector((state: any) => state.user);
     const { subscriptionInfo } = useSelector((state: any) => state.subscription);
     const mySubscription = subscriptionInfo?.data?.find((s: any) => s.userId === userInfo?.id);
@@ -64,6 +63,14 @@ export const Backages = () => {
     const [selectedPkg, setSelectedPkg] = useState<number | null>(null);
     const [selectedSystems, setSelectedSystems] = useState<number[]>([]);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const showPackagesSkeleton = !mounted || loadingPackages;
+    const showSystemsSkeleton = !mounted || loadingSystems;
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -170,144 +177,174 @@ export const Backages = () => {
         <section className="container md:mx-auto relative z-20 pb-16 lg:pb-24 -mt-32" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
             
             <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8 lg:mx-0 mx-4">
-                {Packeges.map((packege: PackageDTO, index: number) => (
-                    <div 
-                        key={packege.id} 
-                        data-aos="fade-up"
-                        data-aos-delay={index * 100}
-                        className="h-full w-full md:w-[340px] lg:w-[360px]"
-                    >
-                        <div className={`group h-full bg-white rounded-[2rem] p-6 md:p-8 border shadow-lg hover:shadow-[0_20px_40px_rgb(var(--primary-rgb),0.12)] transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${index === 1 ? 'border-primary/50 shadow-[0_10px_40px_rgb(var(--primary-rgb),0.15)] md:-translate-y-4 hover:-translate-y-6' : 'border-gray-100 hover:-translate-y-2 hover:border-primary/30'}`}>
-                            {index === 1 && <div className="absolute top-0 right-0 w-full h-1.5 bg-gradient-to-r from-secondary to-primary"></div>}
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                            
-                            <div className="relative z-10 flex-1">
-                                <div className="flex flex-col items-center text-center mb-4">
-                                    {isValidImage(packege.image) ? (
-                                        <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300">
-                                            <Image src={packege.image} alt="" width={64} height={64} className="group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" />
-                                        </div>
-                                    ) : (
-                                        <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300 flex items-center justify-center w-[64px] h-[64px]">
-                                            <ShieldCheck className="w-8 h-8 text-primary/50" />
-                                        </div>
-                                    )}
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className={`inline-block px-2.5 py-0.5 text-xs font-bold rounded-lg ${index === 1 ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600'}`}>
-                                            {packege.type}
-                                        </span>
-                                        {mySubscription?.packageId === packege.id && (
-                                            <span className="inline-block px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-600 animate-pulse">
-                                                {locale === 'ar' ? "باقتك الحالية" : "Current Package"}
-                                            </span>
-                                        )}
+                {showPackagesSkeleton ? (
+                    Array.from({ length: 3 }).map((_, index) => (
+                        <div 
+                            key={index} 
+                            className="h-full w-full md:w-[340px] lg:w-[360px] animate-pulse"
+                        >
+                            <div className="h-full bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-lg flex flex-col justify-between min-h-[500px]">
+                                <div className="space-y-6 flex-1">
+                                    <div className="flex flex-col items-center">
+                                        <Skeleton variant="rectangular" className="w-16 h-16 rounded-2xl mb-4 bg-gray-200" />
+                                        <Skeleton variant="text" className="w-24 h-6 mb-3 bg-gray-200" />
+                                        <Skeleton variant="text" className="w-40 h-8 mb-2 bg-gray-200" />
+                                        <Skeleton variant="text" className="w-full h-4 mb-1 bg-gray-200" />
+                                        <Skeleton variant="text" className="w-5/6 h-4 bg-gray-200" />
                                     </div>
-                                    <h3 className="font-doto2 font-bold text-2xl text-gray-900 mb-1">
-                                        {locale === 'en' ? packege.name_en : packege.name_ar}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed min-h-[2.5rem] line-clamp-2">
-                                        {locale === 'en' ? packege.description_en : packege.description_ar}
-                                    </p>
-
-                                    {packege.systems && packege.systems.length > 0 && (
-                                        <div className="mt-6 pt-4 border-t border-gray-100/60 w-full">
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 text-start px-1">
-                                                {locale === 'ar' ? 'الأنظمة المشمولة:' : 'Included Systems:'}
-                                            </p>
-                                            <div className="max-h-[178px] overflow-y-auto custom-scrollbar flex flex-col gap-2 px-1 py-0.5">
-                                                {packege.systems.map((system: any) => {
-                                                    const fullSystem = allSystems?.find((s: any) => s.id === system.id) || system;
-                                                    const systemKey = `${packege.id}-${system.id}`;
-                                                    const isExpanded = expandedSystemId === systemKey;
-                                                    return (
-                                                        <div 
-                                                            key={system.id} 
-                                                            className={`group/system flex flex-col border border-gray-100 hover:border-primary/20 bg-gray-50/50 hover:bg-primary/[0.01] rounded-xl transition-all duration-300 p-2.5 cursor-pointer ${isExpanded ? 'border-primary/20 bg-primary/[0.01]' : ''}`}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setExpandedSystemId(isExpanded ? null : systemKey);
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center justify-between gap-3">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-100 group-hover/system:border-primary/20 flex items-center justify-center p-1.5 transition-all duration-300 shrink-0">
-                                                                        {isValidImage(system.icon) ? (
-                                                                            <Image src={system.icon} alt="" width={20} height={20} className="object-contain transition-transform group-hover/system:scale-110" />
-                                                                        ) : (
-                                                                            <Settings2 className="w-4 h-4 text-gray-300 group-hover/system:text-primary/40" />
-                                                                        )}
-                                                                    </div>
-                                                                    <span className="text-xs font-bold text-gray-700 group-hover/system:text-primary transition-colors text-start">
-                                                                        {locale === 'ar' ? system.name_ar : system.name_en}
-                                                                    </span>
-                                                                </div>
-                                                                <ChevronDown className={`w-4 h-4 text-gray-400 group-hover/system:text-primary transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180 text-primary' : ''}`} />
-                                                            </div>
-                                                            <AnimatePresence initial={false}>
-                                                                {isExpanded && (
-                                                                    <motion.div
-                                                                        initial={{ height: 0, opacity: 0 }}
-                                                                        animate={{ height: "auto", opacity: 1 }}
-                                                                        exit={{ height: 0, opacity: 0 }}
-                                                                        transition={{ duration: 0.2 }}
-                                                                        className="overflow-hidden"
-                                                                    >
-                                                                        <p className="text-[10px] md:text-[11px] text-gray-500 mt-2 text-justify leading-relaxed border-t border-gray-100/60 pt-2 px-1">
-                                                                            {locale === 'ar' ? (fullSystem.description_ar || system.description_ar) : (fullSystem.description_en || system.description_en)}
-                                                                        </p>
-                                                                    </motion.div>
-                                                                )}
-                                                            </AnimatePresence>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                <div className="text-center mb-6 pb-6 border-b border-gray-100 flex flex-col items-center justify-center">
-                                    <div className="whitespace-nowrap">
-                                        <span className={`font-doto2 font-bold align-middle ${Number(packege.price) === 0 ? 'text-4xl text-primary' : 'text-4xl text-gray-900'}`}>
-                                            {Number(packege.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(packege.price)}
-                                        </span>
-                                        {Number(packege.price) > 0 && (
-                                            <span className="text-sm text-gray-500 font-medium align-middle inline-block mx-1">
-                                                {locale === 'ar' ? <SaudiRiyalIcon size={16} className="inline-block" /> : (packege.currency || 'SAR')}
-                                            </span>
-                                        )}
+                                    <div className="space-y-3 pt-4 border-t border-gray-100">
+                                        <Skeleton variant="text" className="w-24 h-4 bg-gray-200" />
+                                        <Skeleton variant="rectangular" className="w-full h-10 rounded-xl bg-gray-200" />
+                                        <Skeleton variant="rectangular" className="w-full h-10 rounded-xl bg-gray-200" />
                                     </div>
-                                    {packege.renewalPrice !== undefined && packege.renewalPrice !== null && Number(packege.renewalPrice) > 0 && (
-                                        <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
-                                            <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
-                                            <span className="font-bold text-primary">{Number(packege.renewalPrice)}</span>
-                                            <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (packege.currency || 'SAR')}</span>
-                                        </div>
-                                    )}
                                 </div>
-                            </div>
-                            
-                            <div className="relative z-10 w-full mt-auto space-y-2 pt-2">
-                                <button 
-                                    onClick={() => handleSelectPkg(packege.id)}
-                                    className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${selectedPkg === packege.id ? 'bg-secondary text-white shadow-lg' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
-                                >
-                                    {selectedPkg === packege.id ? (
-                                        <><Check className="w-4 h-4" /> {locale === 'ar' ? "تم الاختيار" : "Selected"}</>
-                                    ) : (
-                                        <>{locale === 'ar' ? "اختيار الباقة" : "Select Package"}</>
-                                    )}
-                                </button>
-                                <a href={`/${locale}/contact-us`} className="flex items-center justify-center w-full py-2 text-sm text-gray-500 hover:text-primary font-medium transition-colors">
-                                    {tHeader('contact')}
-                                </a>
+                                <div className="pt-6 border-t border-gray-100 flex flex-col items-center">
+                                    <Skeleton variant="text" className="w-20 h-8 mb-4 bg-gray-200" />
+                                    <Skeleton variant="rectangular" className="w-full h-12 rounded-xl bg-gray-200" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    Packeges.map((packege: PackageDTO, index: number) => (
+                        <div 
+                            key={packege.id} 
+                            data-aos="fade-up"
+                            data-aos-delay={index * 100}
+                            className="h-full w-full md:w-[340px] lg:w-[360px]"
+                        >
+                            <div className={`group h-full bg-white rounded-[2rem] p-6 md:p-8 border shadow-lg hover:shadow-[0_20px_40px_rgb(var(--primary-rgb),0.12)] transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${index === 1 ? 'border-primary/50 shadow-[0_10px_40px_rgb(var(--primary-rgb),0.15)] md:-translate-y-4 hover:-translate-y-6' : 'border-gray-100 hover:-translate-y-2 hover:border-primary/30'}`}>
+                                {index === 1 && <div className="absolute top-0 right-0 w-full h-1.5 bg-gradient-to-r from-secondary to-primary"></div>}
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                
+                                <div className="relative z-10 flex-1">
+                                    <div className="flex flex-col items-center text-center mb-4">
+                                        {isValidImage(packege.image) ? (
+                                            <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300">
+                                                <Image src={packege.image} alt="" width={64} height={64} className="group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" />
+                                            </div>
+                                        ) : (
+                                            <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300 flex items-center justify-center w-[64px] h-[64px]">
+                                                <ShieldCheck className="w-8 h-8 text-primary/50" />
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className={`inline-block px-2.5 py-0.5 text-xs font-bold rounded-lg ${index === 1 ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600'}`}>
+                                                {packege.type}
+                                            </span>
+                                            {mySubscription?.packageId === packege.id && (
+                                                <span className="inline-block px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-600 animate-pulse">
+                                                    {locale === 'ar' ? "باقتك الحالية" : "Current Package"}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <h3 className="font-doto2 font-bold text-2xl text-gray-900 mb-1">
+                                            {locale === 'en' ? packege.name_en : packege.name_ar}
+                                        </h3>
+                                        <p className="text-gray-500 text-sm leading-relaxed min-h-[2.5rem] line-clamp-2">
+                                            {locale === 'en' ? packege.description_en : packege.description_ar}
+                                        </p>
+
+                                        {packege.systems && packege.systems.length > 0 && (
+                                            <div className="mt-6 pt-4 border-t border-gray-100/60 w-full">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 text-start px-1">
+                                                    {locale === 'ar' ? 'الأنظمة المشمولة:' : 'Included Systems:'}
+                                                </p>
+                                                <div className="max-h-[178px] overflow-y-auto custom-scrollbar flex flex-col gap-2 px-1 py-0.5">
+                                                    {packege.systems.map((system: any) => {
+                                                        const fullSystem = allSystems?.find((s: any) => s.id === system.id) || system;
+                                                        const systemKey = `${packege.id}-${system.id}`;
+                                                        const isExpanded = expandedSystemId === systemKey;
+                                                        return (
+                                                            <div 
+                                                                key={system.id} 
+                                                                className={`group/system flex flex-col border border-gray-100 hover:border-primary/20 bg-gray-50/50 hover:bg-primary/[0.01] rounded-xl transition-all duration-300 p-2.5 cursor-pointer ${isExpanded ? 'border-primary/20 bg-primary/[0.01]' : ''}`}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setExpandedSystemId(isExpanded ? null : systemKey);
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center justify-between gap-3">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <div className="w-8 h-8 rounded-lg bg-white border border-gray-100 group-hover/system:border-primary/20 flex items-center justify-center p-1.5 transition-all duration-300 shrink-0">
+                                                                            {isValidImage(system.icon) ? (
+                                                                                <Image src={system.icon} alt="" width={20} height={20} className="object-contain transition-transform group-hover/system:scale-110" />
+                                                                            ) : (
+                                                                                <Settings2 className="w-4 h-4 text-gray-300 group-hover/system:text-primary/40" />
+                                                                            )}
+                                                                        </div>
+                                                                        <span className="text-xs font-bold text-gray-700 group-hover/system:text-primary transition-colors text-start">
+                                                                            {locale === 'ar' ? system.name_ar : system.name_en}
+                                                                        </span>
+                                                                    </div>
+                                                                    <ChevronDown className={`w-4 h-4 text-gray-400 group-hover/system:text-primary transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180 text-primary' : ''}`} />
+                                                                </div>
+                                                                <AnimatePresence initial={false}>
+                                                                    {isExpanded && (
+                                                                        <motion.div
+                                                                            initial={{ height: 0, opacity: 0 }}
+                                                                            animate={{ height: "auto", opacity: 1 }}
+                                                                            exit={{ height: 0, opacity: 0 }}
+                                                                            transition={{ duration: 0.2 }}
+                                                                            className="overflow-hidden"
+                                                                        >
+                                                                            <p className="text-[10px] md:text-[11px] text-gray-500 mt-2 text-justify leading-relaxed border-t border-gray-100/60 pt-2 px-1">
+                                                                                {locale === 'ar' ? (fullSystem.description_ar || system.description_ar) : (fullSystem.description_en || system.description_en)}
+                                                                            </p>
+                                                                        </motion.div>
+                                                                    )}
+                                                                </AnimatePresence>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="text-center mb-6 pb-6 border-b border-gray-100 flex flex-col items-center justify-center">
+                                        <div className="whitespace-nowrap">
+                                            <span className={`font-doto2 font-bold align-middle ${Number(packege.price) === 0 ? 'text-4xl text-primary' : 'text-4xl text-gray-900'}`}>
+                                                {Number(packege.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(packege.price)}
+                                            </span>
+                                            {Number(packege.price) > 0 && (
+                                                <span className="text-sm text-gray-500 font-medium align-middle inline-block mx-1">
+                                                    {locale === 'ar' ? <SaudiRiyalIcon size={16} className="inline-block" /> : (packege.currency || 'SAR')}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {packege.renewalPrice !== undefined && packege.renewalPrice !== null && Number(packege.renewalPrice) > 0 && (
+                                            <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                                <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                <span className="font-bold text-primary">{Number(packege.renewalPrice)}</span>
+                                                <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (packege.currency || 'SAR')}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                
+                                <div className="relative z-10 w-full mt-auto space-y-2 pt-2">
+                                    <button 
+                                        onClick={() => handleSelectPkg(packege.id)}
+                                        className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${selectedPkg === packege.id ? 'bg-secondary text-white shadow-lg' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
+                                    >
+                                        {selectedPkg === packege.id ? (
+                                            <><Check className="w-4 h-4" /> {locale === 'ar' ? "تم الاختيار" : "Selected"}</>
+                                        ) : (
+                                            <>{locale === 'ar' ? "اختيار الباقة" : "Select Package"}</>
+                                        )}
+                                    </button>
+                                    <a href={`/${locale}/contact-us`} className="flex items-center justify-center w-full py-2 text-sm text-gray-500 hover:text-primary font-medium transition-colors">
+                                        {tHeader('contact')}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
 
-            {filteredSystems.length > 0 && (
+            {(showSystemsSkeleton || filteredSystems.length > 0) && (
                 <div className="mt-24 space-y-12">
                     <div className="flex flex-col items-center mb-12 text-center" data-aos="fade-up">
                         <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 text-primary font-bold mb-6 border border-primary/20">
@@ -331,69 +368,87 @@ export const Backages = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 lg:mx-0 mx-4">
-                        {filteredSystems.map((system: any, index: number) => (
-                            <div key={system.id} data-aos="fade-up" data-aos-delay={index * 100} className="h-full">
-                                <div className={`group h-full bg-white rounded-[2rem] p-6 border border-gray-100 shadow-lg transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${selectedSystems.includes(system.id) ? 'border-secondary' : 'hover:border-primary/30'}`}>
-                                    <button 
-                                        onClick={() => setSelectedSystem(system)}
-                                        className="absolute top-6 right-6 p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all duration-300 z-20"
-                                    >
-                                        <Info className="w-4 h-4" />
-                                    </button>
-                                    <div className="relative z-10 flex-1">
-                                        <div className="flex flex-col items-center text-center mb-4">
-                                            <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300 w-20 h-20 flex items-center justify-center">
-                                                {isValidImage(system.icon) ? (
-                                                    <Image src={system.icon} alt="" width={40} height={40} className="group-hover:scale-110 transition-transform duration-500" />
-                                                ) : (
-                                                    <Settings2 className="w-10 h-10 text-primary/50" />
-                                                )}
-                                            </div>
-                                            <h3 className="font-doto2 font-bold text-xl text-gray-900 mb-1">{locale === 'en' ? system.name_en : system.name_ar}</h3>
-                                            <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p>
-                                            
-                                            {Number(system.price) > 0 && (
-                                                <div className="text-center mt-4 flex flex-col items-center justify-center">
-                                                    <div className="whitespace-nowrap">
-                                                        <span className="font-doto2 font-bold text-2xl text-gray-900 align-middle">
-                                                            {Number(system.price)}
-                                                        </span>
-                                                        <span className="text-xs text-gray-500 font-medium align-middle inline-block mx-1">
-                                                            {locale === 'ar' ? <SaudiRiyalIcon size={14} className="inline-block" /> : (system.currency || 'SAR')}
-                                                        </span>
-                                                    </div>
-                                                    {system.renewalPrice !== undefined && system.renewalPrice !== null && Number(system.renewalPrice) > 0 && (
-                                                        <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
-                                                            <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
-                                                            <span className="font-bold text-primary">{Number(system.renewalPrice)}</span>
-                                                            <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (system.currency || 'SAR')}</span>
-                                                        </div>
+                        {showSystemsSkeleton ? (
+                            Array.from({ length: 4 }).map((_, index) => (
+                                <div key={index} className="h-full animate-pulse">
+                                    <div className="h-full bg-white rounded-[2rem] p-6 border border-gray-100 shadow-lg flex flex-col justify-between min-h-[280px]">
+                                        <div className="flex flex-col items-center text-center mb-4 space-y-4">
+                                            <Skeleton variant="rectangular" className="w-20 h-20 rounded-2xl bg-gray-100" />
+                                            <Skeleton variant="text" className="w-32 h-6 bg-gray-100" />
+                                            <Skeleton variant="text" className="w-full h-4 bg-gray-100" />
+                                            <Skeleton variant="text" className="w-4/5 h-4 bg-gray-100" />
+                                        </div>
+                                        <div className="w-full mt-auto pt-2">
+                                            <Skeleton variant="rectangular" className="w-full h-11 rounded-xl bg-gray-100" />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            filteredSystems.map((system: any, index: number) => (
+                                <div key={system.id} data-aos="fade-up" data-aos-delay={index * 100} className="h-full">
+                                    <div className={`group h-full bg-white rounded-[2rem] p-6 border border-gray-100 shadow-lg transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${selectedSystems.includes(system.id) ? 'border-secondary' : 'hover:border-primary/30'}`}>
+                                        <button 
+                                            onClick={() => setSelectedSystem(system)}
+                                            className="absolute top-6 right-6 p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all duration-300 z-20"
+                                        >
+                                            <Info className="w-4 h-4" />
+                                        </button>
+                                        <div className="relative z-10 flex-1">
+                                            <div className="flex flex-col items-center text-center mb-4">
+                                                <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300 w-20 h-20 flex items-center justify-center">
+                                                    {isValidImage(system.icon) ? (
+                                                        <Image src={system.icon} alt="" width={40} height={40} className="group-hover:scale-110 transition-transform duration-500" />
+                                                    ) : (
+                                                        <Settings2 className="w-10 h-10 text-primary/50" />
                                                     )}
                                                 </div>
+                                                <h3 className="font-doto2 font-bold text-xl text-gray-900 mb-1">{locale === 'en' ? system.name_en : system.name_ar}</h3>
+                                                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p>
+                                                
+                                                {Number(system.price) > 0 && (
+                                                    <div className="text-center mt-4 flex flex-col items-center justify-center">
+                                                        <div className="whitespace-nowrap">
+                                                            <span className="font-doto2 font-bold text-2xl text-gray-900 align-middle">
+                                                                {Number(system.price)}
+                                                            </span>
+                                                            <span className="text-xs text-gray-500 font-medium align-middle inline-block mx-1">
+                                                                {locale === 'ar' ? <SaudiRiyalIcon size={14} className="inline-block" /> : (system.currency || 'SAR')}
+                                                            </span>
+                                                        </div>
+                                                        {system.renewalPrice !== undefined && system.renewalPrice !== null && Number(system.renewalPrice) > 0 && (
+                                                            <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                                                <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                                <span className="font-bold text-primary">{Number(system.renewalPrice)}</span>
+                                                                <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (system.currency || 'SAR')}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="relative z-10 w-full mt-auto pt-2">
+                                            {Number(system.price) === 0 ? (
+                                                <a 
+                                                    href={`/${locale}/contact-us`}
+                                                    className="w-full py-3 rounded-xl font-bold transition-all duration-300 bg-primary text-white hover:bg-primary/95 flex items-center justify-center"
+                                                >
+                                                    {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
+                                                </a>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => toggleSystem(system.id)}
+                                                    className={`w-full py-3 rounded-xl font-bold transition-all duration-300 ${selectedSystems.includes(system.id) ? 'bg-secondary text-white' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
+                                                >
+                                                    {selectedSystems.includes(system.id) ? (locale === 'ar' ? 'تمت الإضافة' : 'Added') : (locale === 'ar' ? 'إضافة النظام' : 'Add System')}
+                                                </button>
                                             )}
                                         </div>
                                     </div>
-                                    
-                                    <div className="relative z-10 w-full mt-auto pt-2">
-                                        {Number(system.price) === 0 ? (
-                                            <a 
-                                                href={`/${locale}/contact-us`}
-                                                className="w-full py-3 rounded-xl font-bold transition-all duration-300 bg-primary text-white hover:bg-primary/95 flex items-center justify-center"
-                                            >
-                                                {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
-                                            </a>
-                                        ) : (
-                                            <button 
-                                                onClick={() => toggleSystem(system.id)}
-                                                className={`w-full py-3 rounded-xl font-bold transition-all duration-300 ${selectedSystems.includes(system.id) ? 'bg-secondary text-white' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
-                                            >
-                                                {selectedSystems.includes(system.id) ? (locale === 'ar' ? 'تمت الإضافة' : 'Added') : (locale === 'ar' ? 'إضافة النظام' : 'Add System')}
-                                            </button>
-                                        )}
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             )}

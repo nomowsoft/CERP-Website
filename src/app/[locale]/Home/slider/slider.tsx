@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -7,7 +8,34 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from "swiper/modules";
 
+interface HeroImage {
+  id: number;
+  image: string;
+}
+
 const Slider = () => {
+  const [images, setImages] = useState<HeroImage[]>([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch('/api/hero-images', { cache: 'no-store' });
+        if (response.ok) {
+          const data = await response.json();
+          setImages(data);
+        }
+      } catch (error) {
+        console.error("Error fetching slider images:", error);
+      }
+    };
+    fetchImages();
+  }, []);
+
+  // Fallback default images if no images are stored in the database
+  const displayImages = images.length > 0 
+    ? images.map(img => img.image)
+    : ["/slider/s1.svg", "/slider/s2.svg", "/slider/s3.svg"];
+
   return (
     <section className="py-32 bg-hero bg-no-repeat bg-cover w-full ">
       <Swiper
@@ -28,21 +56,20 @@ const Slider = () => {
           1440: { slidesPerView: 1 },
         }}
       >
-        <SwiperSlide>
-          <div className="flex justify-center">
-            <Image src="/slider/s1.svg" alt="..." height={20} width={5000} />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="flex justify-center">
-            <Image src="/slider/s2.svg" alt="..." height={20} width={5000} />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="flex justify-center">
-            <Image src="/slider/s3.svg" alt="..." height={20} width={5000} />
-          </div>
-        </SwiperSlide>
+        {displayImages.map((imgSrc, index) => (
+          <SwiperSlide key={index}>
+            <div className="flex justify-center h-full w-full relative">
+              <Image 
+                src={imgSrc} 
+                alt={`Hero Slider ${index + 1}`} 
+                height={500} 
+                width={5000} 
+                className="object-contain max-h-[500px]"
+                priority={index === 0}
+              />
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </section>
   );

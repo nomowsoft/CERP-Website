@@ -86,7 +86,7 @@ model Package {
   name_en        String                @default("")
   price          Decimal               @default(0)
   renewalPrice   Decimal               @default(0)
-  image          Bytes?
+  image          String?
   features       PackageFeature[]
   subscriptions  Subscription[]
   requests       SubscriptionRequest[]
@@ -151,7 +151,7 @@ model Service {
   name_en        String                @default("")
   price          Decimal               @default(0)
   renewalPrice   Decimal               @default(0)
-  image          Bytes?
+  image          String?
   contents       ServiceType[]
   subscriptions  Subscription[]        @relation("ServiceToSubscription")
   requests       SubscriptionRequest[] @relation("ServiceToSubscriptionRequest")
@@ -174,7 +174,7 @@ model System {
   description    String                @default("")
   description_ar String                @default("")
   description_en String                @default("")
-  icon           Bytes?
+  icon           String?
   price          Decimal               @default(0)
   renewalPrice   Decimal               @default(0)
   createdAt      DateTime              @default(now())
@@ -261,4 +261,11 @@ model Faq {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model HeroImage {
+  id        Int      @id @default(autoincrement())
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

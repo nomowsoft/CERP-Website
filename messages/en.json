@@ -398,7 +398,10 @@
       "servers": "Servers",
       "clients": "Clients",
       "availableSystems": "Additional Systems",
-      "systemRequests": "System Requests"
+      "systemRequests": "System Requests",
+      "websiteSettings": "Website Settings",
+      "faqs": "FAQs",
+      "heroImages": "Hero Section Images or Banner"
     },
     "stats": {
       "activeSubscriptions": "Active Subscriptions",
