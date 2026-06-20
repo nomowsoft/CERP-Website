@@ -39,7 +39,7 @@ export const HeroDashboardAnimation = () => {
     const activeSlides = images.length > 0
         ? images.map((img, idx) => ({ id: img.id, image: img.image, name: `Slide ${idx + 1}` }))
         : [
-            { id: 1, image: "/hero/2.png", name: "Slide 1" },
+            { id: 1, image: "/hero/cerp2.png", name: "Slide 1" },
             { id: 2, image: "/hero/cerpnew.jpeg", name: "Slide 2" },
         ];
 

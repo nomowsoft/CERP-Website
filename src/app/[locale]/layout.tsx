@@ -81,7 +81,7 @@ export default async function RootLayout({ children, params }: { children: React
   return (
     <html lang={locale} dir={`${locale === "ar" ? "rtl" : "ltr"}`}>
       <head>
-        <link rel="icon" href="/header/CERP.svg" />
+        <link rel="icon" href="/header/cerp_logo.svg" />
       </head>
       <body className="font-tajawalregular font-bold">
         <NextIntlClientProvider messages={messages}>

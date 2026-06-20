@@ -55,25 +55,26 @@ export default function ClientsManagement() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        setIsUploading(true);
-        const formData = new FormData();
-        formData.append("file", file);
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error(isAr ? "حجم الصورة يجب أن يكون أقل من 2 ميجابايت" : "Image size should be less than 2MB");
+            return;
+        }
 
+        setIsUploading(true);
         try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setNewImage(data.url);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setNewImage(reader.result as string);
                 toast.success(isAr ? "تم رفع الصورة بنجاح" : "Image uploaded successfully");
-            } else {
-                toast.error(data.error || "Upload failed");
-            }
+                setIsUploading(false);
+            };
+            reader.onerror = () => {
+                toast.error(isAr ? "حدث خطأ أثناء الرفع" : "Error uploading image");
+                setIsUploading(false);
+            };
+            reader.readAsDataURL(file);
         } catch (error) {
             toast.error(isAr ? "حدث خطأ أثناء الرفع" : "Error uploading image");
-        } finally {
             setIsUploading(false);
         }
     };
