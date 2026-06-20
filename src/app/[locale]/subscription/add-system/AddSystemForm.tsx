@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { getSubscription } from "@/app/store/slices/subscriptionSlice";
 import { getSystems } from "@/app/store/slices/systemsSlice";
@@ -31,6 +32,11 @@ export default function AddSystemForm() {
     const { systems: allSystems, loading: sysLoading } = useSelector((state: RootState) => state.systems);
 
     const [selectedSystems, setSelectedSystems] = useState<number[]>([]);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     const [step, setStep] = useState(1);
     const [bankReceipt, setBankReceipt] = useState<File | null>(null);
     const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
@@ -116,10 +122,36 @@ export default function AddSystemForm() {
         }
     };
 
-    if (subLoading || sysLoading) {
+    if (!mounted || subLoading || sysLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            <div className="max-w-4xl mx-auto py-12 px-4" dir={isAr ? 'rtl' : 'ltr'}>
+                {/* Header Skeleton */}
+                <div className="text-center mb-12 space-y-4">
+                    <Skeleton className="h-10 w-2/3 md:w-1/3 mx-auto" />
+                    <Skeleton className="h-4 w-1/2 mx-auto" />
+                </div>
+
+                {/* Stepper Skeleton */}
+                <div className="flex justify-center items-center gap-4 mb-12">
+                    <Skeleton className="w-10 h-10" variant="circular" />
+                    <Skeleton className="h-1 w-20" />
+                    <Skeleton className="w-10 h-10" variant="circular" />
+                </div>
+
+                {/* Systems Grid Skeleton */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                        <div key={index} className="p-6 rounded-[2rem] border-2 border-gray-100 bg-white flex items-start gap-4">
+                            <Skeleton className="w-16 h-16 rounded-2xl flex-shrink-0" />
+                            <div className="flex-1 space-y-3">
+                                <Skeleton className="h-6 w-2/3" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-1/2" />
+                                <Skeleton className="h-6 w-1/3 pt-2" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }

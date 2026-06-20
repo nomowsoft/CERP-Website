@@ -6,43 +6,8 @@ import bcrypt from "bcryptjs";
 import { verifyToken } from '@/utils/verifyToken';
 import { UserDashbord } from '@/utils/types';
 import { PaymentGateway } from '@/utils/paymentGateway';
+import { formatImage } from '@/utils/imageUtils';
 
-/**
- * @method POST
- * @route ~/api/subscription
- * @desc Create new Subscription
- * @access private for user to add Subscription
- */
-
-const formatImage = (image: any) => {
-    if (!image) return null;
-    
-    // If it's already a string, check if it's a URL or base64
-    if (typeof image === 'string') {
-        if (image.startsWith('http') || image.startsWith('data:image')) {
-            return image;
-        }
-        return `data:image/png;base64,${image}`;
-    }
-
-    // Handle Buffer/Uint8Array
-    try {
-        const buf = Buffer.isBuffer(image) ? image : Buffer.from(image);
-        if (buf.length === 0) return null;
-
-        // Peak at the first few bytes to see if it's already a string/URL
-        if (buf.length > 4) {
-            const start = buf.toString('utf8', 0, 4);
-            if (start === 'http' || start === 'data') {
-                return buf.toString('utf8');
-            }
-        }
-
-        return `data:image/png;base64,${buf.toString('base64')}`;
-    } catch (error) {
-        return null;
-    }
-};
 
 /**
  * Serialize Decimal fields to strings for JSON compatibility.

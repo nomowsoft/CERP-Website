@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
+import { formatImage } from "@/utils/imageUtils";
 
-// Helper to format image for frontend
-const formatImage = (image: any) => {
-    if (!image) return null;
-    const buf = Buffer.from(image);
-    const imageStr = buf.toString('utf8');
-    if (imageStr.startsWith('http') || imageStr.startsWith('data:image')) {
-        return imageStr;
-    }
-    return `data:image/png;base64,${buf.toString('base64')}`;
-};
 
 export async function GET(request: NextRequest) {
     try {

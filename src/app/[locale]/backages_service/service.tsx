@@ -12,6 +12,7 @@ import { isValidImage } from '@/utils/imageUtils';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export const Service = () => {
     const locale = useLocale();
@@ -20,12 +21,18 @@ export const Service = () => {
     const router = useRouter();
     const { userInfo } = useSelector((state: any) => state.user);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [mounted, setMounted] = useState(false);
     
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     useEffect(() => {
         dispatch(getServices());
     }, [dispatch]);
 
-    const Services = useSelector((state: any) => state.services.services);
+    const { services: Services, loading: loadingServices } = useSelector((state: any) => state.services);
+    const showServicesSkeleton = !mounted || loadingServices;
     
     return (
         <section className="container mx-auto py-16 lg:py-20 relative z-10" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
@@ -47,90 +54,117 @@ export const Service = () => {
                     {t('additionalServicesSubtitle')}
                 </p>
             </div>
-            
             <div className="grid md:grid-cols-2 grid-cols-1 gap-8 lg:gap-10 lg:mx-0 mx-4">
-                {Services.map((service: ServiceDTO, index: number) => (
-                    <div 
-                        key={service.id} 
-                        data-aos="fade-up"
-                        data-aos-delay={index * 100}
-                        className="h-full"
-                    >
-                        <div className="group h-full bg-white rounded-[2rem] p-8 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(var(--primary-rgb),0.12)] transition-all duration-500 relative overflow-hidden flex flex-col justify-between hover:-translate-y-2 hover:border-primary/20">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                            
-                            <div className="relative z-10 mb-8">
-                                <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-start mb-6">
-                                    <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-5 rounded-[1.5rem] flex-shrink-0 transition-all duration-300 flex items-center justify-center w-[112px] h-[112px]">
-                                        {isValidImage(service.image) ? (
-                                            <Image src={service.image} alt={service.name} width={72} height={72} className="group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 object-contain" />
-                                        ) : (
-                                            <Settings className="w-14 h-14 text-primary/20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
-                                        )}
+                {showServicesSkeleton ? (
+                    Array.from({ length: 4 }).map((_, index) => (
+                        <div key={index} className="h-full animate-pulse">
+                            <div className="h-full bg-white rounded-[2rem] p-8 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col justify-between min-h-[300px]">
+                                <div className="space-y-6 flex-1">
+                                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                                        <Skeleton variant="rectangular" className="w-[112px] h-[112px] rounded-[1.5rem] bg-gray-100 shrink-0" />
+                                        <div className="flex-1 space-y-3 w-full">
+                                            <Skeleton variant="text" className="w-2/3 h-8 bg-gray-100" />
+                                            <Skeleton variant="text" className="w-full h-4 bg-gray-100" />
+                                            <Skeleton variant="text" className="w-5/6 h-4 bg-gray-100" />
+                                            <Skeleton variant="text" className="w-1/3 h-6 bg-gray-100 pt-2" />
+                                        </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-2xl md:text-3xl font-doto2 font-bold text-gray-900 mb-2">
-                                            {locale === 'en' ? service.name_en : service.name_ar}
-                                        </h3>
-                                        <p className="text-gray-500 leading-relaxed mb-4">
-                                            {locale === 'en' ? service.description_en : service.description_ar}
-                                        </p>
-                                        <div className="flex flex-col items-center md:items-start pb-4 border-b border-gray-100">
-                                            <div className="flex flex-nowrap items-baseline justify-center md:justify-start gap-1">
-                                                <span className={`text-4xl font-bold font-doto2 ${Number(service.price) === 0 ? 'text-secondary' : 'text-primary'}`}>
-                                                    {Number(service.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(service.price)}
-                                                </span>
-                                                {Number(service.price) > 0 && (
-                                                    <span className="text-base text-gray-500 font-medium inline-flex items-center gap-1">
-                                                        {locale === 'ar' ? <SaudiRiyalIcon size={14} /> : (service.currency || 'SAR')}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            {service.renewalPrice !== undefined && service.renewalPrice !== null && Number(service.renewalPrice) > 0 && (
-                                                <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
-                                                    <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
-                                                    <span className="font-bold text-primary">{Number(service.renewalPrice)}</span>
-                                                    <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (service.currency || 'SAR')}</span>
-                                                </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
+                                        {Array.from({ length: 4 }).map((_, idx) => (
+                                            <Skeleton key={idx} variant="rectangular" className="h-10 rounded-xl bg-gray-100" />
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="w-full mt-6 pt-4 border-t border-gray-100">
+                                    <Skeleton variant="rectangular" className="w-full h-14 rounded-2xl bg-gray-100" />
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    Services.map((service: ServiceDTO, index: number) => (
+                        <div 
+                            key={service.id} 
+                            data-aos="fade-up"
+                            data-aos-delay={index * 100}
+                            className="h-full"
+                        >
+                            <div className="group h-full bg-white rounded-[2rem] p-8 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(var(--primary-rgb),0.12)] transition-all duration-500 relative overflow-hidden flex flex-col justify-between hover:-translate-y-2 hover:border-primary/20">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                
+                                <div className="relative z-10 mb-8">
+                                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-start mb-6">
+                                        <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-5 rounded-[1.5rem] flex-shrink-0 transition-all duration-300 flex items-center justify-center w-[112px] h-[112px]">
+                                            {isValidImage(service.image) ? (
+                                                <Image src={service.image} alt={service.name} width={72} height={72} className="group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 object-contain" />
+                                            ) : (
+                                                <Settings className="w-14 h-14 text-primary/20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500" />
                                             )}
                                         </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-2xl md:text-3xl font-doto2 font-bold text-gray-900 mb-2">
+                                                {locale === 'en' ? service.name_en : service.name_ar}
+                                            </h3>
+                                            <p className="text-gray-500 leading-relaxed mb-4">
+                                                {locale === 'en' ? service.description_en : service.description_ar}
+                                            </p>
+                                            <div className="flex flex-col items-center md:items-start pb-4 border-b border-gray-100">
+                                                <div className="flex flex-nowrap items-baseline justify-center md:justify-start gap-1">
+                                                    <span className={`text-4xl font-bold font-doto2 ${Number(service.price) === 0 ? 'text-secondary' : 'text-primary'}`}>
+                                                        {Number(service.price) === 0 ? (locale === 'ar' ? 'مجاناً' : 'Free') : Number(service.price)}
+                                                    </span>
+                                                    {Number(service.price) > 0 && (
+                                                        <span className="text-base text-gray-500 font-medium inline-flex items-center gap-1">
+                                                            {locale === 'ar' ? <SaudiRiyalIcon size={14} /> : (service.currency || 'SAR')}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {service.renewalPrice !== undefined && service.renewalPrice !== null && Number(service.renewalPrice) > 0 && (
+                                                    <div className="text-sm text-gray-500 flex items-center gap-1 font-semibold mt-1">
+                                                        <span>{locale === 'ar' ? 'التجديد السنوي:' : 'Annual Renewal:'}</span>
+                                                        <span className="font-bold text-primary">{Number(service.renewalPrice)}</span>
+                                                        <span>{locale === 'ar' ? <SaudiRiyalIcon size={10} className="inline-block" /> : (service.currency || 'SAR')}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                                        {service.contents?.map((content: ServiceTypeDto) => (
+                                            <div key={content.id} className="flex items-center gap-2 bg-gray-50 border border-gray-100 group-hover:border-primary/10 group-hover:bg-white p-3 rounded-xl transition-colors">
+                                                <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                                                <span className="text-gray-700 text-xs md:text-sm font-medium">
+                                                    {locale === 'en' ? content.name_en : content.name_ar}
+                                                </span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                                 
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                                    {service.contents?.map((content: ServiceTypeDto) => (
-                                        <div key={content.id} className="flex items-center gap-2 bg-gray-50 border border-gray-100 group-hover:border-primary/10 group-hover:bg-white p-3 rounded-xl transition-colors">
-                                            <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                                            <span className="text-gray-700 text-xs md:text-sm font-medium">
-                                                {locale === 'en' ? content.name_en : content.name_ar}
-                                            </span>
-                                        </div>
-                                    ))}
+                                <div className="relative z-10 w-full mt-auto">
+                                    <button 
+                                        onClick={() => {
+                                            if (!userInfo?.id) {
+                                                setShowAuthModal(true);
+                                            } else {
+                                                router.push(`/${locale}/subscription`);
+                                            }
+                                        }}
+                                        className="flex items-center justify-center w-full py-4 text-lg font-bold rounded-2xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                                    >
+                                        <span>{t('subscribeNow')}</span>
+                                        {locale === 'ar' ? (
+                                            <ArrowLeft className="mx-2 w-5 h-5" />
+                                        ) : (
+                                            <ArrowRight className="mx-2 w-5 h-5" />
+                                        )}
+                                    </button>
                                 </div>
                             </div>
-                            
-                            <div className="relative z-10 w-full mt-auto">
-                                <button 
-                                    onClick={() => {
-                                        if (!userInfo?.id) {
-                                            setShowAuthModal(true);
-                                        } else {
-                                            router.push(`/${locale}/subscription`);
-                                        }
-                                    }}
-                                    className="flex items-center justify-center w-full py-4 text-lg font-bold rounded-2xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300"
-                                >
-                                    <span>{t('subscribeNow')}</span>
-                                    {locale === 'ar' ? (
-                                        <ArrowLeft className="mx-2 w-5 h-5" />
-                                    ) : (
-                                        <ArrowRight className="mx-2 w-5 h-5" />
-                                    )}
-                                </button>
-                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
             {/* Beautiful, Premium Auth Prompt Modal for Services */}

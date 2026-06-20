@@ -4,38 +4,10 @@ import { verifyToken } from '@/utils/verifyToken';
 import { SubscriptionService } from '@/utils/payment';
 import { PaymentGateway } from '@/utils/paymentGateway';
 import { ServerManager } from '@/utils/serverManager';
+import { formatImage } from '@/utils/imageUtils';
 
 export const maxDuration = 300; // Allow up to 5 minutes execution time on Vercel
 
-
-const formatImage = (image: any) => {
-    if (!image) return null;
-    
-    // If it's already a string, return as-is or wrap in base64
-    if (typeof image === 'string') {
-        if (image.startsWith('http') || image.startsWith('data:image')) {
-            return image;
-        }
-        return `data:image/png;base64,${image}`;
-    }
-
-    // Handle Buffer/Uint8Array safely
-    try {
-        const buf = Buffer.isBuffer(image) ? image : Buffer.from(image);
-        if (buf.length === 0) return null;
-
-        if (buf.length > 4) {
-            const start = buf.toString('utf8', 0, 4);
-            if (start === 'http' || start === 'data') {
-                return buf.toString('utf8');
-            }
-        }
-
-        return `data:image/png;base64,${buf.toString('base64')}`;
-    } catch (error) {
-        return null;
-    }
-};
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -230,6 +202,31 @@ export async function PUT(request: NextRequest, { params }: Props) {
                         // Connect any systems that were in the systems relation
                     }
                 });
+
+                // Ensure a payment/invoice record is created for the approved subscription if none exists
+                const existingPayment = await prisma.payment.findFirst({
+                    where: { subscriptionId: subId }
+                });
+                if (!existingPayment) {
+                    const subWithDetails = await prisma.subscription.findUnique({
+                        where: { id: subId },
+                        include: { package: true, services: true, systems: true }
+                    });
+                    const packagePrice = subWithDetails?.package ? Number(subWithDetails.package.price) : 0;
+                    const servicesTotal = subWithDetails?.services?.reduce((sum, s) => sum + Number(s.price), 0) || 0;
+                    const systemsTotal = subWithDetails?.systems?.reduce((sum, s) => sum + Number(s.price || 0), 0) || 0;
+                    const totalPrice = packagePrice + servicesTotal + systemsTotal;
+
+                    await prisma.payment.create({
+                        data: {
+                            subscriptionId: subId,
+                            amount: totalPrice,
+                            method: subscription.paymentMethod || 'BANK',
+                            status: 'SUCCESS',
+                            transactionId: `MANUAL-${subId}-${Date.now()}`
+                        }
+                    });
+                }
 
                 // Provision server for the new subscription (Disabled - Manual provisioning required)
                 // const provisioningResult = await ServerManager.provisionServer(subId);
@@ -457,6 +454,33 @@ export async function PUT(request: NextRequest, { params }: Props) {
                 data: dataToUpdate,
                 include: { package: true, services: true, payments: true } 
             });
+
+            // Ensure a payment/invoice record is created for the approved subscription if none exists
+            if (updatedSub.status === 'DONE') {
+                const existingPayment = await prisma.payment.findFirst({
+                    where: { subscriptionId: subId }
+                });
+                if (!existingPayment) {
+                    const subWithDetails = await prisma.subscription.findUnique({
+                        where: { id: subId },
+                        include: { package: true, services: true, systems: true }
+                    });
+                    const packagePrice = subWithDetails?.package ? Number(subWithDetails.package.price) : 0;
+                    const servicesTotal = subWithDetails?.services?.reduce((sum, s) => sum + Number(s.price), 0) || 0;
+                    const systemsTotal = subWithDetails?.systems?.reduce((sum, s) => sum + Number(s.price || 0), 0) || 0;
+                    const totalPrice = packagePrice + servicesTotal + systemsTotal;
+
+                    await prisma.payment.create({
+                        data: {
+                            subscriptionId: subId,
+                            amount: totalPrice,
+                            method: subWithDetails?.paymentMethod || 'BANK',
+                            status: 'SUCCESS',
+                            transactionId: `MANUAL-${subId}-${Date.now()}`
+                        }
+                    });
+                }
+            }
 
             // Refetch to get the latest data
             const finalSub = await prisma.subscription.findUnique({ 

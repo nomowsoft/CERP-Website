@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { AppDispatch } from "@/app/store/store";
 import { getSubscription } from "@/app/store/slices/subscriptionSlice";
 import { getUser } from "@/app/store/slices/userSlice";
@@ -48,6 +49,11 @@ export default function UpgradeForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [checkoutId, setCheckoutId] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         dispatch(getUser());
@@ -196,8 +202,63 @@ export default function UpgradeForm() {
         }
     };
 
-    if (isLoadingData) {
-        return <div className="max-w-5xl mx-auto p-20 text-center">{isAr ? "جاري تحميل البيانات..." : "Loading data..."}</div>;
+    if (!mounted || isLoadingData) {
+        return (
+            <div className="max-w-5xl mx-auto py-12 px-4" dir={isAr ? 'rtl' : 'ltr'}>
+                {/* Header Skeleton */}
+                <div className="text-center mb-12 space-y-4">
+                    <Skeleton className="h-10 w-2/3 md:w-1/3 mx-auto" />
+                    <Skeleton className="h-4 w-1/2 mx-auto" />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Form Fields Skeleton */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* Packages section */}
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-1/4" />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Skeleton className="h-28 w-full rounded-2xl" />
+                                <Skeleton className="h-28 w-full rounded-2xl" />
+                            </div>
+                        </div>
+
+                        {/* Services section */}
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-1/4" />
+                            <div className="space-y-3">
+                                <Skeleton className="h-12 w-full rounded-xl" />
+                                <Skeleton className="h-12 w-full rounded-xl" />
+                                <Skeleton className="h-12 w-full rounded-xl" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Summary section */}
+                    <div className="lg:col-span-1">
+                        <div className="border border-gray-100 rounded-3xl p-6 bg-white space-y-6">
+                            <Skeleton className="h-6 w-1/2" />
+                            <div className="space-y-4">
+                                <div className="flex justify-between">
+                                    <Skeleton className="h-4 w-1/3" />
+                                    <Skeleton className="h-4 w-1/4" />
+                                </div>
+                                <div className="flex justify-between">
+                                    <Skeleton className="h-4 w-1/2" />
+                                    <Skeleton className="h-4 w-1/4" />
+                                </div>
+                                <div className="h-px bg-gray-100 my-4" />
+                                <div className="flex justify-between">
+                                    <Skeleton className="h-6 w-1/3" />
+                                    <Skeleton className="h-6 w-1/4" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-12 w-full rounded-xl" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!mySubscription && subscriptionInfo) {

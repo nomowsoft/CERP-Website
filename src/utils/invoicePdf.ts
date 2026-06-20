@@ -46,66 +46,105 @@ export const generateInvoicePDF = async (invoice: any, subscription: any, locale
         doc.setFont('Tajawal');
 
         // --- Header Section ---
-        // Blue Top Bar
-        doc.setFillColor(30, 41, 59); // Dark blue
-        doc.rect(0, 0, 210, 15, 'F');
+        // Brand Top Bars (Primary Navy Blue & Accent Orange)
+        doc.setFillColor(27, 20, 100); // #1B1464
+        doc.rect(0, 0, 210, 12, 'F');
+        doc.setFillColor(255, 69, 0); // #FF4500
+        doc.rect(0, 12, 210, 2, 'F');
 
-        // Title
-        doc.setFontSize(22);
-        doc.setTextColor(30, 41, 59);
+        // Brand Logo
+        try {
+            const logoUrl = '/cerp-logo.png';
+            const logoResponse = await fetch(logoUrl);
+            if (logoResponse.ok) {
+                const logoBuffer = await logoResponse.arrayBuffer();
+                const logoBinary = new Uint8Array(logoBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+                const logoBase64 = `data:image/png;base64,${btoa(logoBinary)}`;
+                if (isAr) {
+                    doc.addImage(logoBase64, 'PNG', 155, 20, 35, 14);
+                } else {
+                    doc.addImage(logoBase64, 'PNG', 20, 20, 35, 14);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to add logo to PDF", e);
+        }
+
+        // Title & VAT ID
+        doc.setFontSize(20);
+        doc.setTextColor(27, 20, 100); // Primary Deep Navy
         const title = isAr ? 'فاتورة ضريبية مبسطة' : 'Simplified Tax Invoice';
-        doc.text(isAr ? fixArabic(title) : title, 105, 30, { align: 'center' });
-
-        doc.setFontSize(10);
-        doc.setTextColor(100);
         const vatIdText = isAr ? 'الرقم الضريبي: 310294857600003' : 'VAT ID: 310294857600003';
-        doc.text(isAr ? fixArabic(vatIdText) : vatIdText, 105, 37, { align: 'center' });
+
+        if (isAr) {
+            doc.text(fixArabic(title), 20, 28, { align: 'left' });
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(fixArabic(vatIdText), 20, 35, { align: 'left' });
+        } else {
+            doc.text(title, 190, 28, { align: 'right' });
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(vatIdText, 190, 35, { align: 'right' });
+        }
 
         doc.setLineWidth(0.5);
         doc.setDrawColor(220, 220, 220);
         doc.line(20, 45, 190, 45);
 
         // --- Info Section ---
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setTextColor(30, 30, 30);
 
         // Issuer Info
         const leftX = 20;
         const rightX = 190;
-        let infoY = 60;
+        let infoY = 56;
 
         if (isAr) {
             // Right: Company Info
-            doc.setFontSize(14);
+            doc.setFontSize(13);
+            doc.setFont('Tajawal', 'bold');
             doc.text(fixArabic('مؤسسة سرب للاتصالات وتقنية المعلومات'), rightX, infoY, { align: 'right' });
-            doc.setFontSize(10);
+            doc.setFontSize(9);
+            doc.setFont('Tajawal', 'normal');
             doc.text(fixArabic('الرياض، المملكة العربية السعودية'), rightX, infoY + 7, { align: 'right' });
             doc.text(fixArabic('هاتف: 920012345'), rightX, infoY + 12, { align: 'right' });
+            doc.text(fixArabic('البريد: support@cerp.sa'), rightX, infoY + 17, { align: 'right' });
 
             // Left: Client Info
-            doc.setFontSize(14);
+            doc.setFontSize(13);
+            doc.setFont('Tajawal', 'bold');
             doc.text(fixArabic('فاتورة إلى:'), 20, infoY, { align: 'left' });
-            doc.setFontSize(11);
+            doc.setFontSize(10);
+            doc.setFont('Tajawal', 'normal');
             doc.text(fixArabic(`العميل: ${subscription.fullName}`), 20, infoY + 7, { align: 'left' });
-            doc.text(fixArabic(`النطاق: ${subscription.domainName || '--'}`), 20, infoY + 12, { align: 'left' });
-            doc.text(fixArabic(`تاريخ الفاتورة: ${invoice.date}`), 20, infoY + 17, { align: 'left' });
-            doc.text(fixArabic(`رقم الفاتورة: ${invoice.id}`), 20, infoY + 22, { align: 'left' });
+            doc.text(fixArabic(`المنشأة/الجمعية: ${subscription.user?.charityName || subscription.charityRegisterNo || '--'}`), 20, infoY + 12, { align: 'left' });
+            doc.text(fixArabic(`النطاق: ${subscription.domainName || '--'}`), 20, infoY + 17, { align: 'left' });
+            doc.text(fixArabic(`تاريخ الفاتورة: ${invoice.date}`), 20, infoY + 22, { align: 'left' });
+            doc.text(fixArabic(`رقم الفاتورة: ${invoice.id}`), 20, infoY + 27, { align: 'left' });
         } else {
             // Left: Company Info
-            doc.setFontSize(14);
+            doc.setFontSize(13);
+            doc.setFont('Tajawal', 'bold');
             doc.text('SERP Communications & IT', leftX, infoY);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
+            doc.setFont('Tajawal', 'normal');
             doc.text('Riyadh, Saudi Arabia', leftX, infoY + 7);
             doc.text('Tel: 920012345', leftX, infoY + 12);
+            doc.text('Email: support@cerp.sa', leftX, infoY + 17);
 
             // Right: Client Info
-            doc.setFontSize(14);
+            doc.setFontSize(13);
+            doc.setFont('Tajawal', 'bold');
             doc.text('Bill To:', rightX, infoY, { align: 'right' });
-            doc.setFontSize(11);
+            doc.setFontSize(10);
+            doc.setFont('Tajawal', 'normal');
             doc.text(`Customer: ${subscription.fullName}`, rightX, infoY + 7, { align: 'right' });
-            doc.text(`Domain: ${subscription.domainName || '--'}`, rightX, infoY + 12, { align: 'right' });
-            doc.text(`Date: ${invoice.date}`, rightX, infoY + 17, { align: 'right' });
-            doc.text(`Invoice No: ${invoice.id}`, rightX, infoY + 22, { align: 'right' });
+            doc.text(`Company/Charity: ${subscription.user?.charityName || subscription.charityRegisterNo || '--'}`, rightX, infoY + 12, { align: 'right' });
+            doc.text(`Domain: ${subscription.domainName || '--'}`, rightX, infoY + 17, { align: 'right' });
+            doc.text(`Date: ${invoice.date}`, rightX, infoY + 22, { align: 'right' });
+            doc.text(`Invoice No: ${invoice.id}`, rightX, infoY + 27, { align: 'right' });
         }
 
         // --- Table Section ---
@@ -119,13 +158,13 @@ export const generateInvoicePDF = async (invoice: any, subscription: any, locale
         ];
 
         autoTable(doc, {
-            startY: infoY + 35,
+            startY: infoY + 38,
             theme: 'striped',
             headStyles: {
-                fillColor: [30, 41, 59],
+                fillColor: [27, 20, 100], // Brand Primary Deep Navy
                 textColor: 255,
                 font: 'Tajawal',
-                fontSize: 12,
+                fontSize: 11,
                 halign: isAr ? 'right' : 'left'
             },
             styles: {
@@ -164,6 +203,7 @@ export const generateInvoicePDF = async (invoice: any, subscription: any, locale
 
         doc.setFontSize(12);
         doc.setFont('Tajawal', 'bold');
+        doc.setTextColor(27, 20, 100); // Brand Primary Deep Navy
         const grossTotalText = isAr ? `الإجمالي شامل الضريبة: ${amount.toFixed(2)} ر.س` : `Gross Total (Incl. VAT): ${amount.toFixed(2)} SAR`;
         doc.text(isAr ? fixArabic(grossTotalText) : grossTotalText, summaryX, finalY + 27, { align });
 
