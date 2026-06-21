@@ -51,11 +51,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
 
-        // Handle icon as Bytes if it's a base64 string
-        let iconBuffer = null;
-        if (body.icon && body.icon.startsWith('data:image')) {
-            const base64Data = body.icon.split(',')[1];
-            iconBuffer = Buffer.from(base64Data, 'base64');
+        let iconValue = null;
+        if (body.icon) {
+            iconValue = body.icon;
         }
 
         const newSystem = await prisma.system.create({
@@ -66,7 +64,7 @@ export async function POST(request: NextRequest) {
                 description: body.description || "",
                 description_en: body.description_en || "",
                 description_ar: body.description_ar || "",
-                icon: iconBuffer as any,
+                icon: iconValue,
                 price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
                 renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                 modules: body.modules || [],

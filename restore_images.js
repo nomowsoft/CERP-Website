@@ -1,0 +1,2 @@
+"const { PrismaClient } = require('./src/generated/prisma');\nconst prisma = new PrismaClient();\nconst fs = require('fs');\nconst path = require('path');\n\nasync function main() {\n  const mappingPath = path.join(__dirname, 'image_mapping.json');\n  if (
+  < truncated 1702 bytes >

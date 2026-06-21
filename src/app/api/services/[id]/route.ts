@@ -42,14 +42,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         const body = await request.json();
 
-        // Handle image as Bytes if it's a base64 string
-        let imageUpdateData: any = undefined;
+        let imageValue = undefined;
         if (body.image !== undefined) {
-            if (body.image && body.image.startsWith('data:image')) {
-                const base64Data = body.image.split(',')[1];
-                imageUpdateData = Buffer.from(base64Data, 'base64');
-            } else if (body.image === null) {
-                imageUpdateData = null;
+            if (body.image === null || body.image === "") {
+                imageValue = null;
+            } else {
+                imageValue = body.image;
             }
         }
 
@@ -67,7 +65,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description: body.description,
                     description_en: body.description_en,
                     description_ar: body.description_ar,
-                    ...(imageUpdateData !== undefined && { image: imageUpdateData }),
+                    ...(imageValue !== undefined && { image: imageValue }),
                 }
             });
 

@@ -1,25 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
+import { formatImage } from "@/utils/imageUtils";
 
 interface RouteParams {
     params: {
         id: string;
     };
 }
-
-// Helper to format icon for frontend
-const formatIcon = (icon: any) => {
-    if (!icon) return null;
-    const buf = Buffer.from(icon);
-    const iconStr = buf.toString('utf8');
-    // If it's a legacy URL or already a data URI string stored as bytes
-    if (iconStr.startsWith('http') || iconStr.startsWith('data:image')) {
-        return iconStr;
-    }
-    // Otherwise it's raw binary data
-    return `data:image/png;base64,${buf.toString('base64')}`;
-};
 
 export async function GET(request: NextRequest, { params }: any) {
     try {
@@ -37,7 +25,7 @@ export async function GET(request: NextRequest, { params }: any) {
             ...system,
             price: Number(system.price),
             renewalPrice: Number(system.renewalPrice),
-            icon: formatIcon(system.icon)
+            icon: formatImage(system.icon)
         };
         
         return NextResponse.json(formattedSystem, { status: 200 });
@@ -58,14 +46,12 @@ export async function PUT(request: NextRequest, { params }: any) {
 
         const body = await request.json();
         
-        // Handle icon as Bytes if it's a base64 string
-        let iconBuffer = undefined;
+        let iconValue = undefined;
         if (body.icon !== undefined) {
-            if (body.icon && body.icon.startsWith('data:image')) {
-                const base64Data = body.icon.split(',')[1];
-                iconBuffer = Buffer.from(base64Data, 'base64');
-            } else if (body.icon === null || body.icon === "") {
-                iconBuffer = null as any;
+            if (body.icon === null || body.icon === "") {
+                iconValue = null;
+            } else {
+                iconValue = body.icon;
             }
         }
 
@@ -78,7 +64,7 @@ export async function PUT(request: NextRequest, { params }: any) {
                 description: body.description,
                 description_en: body.description_en,
                 description_ar: body.description_ar,
-                icon: iconBuffer,
+                icon: iconValue,
                 price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
                 renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                 modules: body.modules,
@@ -90,7 +76,7 @@ export async function PUT(request: NextRequest, { params }: any) {
             ...updatedSystem,
             price: Number(updatedSystem.price),
             renewalPrice: Number(updatedSystem.renewalPrice),
-            icon: formatIcon(updatedSystem.icon)
+            icon: formatImage(updatedSystem.icon)
         };
 
         return NextResponse.json(responseSystem, { status: 200 });

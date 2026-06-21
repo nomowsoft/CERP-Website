@@ -38,11 +38,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
 
-        // Handle image as Bytes if it's a base64 string
-        let imageBuffer = null;
-        if (body.image && body.image.startsWith('data:image')) {
-            const base64Data = body.image.split(',')[1];
-            imageBuffer = Buffer.from(base64Data, 'base64');
+        let imageValue = null;
+        if (body.image) {
+            imageValue = body.image;
         }
 
         const newService = await prisma.service.create({
@@ -56,7 +54,7 @@ export async function POST(request: NextRequest) {
                 description: body.description,
                 description_en: body.description_en,
                 description_ar: body.description_ar,
-                image: imageBuffer as any,
+                image: imageValue,
                 contents: {
                     create: body.contents?.map((c: any) => ({
                         name: typeof c === 'string' ? c : c.name,

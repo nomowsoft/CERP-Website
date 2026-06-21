@@ -51,14 +51,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
 
         const body = await request.json();
 
-        // Handle image as Bytes if it's a base64 string
-        let imageBuffer = undefined;
+        let imageValue = undefined;
         if (body.image !== undefined) {
-            if (body.image && body.image.startsWith('data:image')) {
-                const base64Data = body.image.split(',')[1];
-                imageBuffer = Buffer.from(base64Data, 'base64');
-            } else if (body.image === null || body.image === "") {
-                imageBuffer = null as any;
+            if (body.image === null || body.image === "") {
+                imageValue = null;
+            } else {
+                imageValue = body.image;
             }
         }
 
@@ -75,7 +73,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
                     description: body.description,
                     description_en: body.description_en,
                     description_ar: body.description_ar !== undefined ? body.description_ar : body.description,
-                    image: imageBuffer,
+                    image: imageValue,
                     price: body.price === "" || body.price === null || body.price === undefined ? 0 : Number(body.price),
                     renewalPrice: body.renewalPrice === "" || body.renewalPrice === null || body.renewalPrice === undefined ? 0 : Number(body.renewalPrice),
                     currency: body.currency,
