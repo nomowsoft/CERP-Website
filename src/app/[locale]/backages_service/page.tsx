@@ -59,7 +59,6 @@ export default function BackagesService() {
                {isAr ? "الباقة المناسبة" : "the Suitable Package"}
              </span>
              <br className="hidden md:block" />
-             <span> {isAr ? "لاحتياجاتك" : "for Your Needs"}</span>
           </h1>
           <p className="text-base md:text-lg text-gray-500 mb-6 max-w-2xl mx-auto leading-relaxed">
             {isAr 

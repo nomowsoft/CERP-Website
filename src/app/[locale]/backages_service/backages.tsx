@@ -158,6 +158,13 @@ export const Backages = () => {
         if (selectedPkgSystemsIds.includes(system.id)) return false;
 
         return true;
+    }).sort((a: any, b: any) => {
+        const priceA = Number(a.price) || 0;
+        const priceB = Number(b.price) || 0;
+        
+        if (priceA > 0 && priceB === 0) return -1;
+        if (priceA === 0 && priceB > 0) return 1;
+        return 0; // Keep original relative order otherwise
     });
 
     // Automatically remove systems from selection if they are now in the selected package
@@ -211,7 +218,7 @@ export const Backages = () => {
                             key={packege.id} 
                             data-aos="fade-up"
                             data-aos-delay={index * 100}
-                            className="h-full w-full md:w-[340px] lg:w-[360px]"
+                            className="h-full w-full md:w-[340px] lg:w-[450px]"
                         >
                             <div className={`group h-full bg-white rounded-[2rem] p-6 md:p-8 border shadow-lg hover:shadow-[0_20px_40px_rgb(var(--primary-rgb),0.12)] transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${index === 1 ? 'border-primary/50 shadow-[0_10px_40px_rgb(var(--primary-rgb),0.15)] md:-translate-y-4 hover:-translate-y-6' : 'border-gray-100 hover:-translate-y-2 hover:border-primary/30'}`}>
                                 {index === 1 && <div className="absolute top-0 right-0 w-full h-1.5 bg-gradient-to-r from-secondary to-primary"></div>}
@@ -388,12 +395,7 @@ export const Backages = () => {
                             filteredSystems.map((system: any, index: number) => (
                                 <div key={system.id} data-aos="fade-up" data-aos-delay={index * 100} className="h-full">
                                     <div className={`group h-full bg-white rounded-[2rem] p-6 border border-gray-100 shadow-lg transition-all duration-500 relative overflow-hidden flex flex-col justify-between ${selectedSystems.includes(system.id) ? 'border-secondary' : 'hover:border-primary/30'}`}>
-                                        <button 
-                                            onClick={() => setSelectedSystem(system)}
-                                            className="absolute top-6 right-6 p-2 rounded-xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all duration-300 z-20"
-                                        >
-                                            <Info className="w-4 h-4" />
-                                        </button>
+                                        
                                         <div className="relative z-10 flex-1">
                                             <div className="flex flex-col items-center text-center mb-4">
                                                 <div className="bg-gray-50 group-hover:bg-primary/5 border border-gray-100 group-hover:border-primary/20 p-4 rounded-2xl mb-4 transition-all duration-300 w-20 h-20 flex items-center justify-center">
@@ -404,7 +406,7 @@ export const Backages = () => {
                                                     )}
                                                 </div>
                                                 <h3 className="font-doto2 font-bold text-xl text-gray-900 mb-1">{locale === 'en' ? system.name_en : system.name_ar}</h3>
-                                                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p>
+                                                {/* <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{locale === 'en' ? system.description_en : system.description_ar}</p> */}
                                                 
                                                 {Number(system.price) > 0 && (
                                                     <div className="text-center mt-4 flex flex-col items-center justify-center">
@@ -437,12 +439,21 @@ export const Backages = () => {
                                                     {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
                                                 </a>
                                             ) : (
-                                                <button 
-                                                    onClick={() => toggleSystem(system.id)}
-                                                    className={`w-full py-3 rounded-xl font-bold transition-all duration-300 ${selectedSystems.includes(system.id) ? 'bg-secondary text-white' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
-                                                >
-                                                    {selectedSystems.includes(system.id) ? (locale === 'ar' ? 'تمت الإضافة' : 'Added') : (locale === 'ar' ? 'إضافة النظام' : 'Add System')}
-                                                </button>
+                                                <div className="flex gap-2 w-full">
+                                                    <button 
+                                                        onClick={() => toggleSystem(system.id)}
+                                                        className={`flex-1 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${selectedSystems.includes(system.id) ? 'bg-secondary text-white' : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'}`}
+                                                    >
+                                                        {selectedSystems.includes(system.id) ? (locale === 'ar' ? 'تمت الإضافة' : 'Added') : (locale === 'ar' ? 'إضافة النظام' : 'Add System')}
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => setSelectedSystem(system)}
+                                                        className="flex-1 py-3 px-2 rounded-xl bg-gray-50 hover:bg-primary/5 text-gray-500 hover:text-primary transition-all duration-300 border border-gray-100 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5"
+                                                    >
+                                                        <Info className="w-4 h-4 shrink-0" />
+                                                        <span className="whitespace-nowrap">{locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}</span>
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -497,7 +508,7 @@ export const Backages = () => {
                         >
                             <button 
                                 onClick={() => setSelectedSystem(null)}
-                                className="absolute top-6 right-6 p-2 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors z-10"
+                                className="absolute top-6 right-6 rtl:left-6 rtl:right-auto p-2 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors z-10"
                             >
                                 <X className="w-6 h-6" />
                             </button>
@@ -556,7 +567,7 @@ export const Backages = () => {
                             
                             <button 
                                 onClick={() => setShowAuthModal(false)}
-                                className="absolute top-6 right-6 p-2.5 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors z-20"
+                                className="absolute top-6 right-6 rtl:left-6 rtl:right-auto p-2.5 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors z-20"
                             >
                                 <X className="w-5 h-5" />
                             </button>

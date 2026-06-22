@@ -24,7 +24,7 @@ const StepPackage = ({ packages, selectedPackageId, onSelect }: StepPackageProps
                     {isAr ? "اختيار الباقة" : "Select Package"}
                 </h2>
                 <p className="text-gray-500 mb-6">
-                    {isAr ? "اختر الباقة المناسبة لاحتياجاتك" : "Choose the right package for your needs"}
+                    {isAr ? "اختر الباقة المناسبة" : "Choose the right package"}
                 </p>
             </div>
 
