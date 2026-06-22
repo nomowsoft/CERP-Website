@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
 import { formatImage } from "@/utils/imageUtils";
+import { saveBase64Image } from "@/utils/imageSave";
 
 
 export async function GET(request: NextRequest) {
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
         let imageValue = null;
         if (body.image) {
-            imageValue = body.image;
+            imageValue = saveBase64Image(body.image, "service");
         }
 
         const newService = await prisma.service.create({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
 import { formatImage } from "@/utils/imageUtils";
+import { saveBase64Image } from "@/utils/imageSave";
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -47,7 +48,7 @@ export async function PUT(request: NextRequest, { params }: Props) {
             if (body.image === null || body.image === "") {
                 imageValue = null;
             } else {
-                imageValue = body.image;
+                imageValue = saveBase64Image(body.image, `service-${id}`);
             }
         }
 

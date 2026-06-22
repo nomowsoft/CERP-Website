@@ -75,7 +75,7 @@ export default function BackagesService() {
       </Suspense>
       
       {/* 2. Additional Services Section */}
-      <Service />
+      {/* <Service /> */}
     </section>
   )
 }

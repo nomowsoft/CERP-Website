@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/utils/db";
+import { saveBase64Image } from "@/utils/imageSave";
 
 export const dynamic = 'force-dynamic';
 
@@ -25,9 +26,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Image URL is required" }, { status: 400 });
         }
 
+        let imageValue = saveBase64Image(image, "hero");
+
         const heroImg = await prisma.heroImage.create({
             data: {
-                image
+                image: imageValue || ""
             }
         });
 

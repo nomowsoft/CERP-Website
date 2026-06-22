@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/utils/db";
+import { saveBase64Image } from "@/utils/imageSave";
 
 export async function GET() {
     try {
@@ -24,10 +25,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
         }
 
+        let imageValue = null;
+        if (image) {
+            imageValue = saveBase64Image(image, "client");
+        }
+
         const client = await prisma.client.create({
             data: {
                 name,
-                image
+                image: imageValue
             }
         });
 

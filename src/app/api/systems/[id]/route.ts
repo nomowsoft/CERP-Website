@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
 import { formatImage } from "@/utils/imageUtils";
+import { saveBase64Image } from "@/utils/imageSave";
 
 interface RouteParams {
     params: {
@@ -51,7 +52,7 @@ export async function PUT(request: NextRequest, { params }: any) {
             if (body.icon === null || body.icon === "") {
                 iconValue = null;
             } else {
-                iconValue = body.icon;
+                iconValue = saveBase64Image(body.icon, `system-${id}`);
             }
         }
 

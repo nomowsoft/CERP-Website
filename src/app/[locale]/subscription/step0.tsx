@@ -135,6 +135,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                 )}
             </div>
 
+            {/* 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {services.map((service) => {
                     const isSelected = isServiceSelected(service.id);
@@ -148,7 +149,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                 : 'border-gray-200 hover:border-primary/50'
                                 }`}
                         >
-                            {/* Checkmark */}
+                            // Checkmark
                             {isSelected && (
                                 <div className="absolute top-4 right-4 w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
                                     <Check className="w-5 h-5 text-white" />
@@ -169,12 +170,12 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                 )}
                             </div>
 
-                            {/* Service Name */}
+                            // Service Name
                             <h3 className="text-xl font-bold font-doto2 mb-2">
                                 {isAr ? service.name_ar : service.name_en}
                             </h3>
 
-                            {/* Service Price */}
+                            // Service Price
                             <div className="flex items-baseline gap-1 mb-3">
                                 <span className="text-2xl font-bold text-primary">
                                     {Number(service.price)}
@@ -184,7 +185,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                                 </span>
                             </div>
 
-                            {/* Service Description */}
+                            // Service Description
                             <p className="text-sm text-gray-500 line-clamp-2">
                                 {isAr ? service.description_ar : service.description_en}
                             </p>
@@ -192,6 +193,7 @@ const Step0 = ({ data, onChange, services, onSkip, selectedPackage, allSystems, 
                     );
                 })}
             </div>
+            */}
 
             {/* Systems Selection */}
             {filteredSystems && filteredSystems.length > 0 && (

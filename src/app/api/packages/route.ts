@@ -3,6 +3,7 @@ import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
 import { PackageType } from "@/generated/prisma";
 import { formatImage } from "@/utils/imageUtils";
+import { saveBase64Image } from "@/utils/imageSave";
 
 export const dynamic = "force-dynamic";
 
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     let imageValue = null;
     if (body.image) {
-        imageValue = body.image;
+        imageValue = saveBase64Image(body.image, "package");
     }
 
     const newPackage = await prisma.package.create({
