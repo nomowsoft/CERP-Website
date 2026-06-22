@@ -38,13 +38,17 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const locale = useLocale();
   const isAr = locale === 'ar';
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionInfo, loading } = useSelector((state: any) => state.subscription);
-  const { userInfo } = useSelector((state: any) => state.user);
-  const { packages } = useSelector((state: RootState) => state.packages);
-  const { services } = useSelector((state: RootState) => state.services);
-  const { systems: allSystems } = useSelector((state: RootState) => state.systems);
+  const { subscriptionInfo, loading: subscriptionLoading } = useSelector((state: any) => state.subscription);
+  const { userInfo, loading: userLoading } = useSelector((state: any) => state.user);
+  const { packages, loading: packagesLoading } = useSelector((state: RootState) => state.packages);
+  const { services, loading: servicesLoading } = useSelector((state: RootState) => state.services);
+  const { systems: allSystems, loading: systemsLoading } = useSelector((state: RootState) => state.systems);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Only block the UI on critical data (User, Subscription, and Packages).
+  // Services and Systems can load in the background since they are currently hidden or non-critical for initial render.
+  const isLoading = !mounted || subscriptionLoading || userLoading || packagesLoading;
 
   useEffect(() => {
     setMounted(true);
@@ -355,7 +359,7 @@ const SubscriptionWizard = ({ onSubmit }: SubscriptionWizardProps) => {
   const { packagePrice, servicesTotal, grandTotal } = getPriceBreakdown();
   const currency = isAr ? <SaudiRiyalIcon size={14} className="inline-block" /> : (selectedPkg?.currency || 'SAR');
 
-  if (!mounted || loading) {
+  if (isLoading) {
     return (
       <div className="w-full max-w-5xl mx-auto py-10" dir={isAr ? 'rtl' : 'ltr'}>
         {/* Header Skeleton */}

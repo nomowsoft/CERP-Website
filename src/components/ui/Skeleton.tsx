@@ -6,7 +6,7 @@ interface SkeletonProps {
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({ className = '', variant = 'rectangular' }) => {
-  const baseClasses = 'animate-pulse';
+  const baseClasses = 'animate-pulse bg-gray-200';
   
   const variantClasses = {
     text: 'h-4 w-full rounded',
