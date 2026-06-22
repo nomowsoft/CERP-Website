@@ -68,7 +68,7 @@ const CustomerPartner = () => {
                         })}
                     </h2>
                     
-                    <p className="text-xl md:text-2xl text-gray-600 font-medium max-w-3xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+                    <p className="text-xl md:text-2xl font-doto text-gray-600 font-medium max-w-3xl mx-auto flex items-center justify-center gap-2 flex-wrap">
                         {t.rich('subHeading', {
                             highlight: (chunks) => <span className="text-secondary font-bold text-3xl mx-1 bg-secondary/10 px-4 py-1.5 rounded-xl border border-secondary/20 shadow-sm">{chunks}</span>
                         })}

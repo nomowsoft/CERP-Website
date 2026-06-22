@@ -16,7 +16,7 @@ export default function BackagesService() {
         {/* Glow effect */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
-        
+
         <div className="flex justify-center relative z-10" data-aos="fade-down">
           <span className="flex items-center gap-2 mb-4 border border-primary/20 rounded-full px-5 py-2 bg-white shadow-sm">
             <Image src="/backage_service/Component.svg" height={24} width={24} alt="icon" />
@@ -51,18 +51,18 @@ export default function BackagesService() {
           <Star className="w-5 h-5 text-secondary fill-secondary" />
           <span className="text-[15px] font-bold text-gray-700">دعم فني مستمر</span>
         </div>
-        
+
         <div className="max-w-4xl mx-auto text-center relative z-10" data-aos="fade-up">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-doto2 font-bold mb-4 text-gray-900 leading-tight">
-             <span>{isAr ? "اختر " : "Choose "}</span>
-             <span className="bg-gradient-to-l from-secondary to-primary bg-clip-text text-transparent font-bold px-2 inline-block pb-2">
-               {isAr ? "الباقة المناسبة" : "the Suitable Package"}
-             </span>
-             <br className="hidden md:block" />
+            <span>{isAr ? "اختر " : "Choose "}</span>
+            <span className="bg-gradient-to-l from-secondary to-primary bg-clip-text text-transparent font-bold px-2 inline-block pb-2">
+              {isAr ? "الباقة المناسبة" : "the Suitable Package"}
+            </span>
+            <br className="hidden md:block" />
           </h1>
           <p className="text-base md:text-lg text-gray-500 mb-6 max-w-2xl mx-auto leading-relaxed">
-            {isAr 
-              ? "نقدم لك منظومة متكاملة من الأنظمة والباقات والخدمات المصممة باحترافية لتلبية احتياجات مؤسستك"
+            {isAr
+              ? "نقدم لك منظومة متكاملة من الأنظمة والباقات والخدمات المصممة باحترافية لتلبية احتياجات جمعيتك"
               : "We offer you an integrated suite of systems, packages, and services professionally designed to meet your organization's needs"}
           </p>
         </div>
@@ -72,7 +72,7 @@ export default function BackagesService() {
       <Suspense fallback={<div className="container mx-auto py-10 text-center">Loading...</div>}>
         <Backages />
       </Suspense>
-      
+
       {/* 2. Additional Services Section */}
       {/* <Service /> */}
     </section>

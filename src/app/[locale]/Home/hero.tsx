@@ -72,15 +72,35 @@ export const Hero = () => {
                                 </Button>
                             </Link>
 
-                            {/* Outline Button */}
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="w-full font-bold sm:w-auto bg-white border border-white  rounded-xl hover:bg-primary/10 hover:text-primary text-base sm:text-lg py-7"
+                            {/* Outline Button (WhatsApp Link) */}
+                            <a
+                                href="https://wa.me/966537802802"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto block lg:hidden"
                             >
-                                {/* <Image src="/hero/buttonshow.svg" height={24} width={40} alt="Play" className="ms-2" /> */}
-                                {t('watchDemo')}
-                            </Button>
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="w-full font-bold bg-white border border-white rounded-xl hover:bg-primary/10 hover:text-primary text-base sm:text-lg py-7"
+                                >
+                                    {t('watchDemo')}
+                                </Button>
+                            </a>
+                            <a
+                                href="https://web.whatsapp.com/send?phone=966537802802"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto hidden lg:block"
+                            >
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="w-full font-bold bg-white border border-white rounded-xl hover:bg-primary/10 hover:text-primary text-base sm:text-lg py-7"
+                                >
+                                    {t('watchDemo')}
+                                </Button>
+                            </a>
                         </div>
                     </div>
                     {/* Left side: Demo */}

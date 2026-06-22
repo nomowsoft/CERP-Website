@@ -369,8 +369,8 @@ export const Backages = () => {
                         
                         <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                             {locale === 'ar' 
-                                ? 'منظومة متكاملة من الأنظمة لتغطية جميع احتياجات المؤسسة' 
-                                : 'An integrated ecosystem of systems to cover all organization needs'}
+                                ? 'منظومة متكاملة من الأنظمة لتغطية جميع احتياجات الجمعية' 
+                                : 'An integrated ecosystem of systems to cover all association needs'}
                         </p>
                     </div>
 
