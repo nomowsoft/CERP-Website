@@ -177,29 +177,40 @@ export default function AvailableSystems() {
                                             <span className="text-2xl font-bold text-gray-900">{Number(system.price)}</span>
                                             <span className="text-sm text-gray-400 font-medium flex items-center gap-1">{locale === 'ar' ? <SaudiRiyalIcon size={12} /> : "SAR"}</span>
                                         </div>
-                                        <button 
-                                            onClick={() => setSelectedSystem(system)}
-                                            className="p-2 text-gray-400 hover:text-primary transition-colors"
-                                            title={locale === 'ar' ? "التفاصيل" : "Details"}
-                                        >
-                                            <Info className="w-5 h-5" />
-                                        </button>
                                     </div>
 
                                     {!isOwned ? (
-                                        <button 
-                                            onClick={() => {
-                                                setBuySystem(system);
-                                                setShowBuyModal(true);
-                                            }}
-                                            className="flex items-center justify-center w-full py-3.5 bg-gray-50 hover:bg-primary hover:text-white text-gray-900 font-bold rounded-2xl transition-all duration-300 gap-2 group-hover:bg-primary group-hover:text-white"
-                                        >
-                                            <Plus className="w-5 h-5" />
-                                            <span>{locale === 'ar' ? "اشتراك الآن" : "Subscribe Now"}</span>
-                                        </button>
+                                        <div className="flex gap-2 w-full">
+                                            <button 
+                                                onClick={() => {
+                                                    setBuySystem(system);
+                                                    setShowBuyModal(true);
+                                                }}
+                                                className="flex-1 flex items-center justify-center py-3.5 bg-gray-50 hover:bg-primary hover:text-white text-gray-900 font-bold rounded-2xl transition-all duration-300 gap-1.5 group-hover:bg-primary group-hover:text-white text-xs sm:text-sm"
+                                            >
+                                                <Plus className="w-4 h-4 shrink-0" />
+                                                <span className="whitespace-nowrap">{locale === 'ar' ? "اشتراك الآن" : "Subscribe Now"}</span>
+                                            </button>
+                                            <button 
+                                                onClick={() => setSelectedSystem(system)}
+                                                className="flex-1 py-3.5 px-2 rounded-2xl bg-gray-50 hover:bg-primary/5 text-gray-500 hover:text-primary transition-all duration-300 border border-gray-100 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5"
+                                            >
+                                                <Info className="w-4 h-4 shrink-0" />
+                                                <span className="whitespace-nowrap">{locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}</span>
+                                            </button>
+                                        </div>
                                     ) : (
-                                        <div className="text-center py-3.5 text-primary/60 font-medium">
-                                            {locale === 'ar' ? "مضمن في اشتراكك" : "Included in your subscription"}
+                                        <div className="flex flex-col gap-2 w-full">
+                                            <div className="text-center py-2 text-primary/60 font-medium text-sm">
+                                                {locale === 'ar' ? "مضمن في اشتراكك" : "Included in your subscription"}
+                                            </div>
+                                            <button 
+                                                onClick={() => setSelectedSystem(system)}
+                                                className="w-full py-3 px-2 rounded-2xl bg-gray-50 hover:bg-primary/5 text-gray-500 hover:text-primary transition-all duration-300 border border-gray-100 font-bold text-sm flex items-center justify-center gap-1.5"
+                                            >
+                                                <Info className="w-4 h-4 shrink-0" />
+                                                <span className="whitespace-nowrap">{locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}</span>
+                                            </button>
                                         </div>
                                     )}
                                 </div>

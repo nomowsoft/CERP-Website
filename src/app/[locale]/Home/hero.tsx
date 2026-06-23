@@ -74,7 +74,7 @@ export const Hero = () => {
 
                             {/* Outline Button (WhatsApp Link) */}
                             <a
-                                href="https://wa.me/966537802802"
+                                href="https://wa.me/966510828040"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full sm:w-auto block lg:hidden"
@@ -88,7 +88,7 @@ export const Hero = () => {
                                 </Button>
                             </a>
                             <a
-                                href="https://web.whatsapp.com/send?phone=966537802802"
+                                href="https://web.whatsapp.com/send?phone=966510828040"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full sm:w-auto hidden lg:block"
