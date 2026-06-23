@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
         const body = await request.json() as RegisterUserDTO;
         const validation = RegisterSchema.safeParse(body);
         if (!validation.success) {
-            return NextResponse.json({ message: validation.error.message }, { status: 400 });
+            return NextResponse.json({ message: validation.error.issues[0].message }, { status: 400 });
         }
         const user = await prisma.user.findFirst({
             where: {

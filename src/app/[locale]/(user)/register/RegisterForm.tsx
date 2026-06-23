@@ -23,9 +23,42 @@ const RegisterForm = () => {
 
     const formSubmitHandler = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (username === "") return toast.error(t("fullName"));
-        if (email === "") return toast.error(t("email"));
-        if (password === "") return toast.error(t("password"));
+        
+        const isAr = locale === 'ar';
+
+        // 1. الاسم الكامل
+        if (username.trim() === "") {
+            return toast.error(isAr ? "الاسم الكامل مطلوب" : "Full name is required");
+        }
+
+        // 2. رقم الجوال
+        if (phone.trim() !== "" && !/^05\d{8}$/.test(phone.trim())) {
+            return toast.error(isAr ? "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام" : "Mobile number must start with 05 and be 10 digits");
+        }
+
+        // 3. البريد الإلكتروني
+        if (email.trim() === "") {
+            return toast.error(isAr ? "البريد الإلكتروني مطلوب" : "Email is required");
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+            return toast.error(isAr ? "البريد الإلكتروني غير صحيح" : "Invalid email address");
+        }
+
+        // 4. كلمة المرور
+        if (password === "") {
+            return toast.error(isAr ? "كلمة المرور مطلوبة" : "Password is required");
+        }
+        if (password.length < 6) {
+            return toast.error(isAr ? "كلمة المرور يجب أن لا تقل عن 6 أحرف" : "Password must be at least 6 characters");
+        }
+
+        // 5. تأكيد كلمة المرور
+        if (confirmPassword === "") {
+            return toast.error(isAr ? "تأكيد كلمة المرور مطلوب" : "Confirm password is required");
+        }
+        if (password !== confirmPassword) {
+            return toast.error(isAr ? "كلمتا المرور غير متطابقتين" : "Passwords do not match");
+        }
 
         try {
             setLoading(true);

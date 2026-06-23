@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
         const validation = SubscriptionSchema.safeParse(body);
         if (!validation.success) {
-            return NextResponse.json({ message: validation.error.message }, { status: 400 });
+            return NextResponse.json({ message: validation.error.issues[0].message }, { status: 400 });
         }
 
         let packagePrice = 0;
