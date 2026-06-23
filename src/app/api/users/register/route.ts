@@ -29,15 +29,15 @@ export async function POST(request: NextRequest) {
         });
         if (user) {
             return NextResponse.json(
-                { message: 'this user already registered' },
+                { message: 'هذا المستخدم مسجل بالفعل' },
                 { status: 400 }
             )
         }
         if (!body.password) {
-            return NextResponse.json({ message: "Password is required" }, { status: 400 });
+            return NextResponse.json({ message: "كلمة المرور مطلوبة" }, { status: 400 });
         }
         if (body.password != body.confirmPassword) {
-            return NextResponse.json({ message: "Passwords do not match" }, { status: 400 });
+            return NextResponse.json({ message: "كلمتا المرور غير متطابقتين" }, { status: 400 });
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(body.password, salt);

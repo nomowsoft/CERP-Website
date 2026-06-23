@@ -32,7 +32,10 @@ const RegisterForm = () => {
         }
 
         // 2. رقم الجوال
-        if (phone.trim() !== "" && !/^05\d{8}$/.test(phone.trim())) {
+        if (phone.trim() === "") {
+            return toast.error(isAr ? "رقم الجوال مطلوب" : "Mobile number is required");
+        }
+        if (!/^05\d{8}$/.test(phone.trim())) {
             return toast.error(isAr ? "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام" : "Mobile number must start with 05 and be 10 digits");
         }
 
@@ -44,7 +47,12 @@ const RegisterForm = () => {
             return toast.error(isAr ? "البريد الإلكتروني غير صحيح" : "Invalid email address");
         }
 
-        // 4. كلمة المرور
+        // 4. اسم الجمعية/المؤسسة
+        if (charityName.trim() === "") {
+            return toast.error(isAr ? "اسم الجمعية/المؤسسة مطلوب" : "Organization name is required");
+        }
+
+        // 5. كلمة المرور
         if (password === "") {
             return toast.error(isAr ? "كلمة المرور مطلوبة" : "Password is required");
         }
@@ -52,7 +60,7 @@ const RegisterForm = () => {
             return toast.error(isAr ? "كلمة المرور يجب أن لا تقل عن 6 أحرف" : "Password must be at least 6 characters");
         }
 
-        // 5. تأكيد كلمة المرور
+        // 6. تأكيد كلمة المرور
         if (confirmPassword === "") {
             return toast.error(isAr ? "تأكيد كلمة المرور مطلوب" : "Confirm password is required");
         }

@@ -1,18 +1,14 @@
 import { z } from 'zod';
 
 export const RegisterSchema = z.object({
-    name: z.string().optional(),
+    name: z.string().min(1, "الاسم الكامل مطلوب"),
     phone: z.string()
-        .refine(val => !val || /^05\d{8}$/.test(val), {
-            message: "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام"
-        })
-        .optional(),
-    email: z.string().email("البريد الإلكتروني غير صحيح").optional(),
-    charityName: z.string().optional(),
-    password: z.string().min(6, "كلمة المرور يجب أن لا تقل عن 6 أحرف").optional(),
+        .min(1, "رقم الجوال مطلوب")
+        .regex(/^05\d{8}$/, "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام"),
+    email: z.string().min(1, "البريد الإلكتروني مطلوب").email("البريد الإلكتروني غير صحيح"),
+    charityName: z.string().min(1, "اسم الجمعية/المؤسسة مطلوب"),
+    password: z.string().min(6, "كلمة المرور يجب أن لا تقل عن 6 أحرف"),
     role: z.enum(['ADMIN', 'EDITOR', 'VIEWER']).optional(),
-}).refine(data => data.email || data.phone, {
-    message: "البريد الإلكتروني أو رقم الهاتف مطلوب"
 });
 
 export const LoginSchema = z.object({
